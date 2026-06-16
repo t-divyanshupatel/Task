@@ -1,0 +1,3 @@
+service/.venv/
+service/.pytest_cache/
+service/**/__pycache__/

@@ -1,0 +1,4 @@
+service/.venv/
+service/.pytest_cache/
+service/**/__pycache__/
+client/node_modules/

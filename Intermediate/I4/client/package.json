@@ -1,0 +1,20 @@
+{
+  "name": "currency-converter-cli",
+  "version": "1.0.0",
+  "description": "CLI client for the Currency Converter API",
+  "type": "module",
+  "bin": {
+    "convert": "./src/cli.js"
+  },
+  "scripts": {
+    "convert": "node src/cli.js",
+    "verify": "node scripts/verify.mjs",
+    "test": "node --experimental-vm-modules node_modules/vitest/vitest.mjs run"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.5"
+  }
+}

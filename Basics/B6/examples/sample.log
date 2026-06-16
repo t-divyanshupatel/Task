@@ -1,0 +1,5 @@
+2024-06-16 INFO Application started
+2024-06-16 WARN Retrying request
+2024-06-16 ERROR Database unavailable
+[INFO] Health check passed
+debug trace line with no level
