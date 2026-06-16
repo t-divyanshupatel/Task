@@ -109,6 +109,36 @@ export const AGENTS: AgentMeta[] = [
     outputRelativePath: "Intermediate/I6/bug-diagnosis-report.md",
   },
   {
+    id: "A1",
+    slug: "parallel-worktree-plan",
+    category: "advanced",
+    title: "Parallel Worktree Plan",
+    shortDescription:
+      "Decomposes a feature into parallel worktrees with lane prompts, merge order, and verification gates.",
+    relativePath: "Advanced/A1/parallel-worktree-plan-agent.md",
+    outputRelativePath: "Advanced/A1/parallel-worktree-plan.md",
+  },
+  {
+    id: "A2",
+    slug: "parallel-worktree-execution",
+    category: "advanced",
+    title: "Parallel Worktree Execution",
+    shortDescription:
+      "Creates parallel worktrees, implements lane changes, merges cleanly, and documents conflicts.",
+    relativePath: "Advanced/A2/parallel-worktree-execution-agent.md",
+    outputRelativePath: "Advanced/A2/parallel-worktree-execution-report.md",
+  },
+  {
+    id: "A6",
+    slug: "performance-optimization",
+    category: "advanced",
+    title: "Performance Optimization",
+    shortDescription:
+      "Profiles a real bottleneck, applies a minimal fix, and proves improvement with before/after metrics.",
+    relativePath: "Advanced/A6/performance-optimization-agent.md",
+    outputRelativePath: "Advanced/A6/performance-optimization-report.md",
+  },
+  {
     id: "A4",
     slug: "repo-modernization",
     category: "advanced",

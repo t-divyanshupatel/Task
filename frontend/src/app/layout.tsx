@@ -21,7 +21,7 @@ const greatVibes = Great_Vibes({
 export const metadata: Metadata = {
   title: "Agent Library | Divyanshu Patel",
   description:
-    "Browse, preview, and copy agent definition files — B1 through A5.",
+    "Browse, preview, and copy agent definition files — B1 through A6.",
 };
 
 export default function RootLayout({

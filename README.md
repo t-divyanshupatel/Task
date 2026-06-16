@@ -46,13 +46,13 @@ task/
 │   ├── I5/                   sample Currency Converter (Dockerized)
 │   └── I6/                   agent: Seeded Bug Diagnosis + sample report
 ├── Advanced/                 ← Google Docs: advanced tasks
-│   ├── A1/                   parallel worktree decomposition plan
-│   ├── A2/                   parallel worktree execution report (demo)
+│   ├── A1/                   agent: Parallel Worktree Plan + sample plan
+│   ├── A2/                   agent: Parallel Worktree Execution + sample report
 │   ├── A3/                   Mini Fraud Score System (FastAPI + Node + Rust)
 │   ├── A3-worktrees/         git worktree lane demos (service + scorer)
 │   ├── A4/                   agent: Repo Modernization + sample report
 │   ├── A5/                   agent: PR Review + sample report
-│   └── A6/                   performance optimization report (rabbit)
+│   └── A6/                   agent: Performance Optimization + sample report (rabbit)
 ├── Devops/                   ← DevOps curriculum tasks (see Devops/README.md)
 │   ├── D1/                   terraform-plan-agent.md
 │   ├── D2/                   docker-compose-e2e-agent.md
@@ -103,16 +103,16 @@ flowchart LR
 
 1. **Curriculum tasks** (Basics, Intermediate, Advanced, Devops) define what each agent should accomplish and acceptance criteria.
 2. **Agent definitions** (`Basics/B1/repo-structure-mapper-agent.md`, `Devops/D1/terraform-plan-agent.md`, etc.) are the executable prompts.
-3. **Cursor Skills** (`skills/`) wrap published prompts so you can invoke them with `/skill-name` or by having Cursor auto-load them (Basics, Intermediate, and Advanced A4/A5 only today).
+3. **Cursor Skills** (`skills/`) wrap published prompts so you can invoke them with `/skill-name` or by having Cursor auto-load them (Basics, Intermediate, and Advanced A1/A2/A4/A5/A6).
 4. **`rabbit/`** (and smaller sample repos) are real codebases agents analyze or patch.
-5. **`frontend/`** publishes the nine published agents so anyone can browse definitions and demo outputs without opening the repo.
+5. **`frontend/`** publishes all twelve published agents so anyone can browse definitions and demo outputs without opening the repo.
 6. **`Devops/`** agents produce infrastructure artifacts (Terraform, compose, CI YAML, K8s manifests) plus detailed `*-report.md` files — see [`Devops/README.md`](Devops/README.md).
 
 ---
 
 ## Agent catalog
 
-Nine agents are published in the [Agent Library](https://task-phi-seven-94.vercel.app/). Each maps 1:1 to a task folder and a Cursor Skill.
+Twelve agents are published in the [Agent Library](https://task-phi-seven-94.vercel.app/). Each maps 1:1 to a task folder and a Cursor Skill.
 
 ### Basics — read-only analysis
 
@@ -131,12 +131,15 @@ Nine agents are published in the [Agent Library](https://task-phi-seven-94.verce
 | **I3** | Minimal Change | `skills/intermediate-repo-minimal-change/` | `rabbit/` | Picks an unfamiliar module, makes one surgical fix + test, writes change report. |
 | **I6** | Bug Diagnosis | `skills/intermediate-repo-seeded-bug-diagnosis/` | `rabbit/` | Reproduces a seeded bug, finds root cause, applies minimal fix, verifies. |
 
-### Advanced — modernization, review, orchestration
+### Advanced — parallel work, performance, modernization, review
 
 | ID | Agent | Skill folder | Target (sample run) | What it does |
 |----|-------|--------------|---------------------|--------------|
+| **A1** | Parallel Worktree Plan | `skills/advance-parallel-worktree-plan/` | `Advanced/A3/` (fraud pipeline) | Decomposes a feature into parallel lanes — task split, branch/worktree names, agent prompts, merge order, conflict plan, verification gates. Writes `parallel-worktree-plan.md`. |
+| **A2** | Parallel Worktree Execution | `skills/advance-parallel-worktree-execution/` | `Advanced/A3/` + `A3-worktrees/` | Creates two+ git worktrees, implements independent lane changes, merges and resolves conflicts, runs post-merge tests. Writes `parallel-worktree-execution-report.md`. |
 | **A4** | Repo Modernization | `skills/advance-repo-modernization/` | `frontend/` | Audits deps/tooling/CI, prioritizes upgrades, implements highest-value lowest-risk step. |
 | **A5** | PR Review | `skills/advance-pr-review/` | External PR (e.g. GitHub) | Structured review: correctness, security, tests, performance, maintainability. |
+| **A6** | Performance Optimization | `skills/advance-performance-optimization/` | `rabbit/` | Profiles a real bottleneck, applies a minimal fix, re-measures with before/after numbers, verifies behavior unchanged. Writes `performance-optimization-report.md`. |
 
 ### Supporting tasks (not in the web UI yet)
 
@@ -149,10 +152,7 @@ These folders are part of the Google Docs curriculum but are **sample codebases*
 | **B6** | `Basics/B6/` | Rust CLI that counts INFO/WARN/ERROR lines in log files |
 | **I4** | `Intermediate/I4/` | Currency converter — FastAPI service + Node CLI client |
 | **I5** | `Intermediate/I5/` | Dockerized currency converter (multi-stage build + compose) |
-| **A1** | `Advanced/A1/` | Parallel worktree **plan** for building A3 without merge conflicts |
-| **A2** | `Advanced/A2/` | Parallel worktree **execution report** — demo of lanes S + R merged |
-| **A3** | `Advanced/A3/` | Mini Fraud Score System — FastAPI ingestion, Node worker, Rust scorer |
-| **A6** | `Advanced/A6/` | Performance fix report — MongoDB text index for `rabbit` course search |
+| **A3** | `Advanced/A3/` | Mini Fraud Score System — FastAPI ingestion, Node worker, Rust scorer (target for A1/A2 demos) |
 
 ### DevOps — infrastructure, CI/CD, and observability (not in web UI yet)
 
@@ -249,8 +249,11 @@ Each subfolder under `skills/` contains a **`SKILL.md`** file — Cursor's forma
 | `skills/intermediate-repo-e2e-flow-tracer/SKILL.md` | I2 E2E Flow Tracer | Yes |
 | `skills/intermediate-repo-minimal-change/SKILL.md` | I3 Minimal Change | No — may edit source + tests |
 | `skills/intermediate-repo-seeded-bug-diagnosis/SKILL.md` | I6 Bug Diagnosis | No — may edit source + tests |
+| `skills/advance-parallel-worktree-plan/SKILL.md` | A1 Parallel Worktree Plan | Yes — writes plan only |
+| `skills/advance-parallel-worktree-execution/SKILL.md` | A2 Parallel Worktree Execution | No — creates worktrees, edits lane-owned code |
 | `skills/advance-repo-modernization/SKILL.md` | A4 Repo Modernization | No — implements one modernization step |
 | `skills/advance-pr-review/SKILL.md` | A5 PR Review | Yes by default (fixes only if asked) |
+| `skills/advance-performance-optimization/SKILL.md` | A6 Performance Optimization | No — minimal targeted performance fix |
 
 ### Installing skills in Cursor
 
@@ -277,6 +280,9 @@ Most agents accept:
 | `scope` | No | Limit to `backend/` or a package in a monorepo |
 | `flowTarget` | I2 only | `POST /api/v1/user/login` |
 | `symptom` | I6 optional | `Invalid JWT causes middleware to hang` |
+| `featureTask` | A1 | Build A3 fraud pipeline in parallel |
+| `planPath` | A2 | `Advanced/A1/parallel-worktree-plan.md` |
+| `hotPath` | A6 | `GET /api/v1/course/search` or handler name |
 | PR URL | A5 | `https://github.com/org/repo/pull/123` |
 | `cloudProvider` | D1 | `aws` or `gcp` |
 | `outputDir` | D1, D2, D4, D6 | Where to write infra/stack files |
@@ -315,10 +321,11 @@ Devops        →  infrastructure, CI/CD, Kubernetes, dev bootstrap, observabili
 
 **Goal:** Teach agents **multi-agent coordination, quality gates, and real-world engineering**.
 
-- **A1–A2** — Documentation for running parallel git worktrees on the A3 fraud system
+- **A1** — Parallel worktree **planning** agent + sample plan for the A3 fraud system
+- **A2** — Parallel worktree **execution** agent + demo report (lanes S + R merged)
 - **A3** — Three-language micro-pipeline (contract-first JSON schemas, FastAPI, Node worker, Rust scorer)
-- **A4–A5** — Published agents with sample reports (modernization of `frontend/`, PR review of an external repo)
-- **A6** — Performance optimization write-up for `rabbit` course search (MongoDB text index)
+- **A4–A5** — Modernization and PR review agents with sample reports
+- **A6** — Performance optimization agent + sample report (`rabbit` course search, MongoDB text index)
 
 ### Devops (`Devops/`)
 
@@ -412,7 +419,7 @@ See [`Advanced/A3/README.md`](Advanced/A3/README.md) for the full contract and p
 3. **Web UI** — Register in `frontend/src/lib/agents.ts` and add `outputRelativePath` in `load-agents.ts`.
 4. **Test target** — Use `rabbit/` for full-stack tasks or add a mini repo under Basics/Intermediate/Advanced.
 
-Keep agent definitions **read-only** unless the task explicitly requires code changes (I3, I6, A4, A6, D1–D6). Always include metadata in reports: agent name, start/end time, duration, repo path, and verification evidence.
+Keep agent definitions **read-only** unless the task explicitly requires code changes (I3, I6, A2, A4, A6, D1–D6). Always include metadata in reports: agent name, start/end time, duration, repo path, and verification evidence.
 
 ---
 
@@ -425,4 +432,4 @@ Keep agent definitions **read-only** unless the task explicitly requires code ch
 
 ---
 
-**Made by Divyanshu Patel** · 9 published agents (web UI) · 6 DevOps agents · 24 curriculum tasks
+**Made by Divyanshu Patel** · 12 published agents (web UI) · 6 DevOps agents · 24 curriculum tasks
