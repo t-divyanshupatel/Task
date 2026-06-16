@@ -5,395 +5,304 @@
 | Field | Value |
 |-------|-------|
 | **Agent name** | repo-er-diagram |
-| **Started at** | 2026-06-16T09:00:00.000Z |
-| **Completed at** | 2026-06-16T09:02:15.000Z |
-| **Duration** | 2m 15s |
-| **Repository** | /Users/divyanshupatel/Desktop/mf/aiAgents/pml-ai-agents |
-| **Repo name** | pml-ai-agents |
-| **Stack detected** | Node.js (Express dashboard) + SQLite3 (`sqlite3` npm package) |
-| **Database engine** | SQLite (file: `fe_agents.db`, default path relative to `dashboard/server/db.js`) |
-| **Schema sources found** | 2 (`init_db.sql`, runtime migrations in `dashboard/server/db.js`) |
-| **Tables found** | 7 |
-| **Entities found** | 7 |
+| **Started at** | 2026-06-16T13:45:00Z |
+| **Completed at** | 2026-06-16T13:47:14Z |
+| **Duration** | 2m 14s |
+| **Repository** | ./rabbit |
+| **Repo name** | rabbit |
+| **Stack detected** | Node.js + Express.js (backend), React + Redux Toolkit (frontend) |
+| **Database engine** | MongoDB (Mongoose ORM v8.9.2) |
+| **Schema sources found** | 5 |
+| **Tables found** | 5 |
+| **Entities found** | 5 |
 
 ## Summary
 
-The pml-ai-agents repository persists pipeline run telemetry in a single SQLite database. Schema is declared in `init_db.sql` and applied at startup by `dashboard/server/db.js`. Seven active tables form a star schema around `jira_runs`: `users` is the parent of runs; `pipeline_gates`, `verification_results`, `usage_metrics`, `run_artifacts`, and `audit_logs` all reference runs via `run_id` → `jira_runs.jira_id`. The legacy `artifacts` table is explicitly dropped at startup and is excluded from this diagram.
+The **rabbit** LMS repository persists all application data in **MongoDB** via **Mongoose** schemas in `backend/models/`. There are five collections (`users`, `courses`, `lectures`, `coursepurchases`, `courseprogresses`) with no SQL migrations or separate schema files. **User** and **Course** form the hub of the graph: users create courses, enroll via bidirectional array references, purchase through **CoursePurchase**, and track viewing via **CourseProgress**. **Lecture** documents are referenced from the `courses.lectures` array rather than storing a back-reference on the lecture document.
 
 ## Tables & Entities
 
 | # | Name | Kind | Primary key | Source |
 |---|------|------|-------------|--------|
-| 1 | users | table | id (TEXT) | aiAgents/pml-ai-agents/init_db.sql:2 |
-| 2 | jira_runs | table | jira_id (TEXT) | aiAgents/pml-ai-agents/init_db.sql:11 |
-| 3 | pipeline_gates | table | id (INTEGER AUTOINCREMENT) | aiAgents/pml-ai-agents/init_db.sql:35 |
-| 4 | verification_results | table | id (INTEGER AUTOINCREMENT) | aiAgents/pml-ai-agents/init_db.sql:47 |
-| 5 | usage_metrics | table | id (INTEGER) | aiAgents/pml-ai-agents/init_db.sql:58 |
-| 6 | run_artifacts | table | id (INTEGER AUTOINCREMENT) | aiAgents/pml-ai-agents/init_db.sql:71 |
-| 7 | audit_logs | table | id (INTEGER AUTOINCREMENT) | aiAgents/pml-ai-agents/init_db.sql:108 |
+| 1 | users | table / entity | `_id` (ObjectId) | backend/models/user.model.js:34 |
+| 2 | courses | table / entity | `_id` (ObjectId) | backend/models/course.model.js:53 |
+| 3 | lectures | table / entity | `_id` (ObjectId) | backend/models/lecture.model.js:22 |
+| 4 | coursepurchases | table / entity | `_id` (ObjectId) | backend/models/purchaseCourse.model.js:32 |
+| 5 | courseprogresses | table / entity | `_id` (ObjectId) | backend/models/courseProgress.model.js:15 |
+
+> Mongoose collection names are inferred from model names using default pluralization (`User` → `users`, `CoursePurchase` → `coursepurchases`). No explicit `collection` option is set in any schema.
 
 ### users
 
-**Source:** `aiAgents/pml-ai-agents/init_db.sql:2`
+**Source:** `backend/models/user.model.js:3`
 
 | Column | Type | Nullable | Default | Constraints | Source |
 |--------|------|----------|---------|-------------|--------|
-| id | TEXT | NO | — | PRIMARY KEY (UUID) | init_db.sql:3 |
-| name | TEXT | NO | — | NOT NULL | init_db.sql:4 |
-| email | TEXT | NO | — | NOT NULL, UNIQUE | init_db.sql:5 |
-| slack_handle | TEXT | YES | — | — | init_db.sql:6 |
-| created_at | DATETIME | YES | CURRENT_TIMESTAMP | — | init_db.sql:7 |
+| _id | ObjectId | NO | auto | PRIMARY KEY (MongoDB default) | MongoDB default |
+| name | String | NO | — | required (schema typo: `requried`) | user.model.js:4-6 |
+| email | String | NO | — | required, UNIQUE | user.model.js:8-11 |
+| password | String | NO | — | required (schema typo: `requried`) | user.model.js:13-15 |
+| role | String | YES | `'student'` | enum: `instructor`, `student` | user.model.js:17-20 |
+| enrolledCourses | [ObjectId] | YES | `[]` | ref: `Course` | user.model.js:22-26 |
+| photoUrl | String | YES | `""` | — | user.model.js:28-30 |
+| createdAt | Date | NO | auto | timestamps | user.model.js:32 |
+| updatedAt | Date | NO | auto | timestamps | user.model.js:32 |
 
-**Primary key:** `id` — `init_db.sql:3`
-
-**Foreign keys:** none
-
-**Inferred relationships:** none
-
-**Application usage:** `dashboard/server/queries/users.js:6` (`INSERT OR IGNORE INTO users`)
-
----
-
-### jira_runs
-
-**Source:** `aiAgents/pml-ai-agents/init_db.sql:11`
-
-| Column | Type | Nullable | Default | Constraints | Source |
-|--------|------|----------|---------|-------------|--------|
-| jira_id | TEXT | NO | — | PRIMARY KEY | init_db.sql:12 |
-| user_id | TEXT | YES | — | FK → users.id | init_db.sql:13, :31 |
-| runner_name | TEXT | YES | — | — | init_db.sql:14 |
-| runner_email | TEXT | YES | — | — | init_db.sql:15 |
-| team | TEXT | YES | — | — | init_db.sql:16 |
-| project_name | TEXT | YES | — | — | init_db.sql:17 |
-| ticket_summary | TEXT | YES | — | — | init_db.sql:18 |
-| platform | TEXT | YES | — | CHECK IN ('react','flutter','android','ios','java-spring','unknown') | init_db.sql:19 |
-| branch_name | TEXT | YES | — | — | init_db.sql:20 |
-| current_phase | TEXT | YES | — | — | init_db.sql:21 |
-| overall_status | TEXT | YES | in_progress | CHECK IN ('in_progress','completed','failed','blocked') | init_db.sql:22 |
-| jira_url | TEXT | YES | — | — | init_db.sql:23 |
-| wiki_url | TEXT | YES | — | — | init_db.sql:24 |
-| pr_url | TEXT | YES | — | — | init_db.sql:25 |
-| started_at | DATETIME | YES | CURRENT_TIMESTAMP | — | init_db.sql:26 |
-| updated_at | DATETIME | YES | CURRENT_TIMESTAMP | — | init_db.sql:27 |
-| completed_at | DATETIME | YES | — | — | init_db.sql:28 |
-| accumulated_cost_usd | REAL | YES | 0 | — | init_db.sql:29 |
-| run_count | INTEGER | YES | 1 | — | init_db.sql:30 |
-
-**Primary key:** `jira_id` — `init_db.sql:12`
+**Primary key:** `_id` — MongoDB default ObjectId
 
 **Foreign keys:**
 
 | Column | References | On delete/update | Source |
 |--------|------------|------------------|--------|
-| user_id | users.id | not specified | init_db.sql:31 |
+| enrolledCourses[] | courses._id | — | user.model.js:24-25 |
+
+**Inferred relationships:** —
+
+### courses
+
+**Source:** `backend/models/course.model.js:3`
+
+| Column | Type | Nullable | Default | Constraints | Source |
+|--------|------|----------|---------|-------------|--------|
+| _id | ObjectId | NO | auto | PRIMARY KEY | MongoDB default |
+| courseTitle | String | NO | — | required | course.model.js:5-7 |
+| subTitle | String | YES | — | — | course.model.js:9-10 |
+| description | String | YES | — | — | course.model.js:12-13 |
+| category | String | NO | — | required | course.model.js:15-17 |
+| courseLevel | String | YES | — | enum: `Beginner`, `Medium`, `Advance` | course.model.js:19-21 |
+| coursePrice | Number | YES | — | — | course.model.js:23-24 |
+| courseThumbnail | String | YES | — | — | course.model.js:26-27 |
+| enrolledStudents | [ObjectId] | YES | `[]` | ref: `User` | course.model.js:29-33 |
+| lectures | [ObjectId] | YES | `[]` | ref: `Lecture` | course.model.js:35-39 |
+| creator | ObjectId | YES | — | ref: `User` | course.model.js:41-43 |
+| isPublished | Boolean | YES | `false` | — | course.model.js:45-47 |
+| createdAt | Date | NO | auto | timestamps | course.model.js:50 |
+| updatedAt | Date | NO | auto | timestamps | course.model.js:50 |
+
+**Primary key:** `_id` — MongoDB default ObjectId
+
+**Foreign keys:**
+
+| Column | References | On delete/update | Source |
+|--------|------------|------------------|--------|
+| enrolledStudents[] | users._id | — | course.model.js:31-32 |
+| lectures[] | lectures._id | — | course.model.js:37-38 |
+| creator | users._id | — | course.model.js:42-43 |
+
+**Inferred relationships:** —
+
+### lectures
+
+**Source:** `backend/models/lecture.model.js:3`
+
+| Column | Type | Nullable | Default | Constraints | Source |
+|--------|------|----------|---------|-------------|--------|
+| _id | ObjectId | NO | auto | PRIMARY KEY | MongoDB default |
+| lectureTitle | String | NO | — | required | lecture.model.js:5-7 |
+| videoUrl | String | YES | — | — | lecture.model.js:9-10 |
+| publicId | String | YES | — | — | lecture.model.js:12-13 |
+| isPreviewFree | Boolean | YES | — | — | lecture.model.js:15-16 |
+| createdAt | Date | NO | auto | timestamps | lecture.model.js:19 |
+| updatedAt | Date | NO | auto | timestamps | lecture.model.js:19 |
+
+**Primary key:** `_id` — MongoDB default ObjectId
+
+**Foreign keys:** — (parent relationship is on `courses.lectures`, not on this document)
 
 **Inferred relationships:**
 
 | From | To | Basis | Source |
 |------|----|-------|--------|
-| jira_runs.user_id | users.id | explicit FK + `LEFT JOIN users u ON r.user_id = u.id` | init_db.sql:31; dashboard/server/queries/runs.js:53 |
+| courses.lectures[] | lectures._id | explicit ref + push on create | course.controller.js:213-217 |
+| courses.lectures[] | lectures._id | `$pull` on delete | course.controller.js:308-310 |
 
-**Application usage:** `dashboard/server/queries/runs.js:8` (`INSERT INTO jira_runs`), `runs.js:52` (`FROM jira_runs r`)
+### coursepurchases
 
----
-
-### pipeline_gates
-
-**Source:** `aiAgents/pml-ai-agents/init_db.sql:35`
+**Source:** `backend/models/purchaseCourse.model.js:3`
 
 | Column | Type | Nullable | Default | Constraints | Source |
 |--------|------|----------|---------|-------------|--------|
-| id | INTEGER | NO | AUTOINCREMENT | PRIMARY KEY | init_db.sql:36 |
-| run_id | TEXT | YES | — | FK → jira_runs.jira_id | init_db.sql:37, :43 |
-| gate_number | INTEGER | YES | — | CHECK BETWEEN 1 AND 8 | init_db.sql:38 |
-| status | TEXT | YES | — | CHECK IN ('pending','in_progress','passed','blocked') | init_db.sql:39 |
-| description | TEXT | YES | — | — | init_db.sql:40 |
-| passed_at | DATETIME | YES | — | — | init_db.sql:41 |
+| _id | ObjectId | NO | auto | PRIMARY KEY | MongoDB default |
+| courseId | ObjectId | NO | — | required, ref: `Course` | purchaseCourse.model.js:5-8 |
+| userId | ObjectId | NO | — | required, ref: `User` | purchaseCourse.model.js:10-13 |
+| amount | Number | NO | — | required | purchaseCourse.model.js:15-17 |
+| status | String | YES | `'pending'` | enum: `pending`, `completed`, `failed` | purchaseCourse.model.js:19-22 |
+| paymentId | String | NO | — | required | purchaseCourse.model.js:24-26 |
+| createdAt | Date | NO | auto | timestamps | purchaseCourse.model.js:29 |
+| updatedAt | Date | NO | auto | timestamps | purchaseCourse.model.js:29 |
 
-**Primary key:** `id` — `init_db.sql:36`
-
-**Unique constraints:** `(run_id, gate_number)` — `init_db.sql:42`
+**Primary key:** `_id` — MongoDB default ObjectId
 
 **Foreign keys:**
 
 | Column | References | On delete/update | Source |
 |--------|------------|------------------|--------|
-| run_id | jira_runs.jira_id | not specified | init_db.sql:43 |
+| courseId | courses._id | — | purchaseCourse.model.js:7 |
+| userId | users._id | — | purchaseCourse.model.js:12 |
+
+**Inferred relationships:** —
+
+### courseprogresses
+
+**Source:** `backend/models/courseProgress.model.js:8`
+
+| Column | Type | Nullable | Default | Constraints | Source |
+|--------|------|----------|---------|-------------|--------|
+| _id | ObjectId | NO | auto | PRIMARY KEY | MongoDB default |
+| userId | String | YES | — | — (no `ref` declared) | courseProgress.model.js:9 |
+| courseId | String | YES | — | — (no `ref` declared) | courseProgress.model.js:10 |
+| completed | Boolean | YES | — | — | courseProgress.model.js:11 |
+| lectureProgress | [subdocument] | YES | `[]` | embedded schema | courseProgress.model.js:12 |
+
+**Embedded subdocument `lectureProgress` fields** (`courseProgress.model.js:3-6`):
+
+| Column | Type | Nullable | Default | Constraints | Source |
+|--------|------|----------|---------|-------------|--------|
+| _id | ObjectId | NO | auto | subdocument PK (Mongoose default) | Mongoose default |
+| lectureId | String | YES | — | — | courseProgress.model.js:4 |
+| viewed | Boolean | YES | — | — | courseProgress.model.js:5 |
+
+**Primary key:** `_id` — MongoDB default ObjectId
+
+**Foreign keys:** — (no `ref` annotations in schema)
 
 **Inferred relationships:**
 
 | From | To | Basis | Source |
 |------|----|-------|--------|
-| pipeline_gates.run_id | jira_runs.jira_id | explicit FK + `WHERE run_id = ?` queries | init_db.sql:43; dashboard/server/queries/gates.js:15 |
-
-**Application usage:** `dashboard/server/queries/gates.js:5` (`INSERT INTO pipeline_gates`)
-
----
-
-### verification_results
-
-**Source:** `aiAgents/pml-ai-agents/init_db.sql:47`
-
-| Column | Type | Nullable | Default | Constraints | Source |
-|--------|------|----------|---------|-------------|--------|
-| id | INTEGER | NO | AUTOINCREMENT | PRIMARY KEY | init_db.sql:48 |
-| run_id | TEXT | YES | — | FK → jira_runs.jira_id | init_db.sql:49, :54 |
-| check_type | TEXT | YES | — | CHECK IN ('types','lint','tests','build','a11y') | init_db.sql:50 |
-| status | TEXT | YES | — | CHECK IN ('pass','fail','warn') | init_db.sql:51 |
-| output_log | TEXT | YES | — | — | init_db.sql:52 |
-| created_at | DATETIME | YES | CURRENT_TIMESTAMP | — | init_db.sql:53 |
-
-**Primary key:** `id` — `init_db.sql:48`
-
-**Foreign keys:**
-
-| Column | References | On delete/update | Source |
-|--------|------------|------------------|--------|
-| run_id | jira_runs.jira_id | not specified | init_db.sql:54 |
-
-**Inferred relationships:** none beyond explicit FK (no application queries found in repo)
-
-**Application usage:** none found — table is defined in schema only
-
----
-
-### usage_metrics
-
-**Source:** `aiAgents/pml-ai-agents/init_db.sql:58`
-
-| Column | Type | Nullable | Default | Constraints | Source |
-|--------|------|----------|---------|-------------|--------|
-| id | INTEGER | NO | — | PRIMARY KEY | init_db.sql:59 |
-| run_id | TEXT | YES | — | FK → jira_runs.jira_id | init_db.sql:60, :67 |
-| total_cost_usd | REAL | YES | — | — | init_db.sql:61 |
-| input_tokens | INTEGER | YES | — | — | init_db.sql:62 |
-| output_tokens | INTEGER | YES | — | — | init_db.sql:63 |
-| model_used | TEXT | YES | — | — | init_db.sql:64 |
-| raw_json | TEXT | YES | — | — | init_db.sql:65 |
-| created_at | DATETIME | YES | CURRENT_TIMESTAMP | — | init_db.sql:66 |
-
-**Primary key:** `id` — `init_db.sql:59`
-
-**Foreign keys:**
-
-| Column | References | On delete/update | Source |
-|--------|------------|------------------|--------|
-| run_id | jira_runs.jira_id | not specified | init_db.sql:67 |
-
-**Inferred relationships:**
-
-| From | To | Basis | Source |
-|------|----|-------|--------|
-| usage_metrics.run_id | jira_runs.jira_id | explicit FK + subquery `WHERE run_id = r.jira_id` | init_db.sql:67; dashboard/server/queries/runs.js:46 |
-
-**Application usage:** `dashboard/server/queries/usage.js:5` (`INSERT INTO usage_metrics`)
-
----
-
-### run_artifacts
-
-**Source:** `aiAgents/pml-ai-agents/init_db.sql:71` (rebuild migration mirrors same shape at `dashboard/server/db.js:49`)
-
-| Column | Type | Nullable | Default | Constraints | Source |
-|--------|------|----------|---------|-------------|--------|
-| id | INTEGER | NO | AUTOINCREMENT | PRIMARY KEY | init_db.sql:72 |
-| run_id | TEXT | NO | — | FK → jira_runs.jira_id, NOT NULL | init_db.sql:73, :91 |
-| data_type | TEXT | NO | — | NOT NULL, CHECK (11 allowed values incl. `code-review`) | init_db.sql:74-78; db.js:52-55 |
-| raw_json | TEXT | NO | — | NOT NULL | init_db.sql:79 |
-| is_resolved | INTEGER | YES | 0 | — | init_db.sql:80 |
-| resolved_at | DATETIME | YES | — | — | init_db.sql:81 |
-| reviewer_name | TEXT | YES | — | added via migration | init_db.sql:83; db.js:60 |
-| reviewer_email | TEXT | YES | — | added via migration | init_db.sql:84; db.js:61 |
-| workflow_phase | TEXT | YES | — | added via migration | init_db.sql:85; db.js:62 |
-| verdict | TEXT | YES | — | added via migration | init_db.sql:86; db.js:63 |
-| reviewed_at | DATETIME | YES | — | added via migration | init_db.sql:87; db.js:64 |
-| created_at | DATETIME | YES | CURRENT_TIMESTAMP | — | init_db.sql:88 |
-| updated_at | DATETIME | YES | CURRENT_TIMESTAMP | — | init_db.sql:89 |
-
-**Primary key:** `id` — `init_db.sql:72`
-
-**Unique constraints:** `(run_id, data_type)` — `init_db.sql:90`
-
-**Foreign keys:**
-
-| Column | References | On delete/update | Source |
-|--------|------------|------------------|--------|
-| run_id | jira_runs.jira_id | not specified | init_db.sql:91 |
-
-**Inferred relationships:**
-
-| From | To | Basis | Source |
-|------|----|-------|--------|
-| run_artifacts.run_id | jira_runs.jira_id | explicit FK + `LEFT JOIN jira_runs r ON r.jira_id = a.run_id` | init_db.sql:91; dashboard/server/routes/reviews.js:77 |
-
-**Application usage:** `dashboard/server/queries/artifacts.js:17` (`INSERT INTO run_artifacts`)
-
----
-
-### audit_logs
-
-**Source:** `aiAgents/pml-ai-agents/init_db.sql:108`
-
-| Column | Type | Nullable | Default | Constraints | Source |
-|--------|------|----------|---------|-------------|--------|
-| id | INTEGER | NO | AUTOINCREMENT | PRIMARY KEY | init_db.sql:109 |
-| run_id | TEXT | YES | — | FK → jira_runs.jira_id | init_db.sql:110, :117 |
-| user_email | TEXT | YES | — | — | init_db.sql:111 |
-| action_attempted | TEXT | YES | — | — | init_db.sql:112 |
-| resource | TEXT | YES | — | — | init_db.sql:113 |
-| decision | TEXT | YES | — | — | init_db.sql:114 |
-| reason | TEXT | YES | — | — | init_db.sql:115 |
-| timestamp | DATETIME | YES | CURRENT_TIMESTAMP | — | init_db.sql:116 |
-
-**Primary key:** `id` — `init_db.sql:109`
-
-**Foreign keys:**
-
-| Column | References | On delete/update | Source |
-|--------|------------|------------------|--------|
-| run_id | jira_runs.jira_id | not specified | init_db.sql:117 |
-
-**Inferred relationships:** none beyond explicit FK
-
-**Application usage:** `dashboard/server/queries/audit.js:5` (`INSERT INTO audit_logs`)
-
----
+| courseprogresses.userId | users._id | lookup key in `findOne({courseId, userId})` | courseProgress.controller.js:41 |
+| courseprogresses.courseId | courses._id | lookup key in `findOne({courseId, userId})` | courseProgress.controller.js:41 |
+| lectureProgress.lectureId | lectures._id | compared to `lectureId` route param on update | courseProgress.controller.js:51-57 |
 
 ## Relationships Summary
 
 | # | Parent | Child | Cardinality | Type | Source |
 |---|--------|-------|-------------|------|--------|
-| 1 | users | jira_runs | 1:N | explicit FK (`user_id`) | init_db.sql:31 |
-| 2 | jira_runs | pipeline_gates | 1:N | explicit FK (`run_id`) | init_db.sql:43 |
-| 3 | jira_runs | verification_results | 1:N | explicit FK (`run_id`) | init_db.sql:54 |
-| 4 | jira_runs | usage_metrics | 1:N | explicit FK (`run_id`) | init_db.sql:67 |
-| 5 | jira_runs | run_artifacts | 1:N | explicit FK (`run_id`) | init_db.sql:91 |
-| 6 | jira_runs | audit_logs | 1:N | explicit FK (`run_id`) | init_db.sql:117 |
+| 1 | users | courses | M:N | explicit ref (`enrolledCourses` / `enrolledStudents`) | user.model.js:22-26, course.model.js:29-33 |
+| 2 | users | courses | 1:N | explicit ref (`creator`) | course.model.js:41-43 |
+| 3 | courses | lectures | 1:N | explicit ref (`lectures` array) | course.model.js:35-39 |
+| 4 | users | coursepurchases | 1:N | explicit FK (`userId`) | purchaseCourse.model.js:10-13 |
+| 5 | courses | coursepurchases | 1:N | explicit FK (`courseId`) | purchaseCourse.model.js:5-8 |
+| 6 | users | courseprogresses | 1:N | inferred (`userId` lookup) | courseProgress.controller.js:41 |
+| 7 | courses | courseprogresses | 1:N | inferred (`courseId` lookup) | courseProgress.controller.js:41 |
+| 8 | lectures | courseprogresses.lectureProgress | 1:N | inferred (`lectureId` in embedded array) | courseProgress.controller.js:51-57 |
+
+Enrollment M:N is maintained bidirectionally on purchase completion:
+
+```117:127:rabbit/backend/controllers/purchaseCourse.controller.js
+      await User.findByIdAndUpdate(
+        purchase.userId,
+        { $addToSet: { enrolledCourses: purchase.courseId._id } }, 
+        { new: true }
+      );
+
+      
+      await Course.findByIdAndUpdate(
+        purchase.courseId._id,
+        { $addToSet: { enrolledStudents: purchase.userId } }, 
+        { new: true }
+      );
+```
 
 ## Mermaid ER Diagram
 
 ```mermaid
 erDiagram
     users {
-        TEXT id PK
-        TEXT name
-        TEXT email UK
-        TEXT slack_handle
-        DATETIME created_at
+        ObjectId _id PK
+        String name
+        String email UK
+        String password
+        String role
+        ObjectId enrolledCourses FK
+        String photoUrl
+        Date createdAt
+        Date updatedAt
     }
-
-    jira_runs {
-        TEXT jira_id PK
-        TEXT user_id FK
-        TEXT runner_name
-        TEXT runner_email
-        TEXT team
-        TEXT project_name
-        TEXT ticket_summary
-        TEXT platform
-        TEXT branch_name
-        TEXT current_phase
-        TEXT overall_status
-        TEXT jira_url
-        TEXT wiki_url
-        TEXT pr_url
-        DATETIME started_at
-        DATETIME updated_at
-        DATETIME completed_at
-        REAL accumulated_cost_usd
-        INTEGER run_count
+    courses {
+        ObjectId _id PK
+        String courseTitle
+        String subTitle
+        String description
+        String category
+        String courseLevel
+        Number coursePrice
+        String courseThumbnail
+        ObjectId enrolledStudents FK
+        ObjectId lectures FK
+        ObjectId creator FK
+        Boolean isPublished
+        Date createdAt
+        Date updatedAt
     }
-
-    pipeline_gates {
-        INTEGER id PK
-        TEXT run_id FK
-        INTEGER gate_number
-        TEXT status
-        TEXT description
-        DATETIME passed_at
+    lectures {
+        ObjectId _id PK
+        String lectureTitle
+        String videoUrl
+        String publicId
+        Boolean isPreviewFree
+        Date createdAt
+        Date updatedAt
     }
-
-    verification_results {
-        INTEGER id PK
-        TEXT run_id FK
-        TEXT check_type
-        TEXT status
-        TEXT output_log
-        DATETIME created_at
+    coursepurchases {
+        ObjectId _id PK
+        ObjectId courseId FK
+        ObjectId userId FK
+        Number amount
+        String status
+        String paymentId
+        Date createdAt
+        Date updatedAt
     }
-
-    usage_metrics {
-        INTEGER id PK
-        TEXT run_id FK
-        REAL total_cost_usd
-        INTEGER input_tokens
-        INTEGER output_tokens
-        TEXT model_used
-        TEXT raw_json
-        DATETIME created_at
+    courseprogresses {
+        ObjectId _id PK
+        String userId
+        String courseId
+        Boolean completed
+        String lectureProgress_embedded
     }
-
-    run_artifacts {
-        INTEGER id PK
-        TEXT run_id FK
-        TEXT data_type
-        TEXT raw_json
-        INTEGER is_resolved
-        DATETIME resolved_at
-        TEXT reviewer_name
-        TEXT reviewer_email
-        TEXT workflow_phase
-        TEXT verdict
-        DATETIME reviewed_at
-        DATETIME created_at
-        DATETIME updated_at
-    }
-
-    audit_logs {
-        INTEGER id PK
-        TEXT run_id FK
-        TEXT user_email
-        TEXT action_attempted
-        TEXT resource
-        TEXT decision
-        TEXT reason
-        DATETIME timestamp
-    }
-
-    users ||--o{ jira_runs : "user_id"
-    jira_runs ||--o{ pipeline_gates : "run_id"
-    jira_runs ||--o{ verification_results : "run_id"
-    jira_runs ||--o{ usage_metrics : "run_id"
-    jira_runs ||--o{ run_artifacts : "run_id"
-    jira_runs ||--o{ audit_logs : "run_id"
+    users ||--o{ courses : "creates"
+    users }o--o{ courses : "enrolls"
+    courses ||--o{ lectures : "contains"
+    users ||--o{ coursepurchases : "purchases"
+    courses ||--o{ coursepurchases : "sold_via"
+    users ||--o{ courseprogresses : "tracks"
+    courses ||--o{ courseprogresses : "progress_on"
+    lectures ||--o{ courseprogresses : "lectureProgress"
 ```
 
 ## Discovery Notes
 
 ### Files examined
 
-- `aiAgents/pml-ai-agents/init_db.sql` — canonical schema (7 `CREATE TABLE` statements, 5 indexes)
-- `aiAgents/pml-ai-agents/dashboard/server/db.js` — DB connection, `init_db.sql` execution, idempotent migrations, dropped `artifacts` table
-- `aiAgents/pml-ai-agents/dashboard/server/queries/users.js` — `users` inserts
-- `aiAgents/pml-ai-agents/dashboard/server/queries/runs.js` — `jira_runs` CRUD and JOIN to `users`
-- `aiAgents/pml-ai-agents/dashboard/server/queries/gates.js` — `pipeline_gates` upserts
-- `aiAgents/pml-ai-agents/dashboard/server/queries/usage.js` — `usage_metrics` inserts
-- `aiAgents/pml-ai-agents/dashboard/server/queries/artifacts.js` — `run_artifacts` upserts
-- `aiAgents/pml-ai-agents/dashboard/server/queries/audit.js` — `audit_logs` inserts
-- `aiAgents/pml-ai-agents/dashboard/server/routes/reviews.js` — JOIN `run_artifacts` ↔ `jira_runs`
-- `aiAgents/pml-ai-agents/dashboard/scripts/seed-dummy-data.js` — seed/delete patterns confirming table names
+- `rabbit/README.md` — confirms MongoDB + Mongoose stack; no schema DDL
+- `rabbit/package.json` — root monorepo scripts; `mongoose@^8.9.2`
+- `rabbit/backend/database/db.js` — MongoDB connection via `MONGO_URI`; no runtime migrations
+- `rabbit/backend/index.js` — Express entry; wires routes only
+- `rabbit/backend/models/user.model.js` — User schema
+- `rabbit/backend/models/course.model.js` — Course schema
+- `rabbit/backend/models/lecture.model.js` — Lecture schema
+- `rabbit/backend/models/purchaseCourse.model.js` — CoursePurchase schema
+- `rabbit/backend/models/courseProgress.model.js` — CourseProgress schema + embedded lectureProgress
+- `rabbit/backend/controllers/user.controller.js` — `populate("enrolledCourses")` at line 98
+- `rabbit/backend/controllers/course.controller.js` — `populate('creator')`, `populate('lectures')`; lecture push/pull
+- `rabbit/backend/controllers/purchaseCourse.controller.js` — purchase creation, `populate("courseId")`, enrollment updates
+- `rabbit/backend/controllers/courseProgress.controller.js` — progress CRUD by `userId`/`courseId` strings
+- `rabbit/frontend/package.json` — React client; no local persistence layer
 
 ### Deprecated / dropped objects
 
-- **`artifacts` table** — explicitly dropped at startup (`DROP TABLE IF EXISTS artifacts`) because it was superseded by `run_artifacts`. Source: `dashboard/server/db.js:18-22`. Not included in active ER diagram.
+- None found. No `DROP TABLE`, migration rollbacks, or runtime collection drops in application code.
 
 ### Ambiguities & gaps
 
-- **`verification_results`** is defined in `init_db.sql:47-55` with a foreign key to `jira_runs`, but no `INSERT`, `SELECT`, or `UPDATE` against this table was found anywhere in the repository. It appears to be schema prepared for future use.
-- **`usage_metrics.id`** is `INTEGER PRIMARY KEY` without `AUTOINCREMENT` in `init_db.sql:59`; the application does not show how `id` values are assigned on insert (`usage.js:5` omits `id` from the column list).
-- **ON DELETE / ON UPDATE** behavior is not specified on any foreign key constraint.
+- **CourseProgress refs are strings, not ObjectIds.** `userId` and `courseId` are typed `String` with no `ref`, yet `getCourseProgress` calls `.populate("courseId")` (`courseProgress.controller.js:9`), which will not resolve without a `ref` definition.
+- **Bidirectional enrollment arrays** (`users.enrolledCourses` and `courses.enrolledStudents`) can drift if updated independently; only the Stripe webhook path updates both.
+- **README mentions Admin role** but `users.role` enum only allows `instructor` and `student` (`user.model.js:19`).
+- **No explicit MongoDB indexes** beyond the implicit unique index on `users.email`.
+- **`lectureProgress` is embedded**, not a separate collection; `lectureId` stores string IDs, not ObjectId refs.
+- **No SQL, Prisma, Flyway, or Liquibase** artifacts anywhere in the repo.
 
-### Workspace scan (sibling repos)
+### Repos / packages with no persistence layer
 
-A repo-wide search for `CREATE TABLE` and `@Entity` under `/Users/divyanshupatel/Desktop/mf` found **only** `aiAgents/pml-ai-agents/init_db.sql`. Other workspace packages (`mf-h5`, `mf-api-mock-service`, `paytm-wealth-mock-api-service`, `sip-product-frontend`, `pml-widget-eq`, `Task/Basics/B4`, `Task/Basics/B5`) contain no SQL migrations or ORM entity definitions. `Task/Basics/B4` uses in-memory Pydantic models (`app/models.py`) with no database persistence.
+- `rabbit/frontend/` — React + Redux Toolkit SPA; all data fetched from backend APIs, no client-side database.
