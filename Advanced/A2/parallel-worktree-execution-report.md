@@ -2,14 +2,14 @@
 
 ## Metadata
 
-| Field | Value |
-|-------|-------|
-| **Task** | A3 — Mini Fraud Score System (parallel lane demo) |
-| **Report location** | `Task/Advanced/A2/parallel-worktree-execution-report.md` |
-| **Repository root** | `Task/Advanced/A3/` |
-| **Base commit** | `9e34a42` — Baseline Mini Fraud Score System |
-| **Integration commit** | `234a085` — merged `lane-s-service` + `lane-r-scorer` |
-| **Executed** | 2026-06-16 |
+| Field                  | Value                                                    |
+| ---------------------- | -------------------------------------------------------- |
+| **Task**               | A3 — Mini Fraud Score System (parallel lane demo)        |
+| **Report location**    | `Task/Advanced/A2/parallel-worktree-execution-report.md` |
+| **Repository root**    | `Task/Advanced/A3/`                                      |
+| **Base commit**        | `9e34a42` — Baseline Mini Fraud Score System             |
+| **Integration commit** | `234a085` — merged `lane-s-service` + `lane-r-scorer`    |
+| **Executed**           | 2026-06-16                                               |
 
 ---
 
@@ -17,10 +17,10 @@
 
 Two parallel git worktrees were created from the same baseline commit on `main`. Each lane made **independent, disjoint-directory changes**:
 
-| Lane | Branch | Worktree path | Scope | Result |
-|------|--------|---------------|-------|--------|
-| **S** | `lane-s-service` | `Task/Advanced/A3-worktrees/lane-s-service` | `service/` + README | `GET /stats` endpoint + tests |
-| **R** | `lane-r-scorer` | `Task/Advanced/A3-worktrees/lane-r-scorer` | `scorer/` + README | `weekend_transaction` scoring signal (+5) |
+| Lane  | Branch           | Worktree path                               | Scope               | Result                                    |
+| ----- | ---------------- | ------------------------------------------- | ------------------- | ----------------------------------------- |
+| **S** | `lane-s-service` | `Task/Advanced/A3-worktrees/lane-s-service` | `service/` + README | `GET /stats` endpoint + tests             |
+| **R** | `lane-r-scorer`  | `Task/Advanced/A3-worktrees/lane-r-scorer`  | `scorer/` + README  | `weekend_transaction` scoring signal (+5) |
 
 Lanes merged cleanly at the code level (`service/` vs `scorer/`). A **single intentional conflict** occurred in `README.md` (both lanes appended a "Parallel lane changelog" section). It was resolved manually by keeping both sections. Post-merge tests: **9/9 pytest passed**, **1/1 worker unit test passed** (2 integration tests skipped — no Rust binary built).
 
@@ -129,11 +129,11 @@ git branch -d lane-s-service lane-r-scorer   # after merge
 
 ## 2. Branch and worktree names
 
-| Role | Branch | Worktree directory | HEAD after lane work |
-|------|--------|--------------------|----------------------|
-| Orchestrator / integration | `main` | `Task/Advanced/A3/` | `234a085` |
-| Lane S — FastAPI service | `lane-s-service` | `Task/Advanced/A3-worktrees/lane-s-service/` | `d93fec5` |
-| Lane R — Rust scorer | `lane-r-scorer` | `Task/Advanced/A3-worktrees/lane-r-scorer/` | `37a9f0c` |
+| Role                       | Branch           | Worktree directory                           | HEAD after lane work |
+| -------------------------- | ---------------- | -------------------------------------------- | -------------------- |
+| Orchestrator / integration | `main`           | `Task/Advanced/A3/`                          | `234a085`            |
+| Lane S — FastAPI service   | `lane-s-service` | `Task/Advanced/A3-worktrees/lane-s-service/` | `d93fec5`            |
+| Lane R — Rust scorer       | `lane-r-scorer`  | `Task/Advanced/A3-worktrees/lane-r-scorer/`  | `37a9f0c`            |
 
 **Naming convention used:** `lane-{component}-{short-name}` — matches the decomposition in `Task/Advanced/A1/parallel-worktree-plan.md`.
 
@@ -145,13 +145,13 @@ git branch -d lane-s-service lane-r-scorer   # after merge
 
 **Files changed (5):**
 
-| File | Change |
-|------|--------|
-| `service/app/models.py` | Added `TransactionStats` model |
-| `service/app/store.py` | Added `counts()` method |
-| `service/app/main.py` | Added `GET /stats` route |
-| `service/tests/test_api.py` | Added `test_transaction_stats_reflect_store_state` |
-| `README.md` | Documented `/stats` in API table + Lane S changelog |
+| File                        | Change                                              |
+| --------------------------- | --------------------------------------------------- |
+| `service/app/models.py`     | Added `TransactionStats` model                      |
+| `service/app/store.py`      | Added `counts()` method                             |
+| `service/app/main.py`       | Added `GET /stats` route                            |
+| `service/tests/test_api.py` | Added `test_transaction_stats_reflect_store_state`  |
+| `README.md`                 | Documented `/stats` in API table + Lane S changelog |
 
 **Lane S test output** (run inside `lane-s-service` worktree):
 
@@ -186,16 +186,16 @@ curl http://127.0.0.1:8000/stats
 
 **Files changed (2):**
 
-| File | Change |
-|------|--------|
+| File                | Change                                                          |
+| ------------------- | --------------------------------------------------------------- |
 | `scorer/src/lib.rs` | `weekend_transaction` signal (+5 on Sat/Sun UTC); new unit test |
-| `README.md` | Risk rules table + Lane R changelog |
+| `README.md`         | Risk rules table + Lane R changelog                             |
 
 **Scoring rule added:**
 
-| Signal | Points | Condition |
-|--------|--------|-----------|
-| `weekend_transaction` | +5 | `timestamp` falls on Saturday or Sunday (UTC) |
+| Signal                | Points | Condition                                     |
+| --------------------- | ------ | --------------------------------------------- |
+| `weekend_transaction` | +5     | `timestamp` falls on Saturday or Sunday (UTC) |
 
 **Lane R test command:**
 
@@ -262,14 +262,9 @@ Changes to be committed:
 ```markdown
 ## Parallel lane changelog
 
-<<<<<<< HEAD
-### Lane S — FastAPI service (`lane-s-service`)
-- Added `GET /stats` for pipeline observability.
-...
-=======
 ### Lane R — Rust scorer (`lane-r-scorer`)
+
 - Added `weekend_transaction` signal (+5) ...
->>>>>>> lane-r-scorer
 ```
 
 **Resolution:** keep **both** lane subsections (union, not pick-one). This is the correct pattern when parallel agents document their own changelog in a shared file — merge by concatenation, not by choosing a winner.
@@ -283,10 +278,10 @@ git commit -m "Merge lane-r-scorer: weekend_transaction signal with README recon
 
 ```
 *   234a085 Merge lane-r-scorer: weekend_transaction signal with README reconcile.
-|\  
+|\
 | * 37a9f0c Lane R: add weekend_transaction scoring signal (+5).
 * | d93fec5 Lane S: add GET /stats endpoint for transaction counts.
-|/  
+|/
 * 9e34a42 Baseline Mini Fraud Score System for parallel worktree demo.
 ```
 
@@ -302,9 +297,9 @@ source .venv/bin/activate
 python -m pytest -v
 ```
 
-| Suite | Passed | Failed | Skipped |
-|-------|--------|--------|---------|
-| `service/tests/` | **9** | 0 | 0 |
+| Suite            | Passed | Failed | Skipped |
+| ---------------- | ------ | ------ | ------- |
+| `service/tests/` | **9**  | 0      | 0       |
 
 All pre-existing API tests plus new `test_transaction_stats_reflect_store_state` pass on integrated `main`.
 
@@ -315,19 +310,19 @@ cd Task/Advanced/A3/worker
 npm test
 ```
 
-| Suite | Passed | Failed | Skipped |
-|-------|--------|--------|---------|
-| `tests/scorer.test.js` | 1 | 0 | 0 |
-| `tests/integration.test.js` | 0 | 0 | 2 (no Rust binary) |
+| Suite                       | Passed | Failed | Skipped            |
+| --------------------------- | ------ | ------ | ------------------ |
+| `tests/scorer.test.js`      | 1      | 0      | 0                  |
+| `tests/integration.test.js` | 0      | 0      | 2 (no Rust binary) |
 
 Worker unit tests pass. Integration tests skip when `scorer/target/release/fraud-scorer` is absent.
 
 ### Rust — `cargo test`
 
-| Status | Notes |
-|--------|-------|
-| **Not executed** | `cargo` / `rustc` not installed in this environment |
-| **Expected** | 5 tests (4 existing + `weekend_transaction_adds_signal`) when run after `cargo build` |
+| Status           | Notes                                                                                 |
+| ---------------- | ------------------------------------------------------------------------------------- |
+| **Not executed** | `cargo` / `rustc` not installed in this environment                                   |
+| **Expected**     | 5 tests (4 existing + `weekend_transaction_adds_signal`) when run after `cargo build` |
 
 **Recommended full verify after Rust install:**
 
@@ -342,13 +337,13 @@ cd ../worker && npm test
 
 ## 6. Conflict notes
 
-| File | Conflict? | Type | Resolution |
-|------|-----------|------|------------|
-| `service/app/*` | No | — | Lane R did not touch `service/` |
-| `scorer/src/lib.rs` | No | — | Lane S did not touch `scorer/` |
-| `README.md` | **Yes** | Content — both lanes appended `## Parallel lane changelog` | Manual union: keep Lane S + Lane R subsections |
-| `contract/` | No | — | Unchanged by both lanes |
-| `worker/` | No | — | Unchanged by both lanes |
+| File                | Conflict? | Type                                                       | Resolution                                     |
+| ------------------- | --------- | ---------------------------------------------------------- | ---------------------------------------------- |
+| `service/app/*`     | No        | —                                                          | Lane R did not touch `service/`                |
+| `scorer/src/lib.rs` | No        | —                                                          | Lane S did not touch `scorer/`                 |
+| `README.md`         | **Yes**   | Content — both lanes appended `## Parallel lane changelog` | Manual union: keep Lane S + Lane R subsections |
+| `contract/`         | No        | —                                                          | Unchanged by both lanes                        |
+| `worker/`           | No        | —                                                          | Unchanged by both lanes                        |
 
 ### Why only README conflicted
 
@@ -398,10 +393,10 @@ git worktree remove ../A3-worktrees/<lane-name>
 
 ## 8. Artifact index
 
-| Artifact | Path |
-|----------|------|
-| Primary repo (integrated) | `Task/Advanced/A3/` |
-| Lane S worktree | `Task/Advanced/A3-worktrees/lane-s-service/` |
-| Lane R worktree | `Task/Advanced/A3-worktrees/lane-r-scorer/` |
-| Decomposition plan (reference) | `Task/Advanced/A1/parallel-worktree-plan.md` |
-| This execution report | `Task/Advanced/A2/parallel-worktree-execution-report.md` |
+| Artifact                       | Path                                                     |
+| ------------------------------ | -------------------------------------------------------- |
+| Primary repo (integrated)      | `Task/Advanced/A3/`                                      |
+| Lane S worktree                | `Task/Advanced/A3-worktrees/lane-s-service/`             |
+| Lane R worktree                | `Task/Advanced/A3-worktrees/lane-r-scorer/`              |
+| Decomposition plan (reference) | `Task/Advanced/A1/parallel-worktree-plan.md`             |
+| This execution report          | `Task/Advanced/A2/parallel-worktree-execution-report.md` |
