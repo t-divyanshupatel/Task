@@ -2,16 +2,18 @@
 
 ## Metadata
 
-| Field | Value |
-|-------|-------|
-| **Task ID** | A1 — parallel agent / worktree orchestration |
-| **Parent feature** | Mini Fraud Score System (`Task/Advanced/A3/`) |
-| **Parent task (concrete)** | Implement the three-component fraud pipeline in parallel without merge chaos |
-| **Repository** | `/Users/divyanshupatel/Desktop/mf` |
-| **Base branch** | `main` (or `development` if your team uses it — all lanes branch from the same commit) |
-| **Orchestrator role** | Human or a coordinator agent that owns contract lane + final integration merge |
-| **Created** | 2026-06-16 |
-| **Lanes** | 4 parallel implementation lanes + 1 sequential integration lane |
+
+| Field                      | Value                                                                                  |
+| -------------------------- | -------------------------------------------------------------------------------------- |
+| **Task ID**                | A1 — parallel agent / worktree orchestration                                           |
+| **Parent feature**         | Mini Fraud Score System (`Task/Advanced/A3/`)                                          |
+| **Parent task (concrete)** | Implement the three-component fraud pipeline in parallel without merge chaos           |
+| **Repository**             | `/Users/divyanshupatel/Desktop/mf`                                                     |
+| **Base branch**            | `main` (or `development` if your team uses it — all lanes branch from the same commit) |
+| **Orchestrator role**      | Human or a coordinator agent that owns contract lane + final integration merge         |
+| **Created**                | 2026-06-16                                                                             |
+| **Lanes**                  | 4 parallel implementation lanes + 1 sequential integration lane                        |
+
 
 ---
 
@@ -51,17 +53,21 @@ flowchart TB
     W --> I
 ```
 
+
+
 ---
 
 ## Why this feature splits cleanly
 
-| Signal | Evidence |
-|--------|----------|
-| **Disjoint file ownership** | `Task/Advanced/A3/contract/`, `service/`, `worker/`, `scorer/` — no shared source files |
-| **Stable interface** | JSON schemas in `contract/` define ingest, scoring-input, scoring-result shapes |
-| **Independent test suites** | `pytest` (service), `cargo test` (scorer), `npm test` (worker) |
-| **Runtime coupling is late** | Components only need each other at integration time, not during unit implementation |
-| **Documented env contract** | `FRAUD_API_URL`, `SCORER_BIN`, `POLL_INTERVAL_MS` — see `Task/Advanced/A3/README.md` |
+
+| Signal                       | Evidence                                                                                |
+| ---------------------------- | --------------------------------------------------------------------------------------- |
+| **Disjoint file ownership**  | `Task/Advanced/A3/contract/`, `service/`, `worker/`, `scorer/` — no shared source files |
+| **Stable interface**         | JSON schemas in `contract/` define ingest, scoring-input, scoring-result shapes         |
+| **Independent test suites**  | `pytest` (service), `cargo test` (scorer), `npm test` (worker)                          |
+| **Runtime coupling is late** | Components only need each other at integration time, not during unit implementation     |
+| **Documented env contract**  | `FRAUD_API_URL`, `SCORER_BIN`, `POLL_INTERVAL_MS` — see `Task/Advanced/A3/README.md`    |
+
 
 **Anti-pattern (do not parallelize this way):** assigning one agent to `service/app/main.py` and another to `service/app/store.py` — both touch the same Python package and will conflict on imports and shared models.
 
@@ -85,15 +91,17 @@ Node worker POST /transactions/{id}/score → FastAPI (scored)
 
 ### Acceptance criteria
 
-| # | Criterion | Verified by |
-|---|-----------|-------------|
-| AC-1 | JSON schemas validate all example payloads in `contract/examples/` | Contract lane + integration |
-| AC-2 | `POST /transactions` returns `201` with `status: pending` | `pytest service/tests/test_api.py` |
-| AC-3 | `GET /transactions/pending` returns FIFO pending items | `pytest service/tests/test_api.py` |
-| AC-4 | `POST /transactions/{id}/score` transitions record to `scored` | `pytest service/tests/test_api.py` |
-| AC-5 | Rust scorer applies documented risk rules (amount, country, device, category, off-hours) | `cargo test scorer/` |
-| AC-6 | Worker polls, scores, and posts back without manual intervention | `npm run verify` in worker |
-| AC-7 | Full pipeline test passes with all three processes | Integration lane |
+
+| #    | Criterion                                                                                | Verified by                        |
+| ---- | ---------------------------------------------------------------------------------------- | ---------------------------------- |
+| AC-1 | JSON schemas validate all example payloads in `contract/examples/`                       | Contract lane + integration        |
+| AC-2 | `POST /transactions` returns `201` with `status: pending`                                | `pytest service/tests/test_api.py` |
+| AC-3 | `GET /transactions/pending` returns FIFO pending items                                   | `pytest service/tests/test_api.py` |
+| AC-4 | `POST /transactions/{id}/score` transitions record to `scored`                           | `pytest service/tests/test_api.py` |
+| AC-5 | Rust scorer applies documented risk rules (amount, country, device, category, off-hours) | `cargo test scorer/`               |
+| AC-6 | Worker polls, scores, and posts back without manual intervention                         | `npm run verify` in worker         |
+| AC-7 | Full pipeline test passes with all three processes                                       | Integration lane                   |
+
 
 ### Out of scope (explicit)
 
@@ -108,13 +116,15 @@ Node worker POST /transactions/{id}/score → FastAPI (scored)
 
 ### Phase 0 — Contract foundation (Lane C, **sequential first**)
 
-| Subtask | Owner | Files | Depends on |
-|---------|-------|-------|------------|
-| C1 | Lane C | `contract/transaction.schema.json` | — |
-| C2 | Lane C | `contract/scoring-input.schema.json` | C1 |
-| C3 | Lane C | `contract/scoring-result.schema.json` | C1 |
-| C4 | Lane C | `contract/examples/low-risk.json`, `high-risk.json` | C1–C3 |
-| C5 | Lane C | `Task/Advanced/A3/README.md` (contract section only) | C1–C4 |
+
+| Subtask | Owner  | Files                                                | Depends on |
+| ------- | ------ | ---------------------------------------------------- | ---------- |
+| C1      | Lane C | `contract/transaction.schema.json`                   | —          |
+| C2      | Lane C | `contract/scoring-input.schema.json`                 | C1         |
+| C3      | Lane C | `contract/scoring-result.schema.json`                | C1         |
+| C4      | Lane C | `contract/examples/low-risk.json`, `high-risk.json`  | C1–C3      |
+| C5      | Lane C | `Task/Advanced/A3/README.md` (contract section only) | C1–C4      |
+
 
 **Deliverable:** frozen schemas committed to `main` (or merged first) before any implementation lane starts.
 
@@ -124,13 +134,15 @@ Node worker POST /transactions/{id}/score → FastAPI (scored)
 
 #### Lane S — FastAPI ingestion service
 
-| Subtask | Files | Must not touch |
-|---------|-------|----------------|
-| S1 | `service/app/models.py` — Pydantic models mirroring contract | `worker/`, `scorer/`, `contract/` |
-| S2 | `service/app/store.py` — thread-safe in-memory store | same |
-| S3 | `service/app/main.py` — routes: health, ingest, pending, get, score | same |
-| S4 | `service/requirements.txt`, `service/pytest.ini` | same |
-| S5 | `service/tests/test_api.py`, `service/tests/test_integration.py` | same |
+
+| Subtask | Files                                                               | Must not touch                    |
+| ------- | ------------------------------------------------------------------- | --------------------------------- |
+| S1      | `service/app/models.py` — Pydantic models mirroring contract        | `worker/`, `scorer/`, `contract/` |
+| S2      | `service/app/store.py` — thread-safe in-memory store                | same                              |
+| S3      | `service/app/main.py` — routes: health, ingest, pending, get, score | same                              |
+| S4      | `service/requirements.txt`, `service/pytest.ini`                    | same                              |
+| S5      | `service/tests/test_api.py`, `service/tests/test_integration.py`    | same                              |
+
 
 **Mock strategy until integration:** use `TestClient` + in-memory store; no worker or Rust required.
 
@@ -138,12 +150,14 @@ Node worker POST /transactions/{id}/score → FastAPI (scored)
 
 #### Lane R — Rust scorer
 
-| Subtask | Files | Must not touch |
-|---------|-------|----------------|
-| R1 | `scorer/Cargo.toml` — deps: serde, chrono | `service/`, `worker/`, `contract/` (read-only) |
-| R2 | `scorer/src/lib.rs` — `compute_risk_score`, rule table | same |
-| R3 | `scorer/src/main.rs` — stdin JSON → stdout JSON CLI | same |
-| R4 | `scorer/tests/integration_test.rs` — golden cases from contract examples | same |
+
+| Subtask | Files                                                                    | Must not touch                                 |
+| ------- | ------------------------------------------------------------------------ | ---------------------------------------------- |
+| R1      | `scorer/Cargo.toml` — deps: serde, chrono                                | `service/`, `worker/`, `contract/` (read-only) |
+| R2      | `scorer/src/lib.rs` — `compute_risk_score`, rule table                   | same                                           |
+| R3      | `scorer/src/main.rs` — stdin JSON → stdout JSON CLI                      | same                                           |
+| R4      | `scorer/tests/integration_test.rs` — golden cases from contract examples | same                                           |
+
 
 **Mock strategy:** unit tests feed JSON strings directly; no API or worker required.
 
@@ -151,13 +165,15 @@ Node worker POST /transactions/{id}/score → FastAPI (scored)
 
 #### Lane W — Node.js polling worker
 
-| Subtask | Files | Must not touch |
-|---------|-------|----------------|
-| W1 | `worker/package.json` — scripts: start, test, verify | `service/app/`, `scorer/src/` |
-| W2 | `worker/src/scorer.js` — spawn Rust CLI, pipe stdin/stdout | same |
-| W3 | `worker/src/worker.js` — poll loop, HTTP client, error handling | same |
-| W4 | `worker/tests/` — unit tests with mocked fetch + mocked scorer | same |
-| W5 | `worker/scripts/verify.js` (if present) — live E2E against running API | same |
+
+| Subtask | Files                                                                  | Must not touch                |
+| ------- | ---------------------------------------------------------------------- | ----------------------------- |
+| W1      | `worker/package.json` — scripts: start, test, verify                   | `service/app/`, `scorer/src/` |
+| W2      | `worker/src/scorer.js` — spawn Rust CLI, pipe stdin/stdout             | same                          |
+| W3      | `worker/src/worker.js` — poll loop, HTTP client, error handling        | same                          |
+| W4      | `worker/tests/` — unit tests with mocked fetch + mocked scorer         | same                          |
+| W5      | `worker/scripts/verify.js` (if present) — live E2E against running API | same                          |
+
 
 **Mock strategy:** mock `fetch` and `scorer.js` in unit tests; assume API paths from README, not from reading `main.py`.
 
@@ -165,13 +181,15 @@ Node worker POST /transactions/{id}/score → FastAPI (scored)
 
 ### Phase 2 — Integration (Lane I, **sequential last**)
 
-| Subtask | Owner | Action |
-|---------|-------|--------|
-| I1 | Lane I | Merge all lane branches into `integration/a3-fraud-pipeline` |
-| I2 | Lane I | Run cross-component verification (see Verification plan) |
-| I3 | Lane I | Fix only glue issues: env defaults, path mismatches, schema drift |
-| I4 | Lane I | Update `Task/Advanced/A3/README.md` run-order section if needed |
-| I5 | Lane I | Write `Task/Advanced/A1/integration-report.md` with evidence |
+
+| Subtask | Owner  | Action                                                            |
+| ------- | ------ | ----------------------------------------------------------------- |
+| I1      | Lane I | Merge all lane branches into `integration/a3-fraud-pipeline`      |
+| I2      | Lane I | Run cross-component verification (see Verification plan)          |
+| I3      | Lane I | Fix only glue issues: env defaults, path mismatches, schema drift |
+| I4      | Lane I | Update `Task/Advanced/A3/README.md` run-order section if needed   |
+| I5      | Lane I | Write `Task/Advanced/A1/integration-report.md` with evidence      |
+
 
 ---
 
@@ -219,13 +237,15 @@ git worktree add ../mf-wt-a3-integration -b integration/a3-fraud-pipeline main
 
 ### Worktree map
 
-| Lane | Branch | Worktree path | Directory ownership |
-|------|--------|---------------|---------------------|
-| **C** Contract | `feat/a3-contract-schemas` | (main worktree, short-lived) | `Task/Advanced/A3/contract/**` |
-| **S** Service | `feat/a3-service-api` | `../mf-wt-a3-service` | `Task/Advanced/A3/service/**` |
-| **R** Scorer | `feat/a3-rust-scorer` | `../mf-wt-a3-scorer` | `Task/Advanced/A3/scorer/**` |
-| **W** Worker | `feat/a3-node-worker` | `../mf-wt-a3-worker` | `Task/Advanced/A3/worker/**` (exclude `node_modules/`) |
-| **I** Integration | `integration/a3-fraud-pipeline` | `../mf-wt-a3-integration` | glue fixes only; no feature rewrites |
+
+| Lane              | Branch                          | Worktree path                | Directory ownership                                    |
+| ----------------- | ------------------------------- | ---------------------------- | ------------------------------------------------------ |
+| **C** Contract    | `feat/a3-contract-schemas`      | (main worktree, short-lived) | `Task/Advanced/A3/contract/`**                         |
+| **S** Service     | `feat/a3-service-api`           | `../mf-wt-a3-service`        | `Task/Advanced/A3/service/`**                          |
+| **R** Scorer      | `feat/a3-rust-scorer`           | `../mf-wt-a3-scorer`         | `Task/Advanced/A3/scorer/`**                           |
+| **W** Worker      | `feat/a3-node-worker`           | `../mf-wt-a3-worker`         | `Task/Advanced/A3/worker/`** (exclude `node_modules/`) |
+| **I** Integration | `integration/a3-fraud-pipeline` | `../mf-wt-a3-integration`    | glue fixes only; no feature rewrites                   |
+
 
 ### Cleanup after merge
 
@@ -402,25 +422,29 @@ After Lane C merges to `main`, **no lane may modify `contract/`** without orches
 
 ### SC-2 — Directory ownership
 
-| Path | Owner lane | Others |
-|------|------------|--------|
-| `Task/Advanced/A3/contract/**` | C | read-only |
-| `Task/Advanced/A3/service/**` | S | no access |
-| `Task/Advanced/A3/scorer/**` | R | no access |
-| `Task/Advanced/A3/worker/**` | W | no access |
-| `Task/Advanced/A3/README.md` | C (contract section), I (run order) | others read-only |
+
+| Path                           | Owner lane                          | Others           |
+| ------------------------------ | ----------------------------------- | ---------------- |
+| `Task/Advanced/A3/contract/**` | C                                   | read-only        |
+| `Task/Advanced/A3/service/**`  | S                                   | no access        |
+| `Task/Advanced/A3/scorer/**`   | R                                   | no access        |
+| `Task/Advanced/A3/worker/**`   | W                                   | no access        |
+| `Task/Advanced/A3/README.md`   | C (contract section), I (run order) | others read-only |
+
 
 ### SC-3 — Interface constants
 
-| Constant | Value |
-|----------|-------|
-| API port (local dev) | `8000` |
-| Health path | `GET /health` → `{"status":"ok"}` |
-| Pending default limit | `10` (max `100`) |
-| Score path | `POST /transactions/{uuid}/score` |
-| Transaction status values | `pending`, `scored` |
-| Risk levels | `low`, `medium`, `high` |
-| Risk score range | `0–100` integer |
+
+| Constant                  | Value                             |
+| ------------------------- | --------------------------------- |
+| API port (local dev)      | `8000`                            |
+| Health path               | `GET /health` → `{"status":"ok"}` |
+| Pending default limit     | `10` (max `100`)                  |
+| Score path                | `POST /transactions/{uuid}/score` |
+| Transaction status values | `pending`, `scored`               |
+| Risk levels               | `low`, `medium`, `high`           |
+| Risk score range          | `0–100` integer                   |
+
 
 ### SC-4 — Field names (canonical)
 
@@ -470,17 +494,21 @@ gitGraph
     merge feat/a3-node-worker id: "merge W"
 ```
 
+
+
 ### Ordered steps
 
-| Step | Action | Gate |
-|------|--------|------|
-| 1 | Merge `feat/a3-contract-schemas` → `main` | Schema validation passes |
-| 2 | Start lanes S, R, W from updated `main` | Contract manifest published |
-| 3 | Merge `feat/a3-service-api` → `integration/a3-fraud-pipeline` | `pytest -v` green |
-| 4 | Merge `feat/a3-rust-scorer` → `integration/a3-fraud-pipeline` | `cargo test` green |
-| 5 | Merge `feat/a3-node-worker` → `integration/a3-fraud-pipeline` | `npm test` green |
-| 6 | Lane I runs live E2E | `npm run verify` green |
-| 7 | Merge `integration/a3-fraud-pipeline` → `main` | Full matrix green |
+
+| Step | Action                                                        | Gate                        |
+| ---- | ------------------------------------------------------------- | --------------------------- |
+| 1    | Merge `feat/a3-contract-schemas` → `main`                     | Schema validation passes    |
+| 2    | Start lanes S, R, W from updated `main`                       | Contract manifest published |
+| 3    | Merge `feat/a3-service-api` → `integration/a3-fraud-pipeline` | `pytest -v` green           |
+| 4    | Merge `feat/a3-rust-scorer` → `integration/a3-fraud-pipeline` | `cargo test` green          |
+| 5    | Merge `feat/a3-node-worker` → `integration/a3-fraud-pipeline` | `npm test` green            |
+| 6    | Lane I runs live E2E                                          | `npm run verify` green      |
+| 7    | Merge `integration/a3-fraud-pipeline` → `main`                | Full matrix green           |
+
 
 **Why this order:** S, R, W touch disjoint paths — merge order among them is arbitrary. Service first is a convention (API is the hub). If conflicts occur, they will be in `README.md` only.
 
@@ -490,16 +518,18 @@ gitGraph
 
 ### Conflict matrix
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Two lanes edit `README.md` | Medium | Low | C owns contract section; I owns run-order; S/R/W don't touch README |
-| Schema drift (Pydantic ≠ JSON schema) | Medium | High | Contract manifest + Lane S validates against examples in tests |
-| Rust rules ≠ README table | Medium | High | Lane R tests use golden vectors from contract examples |
-| Worker URL/path mismatch | Medium | Medium | Worker uses README constants only; integration catches drift |
-| Both lanes edit `service/app/models.py` | High if mis-split | High | **Never split within service/** — whole service is one lane |
-| Merge conflict in `package-lock.json` | Low | Low | Only Lane W touches worker; run `npm install` once at merge |
-| Agent commits secrets | Low | Critical | No `.env` commits; redact in reports |
-| Parallel agents on same worktree | High | Critical | One worktree per lane; orchestrator enforces |
+
+| Risk                                    | Likelihood        | Impact   | Mitigation                                                          |
+| --------------------------------------- | ----------------- | -------- | ------------------------------------------------------------------- |
+| Two lanes edit `README.md`              | Medium            | Low      | C owns contract section; I owns run-order; S/R/W don't touch README |
+| Schema drift (Pydantic ≠ JSON schema)   | Medium            | High     | Contract manifest + Lane S validates against examples in tests      |
+| Rust rules ≠ README table               | Medium            | High     | Lane R tests use golden vectors from contract examples              |
+| Worker URL/path mismatch                | Medium            | Medium   | Worker uses README constants only; integration catches drift        |
+| Both lanes edit `service/app/models.py` | High if mis-split | High     | **Never split within service/** — whole service is one lane         |
+| Merge conflict in `package-lock.json`   | Low               | Low      | Only Lane W touches worker; run `npm install` once at merge         |
+| Agent commits secrets                   | Low               | Critical | No `.env` commits; redact in reports                                |
+| Parallel agents on same worktree        | High              | Critical | One worktree per lane; orchestrator enforces                        |
+
 
 ### If merge conflict occurs
 
@@ -513,13 +543,15 @@ git commit
 
 ### Escalation paths
 
-| Symptom | Owner | Action |
-|---------|-------|--------|
-| Field rename needed | Orchestrator | Lane C amends schema → all lanes rebase |
-| API returns wrong status code | Lane S | Fix in `feat/a3-service-api`, re-merge |
-| Scorer wrong score | Lane R | Fix rules in `feat/a3-rust-scorer`, re-merge |
-| Worker crash loop | Lane W | Fix polling/error handling, re-merge |
-| E2E fails all unit tests pass | Lane I | Diagnose glue; file bugs to S/R/W |
+
+| Symptom                       | Owner        | Action                                       |
+| ----------------------------- | ------------ | -------------------------------------------- |
+| Field rename needed           | Orchestrator | Lane C amends schema → all lanes rebase      |
+| API returns wrong status code | Lane S       | Fix in `feat/a3-service-api`, re-merge       |
+| Scorer wrong score            | Lane R       | Fix rules in `feat/a3-rust-scorer`, re-merge |
+| Worker crash loop             | Lane W       | Fix polling/error handling, re-merge         |
+| E2E fails all unit tests pass | Lane I       | Diagnose glue; file bugs to S/R/W            |
+
 
 ### Rollback
 
@@ -546,11 +578,13 @@ cd Task/Advanced/A3/contract
 # Manual: field list in README matches schema required[] arrays
 ```
 
-| Check | Pass criteria |
-|-------|---------------|
-| Schemas exist | 3 schema files + 2 examples |
-| Examples valid | Both examples conform |
-| README table | Risk rules documented with point values |
+
+| Check          | Pass criteria                           |
+| -------------- | --------------------------------------- |
+| Schemas exist  | 3 schema files + 2 examples             |
+| Examples valid | Both examples conform                   |
+| README table   | Risk rules documented with point values |
+
 
 ---
 
@@ -564,14 +598,16 @@ pip install -r requirements.txt
 pytest -v
 ```
 
-| Test | Proves |
-|------|--------|
-| `test_health` | Server boots |
-| `test_ingest_transaction_returns_pending_record` | POST /transactions |
-| `test_list_pending_transactions` | GET /transactions/pending |
-| `test_submit_score_marks_transaction_scored` | POST /score |
-| `test_validation_rejects_non_positive_amount` | Pydantic validation |
-| `test_worker_pipeline_via_api` | In-process E2E without worker |
+
+| Test                                             | Proves                        |
+| ------------------------------------------------ | ----------------------------- |
+| `test_health`                                    | Server boots                  |
+| `test_ingest_transaction_returns_pending_record` | POST /transactions            |
+| `test_list_pending_transactions`                 | GET /transactions/pending     |
+| `test_submit_score_marks_transaction_scored`     | POST /score                   |
+| `test_validation_rejects_non_positive_amount`    | Pydantic validation           |
+| `test_worker_pipeline_via_api`                   | In-process E2E without worker |
+
 
 ---
 
@@ -586,12 +622,14 @@ cat ../contract/examples/high-risk.json \
   | ./target/release/fraud-scorer
 ```
 
-| Check | Pass criteria |
-|-------|---------------|
-| Unit tests | All rules fire independently |
+
+| Check             | Pass criteria                        |
+| ----------------- | ------------------------------------ |
+| Unit tests        | All rules fire independently         |
 | High-risk example | `risk_level: high`, multiple signals |
-| Low-risk example | `risk_level: low`, score < 30 |
-| CLI | Valid JSON on stdout, exit 0 |
+| Low-risk example  | `risk_level: low`, score < 30        |
+| CLI               | Valid JSON on stdout, exit 0         |
+
 
 ---
 
@@ -603,11 +641,13 @@ npm install
 npm test
 ```
 
-| Check | Pass criteria |
-|-------|---------------|
-| Unit tests | Mocked poll + score cycle |
-| Error handling | Scorer failure doesn't kill loop |
+
+| Check            | Pass criteria                       |
+| ---------------- | ----------------------------------- |
+| Unit tests       | Mocked poll + score cycle           |
+| Error handling   | Scorer failure doesn't kill loop    |
 | Contract mapping | transaction_id preserved end-to-end |
+
 
 ---
 
@@ -615,16 +655,18 @@ npm test
 
 Run in **three terminals** or use the verify script:
 
-| # | Command | Expected |
-|---|---------|----------|
-| 1 | `cd scorer && cargo build --release && cargo test` | All pass |
-| 2 | `cd service && pytest -v` | All pass |
-| 3 | `cd worker && npm test` | All pass |
-| 4 | Start uvicorn on :8000 | `/health` → 200 |
-| 5 | `curl -X POST :8000/transactions -d @contract/examples/high-risk.json` | 201 pending |
-| 6 | Start worker with env vars | Polls and scores |
-| 7 | `GET :8000/transactions/{id}` | status scored, risk_level present |
-| 8 | `cd worker && npm run verify` | Script exits 0 |
+
+| #   | Command                                                                | Expected                          |
+| --- | ---------------------------------------------------------------------- | --------------------------------- |
+| 1   | `cd scorer && cargo build --release && cargo test`                     | All pass                          |
+| 2   | `cd service && pytest -v`                                              | All pass                          |
+| 3   | `cd worker && npm test`                                                | All pass                          |
+| 4   | Start uvicorn on :8000                                                 | `/health` → 200                   |
+| 5   | `curl -X POST :8000/transactions -d @contract/examples/high-risk.json` | 201 pending                       |
+| 6   | Start worker with env vars                                             | Polls and scores                  |
+| 7   | `GET :8000/transactions/{id}`                                          | status scored, risk_level present |
+| 8   | `cd worker && npm run verify`                                          | Script exits 0                    |
+
 
 ### Regression checklist
 
@@ -699,13 +741,15 @@ cd Task/Advanced/A3/worker && npm test && cd -
 
 ## What NOT to parallelize
 
-| Tempting split | Why it fails |
-|----------------|--------------|
-| `main.py` to Agent A, `store.py` to Agent B | Same package, shared imports, guaranteed conflict |
-| "One agent per endpoint" | All routes share models and store singleton |
-| Contract + service in parallel | Schema drift breaks Pydantic validation |
-| Worker + scorer in one lane split by file | Same Node package; scorer spawn logic couples to worker loop |
-| Integration tests while features in flight | Tests will churn on every lane commit |
+
+| Tempting split                              | Why it fails                                                 |
+| ------------------------------------------- | ------------------------------------------------------------ |
+| `main.py` to Agent A, `store.py` to Agent B | Same package, shared imports, guaranteed conflict            |
+| "One agent per endpoint"                    | All routes share models and store singleton                  |
+| Contract + service in parallel              | Schema drift breaks Pydantic validation                      |
+| Worker + scorer in one lane split by file   | Same Node package; scorer spawn logic couples to worker loop |
+| Integration tests while features in flight  | Tests will churn on every lane commit                        |
+
 
 ---
 
@@ -713,12 +757,14 @@ cd Task/Advanced/A3/worker && npm test && cd -
 
 The same pattern applies to **read-only analysis** (e.g., repo modernization like A4):
 
-| Lane | Scope | Output file |
-|------|-------|-------------|
-| A | Dependencies + security | `analysis/deps-security.md` |
-| B | CI/CD + testing | `analysis/ci-testing.md` |
-| C | Architecture + DX | `analysis/architecture-dx.md` |
-| I | Merge findings | `modernization-report.md` |
+
+| Lane | Scope                   | Output file                   |
+| ---- | ----------------------- | ----------------------------- |
+| A    | Dependencies + security | `analysis/deps-security.md`   |
+| B    | CI/CD + testing         | `analysis/ci-testing.md`      |
+| C    | Architecture + DX       | `analysis/architecture-dx.md` |
+| I    | Merge findings          | `modernization-report.md`     |
+
 
 Analysis lanes write to **disjoint output files** under `Task/Advanced/A4/` — never edit the same report section. Merge order: any order; integration synthesizes.
 
@@ -728,13 +774,15 @@ Analysis lanes write to **disjoint output files** under `Task/Advanced/A4/` — 
 
 The A3 pipeline is partially implemented in this workspace:
 
-| Component | Path | Status |
-|-----------|------|--------|
-| Contract | `Task/Advanced/A3/contract/` | Schemas + examples present |
-| Service | `Task/Advanced/A3/service/app/` | `main.py`, `models.py`, `store.py` implemented |
-| Scorer | `Task/Advanced/A3/scorer/src/` | `lib.rs` with full rule table |
-| Worker | `Task/Advanced/A3/worker/src/` | `worker.js`, `scorer.js` present |
-| Tests | `service/tests/`, `scorer/tests/`, `worker/tests/` | API + integration tests exist |
+
+| Component | Path                                               | Status                                         |
+| --------- | -------------------------------------------------- | ---------------------------------------------- |
+| Contract  | `Task/Advanced/A3/contract/`                       | Schemas + examples present                     |
+| Service   | `Task/Advanced/A3/service/app/`                    | `main.py`, `models.py`, `store.py` implemented |
+| Scorer    | `Task/Advanced/A3/scorer/src/`                     | `lib.rs` with full rule table                  |
+| Worker    | `Task/Advanced/A3/worker/src/`                     | `worker.js`, `scorer.js` present               |
+| Tests     | `service/tests/`, `scorer/tests/`, `worker/tests/` | API + integration tests exist                  |
+
 
 This plan remains valid for **greenfield implementation** or **feature extensions** (e.g., add `failed` status) — adjust lane prompts to delta scope while keeping ownership boundaries.
 

@@ -13,11 +13,12 @@ A hands-on workspace for designing, documenting, and evaluating **Cursor AI agen
 | [`Basics/`](Basics/) | **Beginner agent tasks** (Google Docs assignments) — read-only repo analysis agents |
 | [`Intermediate/`](Intermediate/) | **Intermediate agent tasks** — deeper analysis, small code changes, bug diagnosis |
 | [`Advanced/`](Advanced/) | **Advanced agent tasks** — modernization, PR review, parallel worktrees, multi-service systems |
+| [`Devops/`](Devops/) | **DevOps agent tasks** — Terraform, Docker Compose, CI/CD, Kubernetes, dev bootstrap, observability |
 | [`rabbit/`](rabbit/) | **Sample open-source repo** — a full-stack LMS used as the default target for most agents |
 | [`frontend/`](frontend/) | **Agent Library web app** — Next.js UI deployed to Vercel |
 | [`skills/`](skills/) | **Cursor Skills** — installable skill files that invoke each agent inside Cursor |
 
-The **Basics**, **Intermediate**, and **Advanced** folders correspond to the task assignments documented in Google Docs. Each task folder typically contains:
+The **Basics**, **Intermediate**, **Advanced**, and **Devops** folders correspond to the structured curriculum. Each agent task folder typically contains:
 
 - An **agent definition** (`*-agent.md`) — the full prompt/spec a developer (or Cursor) follows
 - A **sample output report** — what a successful run looks like
@@ -52,6 +53,13 @@ task/
 │   ├── A4/                   agent: Repo Modernization + sample report
 │   ├── A5/                   agent: PR Review + sample report
 │   └── A6/                   performance optimization report (rabbit)
+├── Devops/                   ← DevOps curriculum tasks (see Devops/README.md)
+│   ├── D1/                   terraform-plan-agent.md
+│   ├── D2/                   docker-compose-e2e-agent.md
+│   ├── D3/                   ci-pipeline-agent.md
+│   ├── D4/                   kubernetes-manifests-agent.md
+│   ├── D5/                   dev-environment-bootstrap-agent.md
+│   └── D6/                   observability-bolt-on-agent.md
 ├── rabbit/                   ← primary test target (LMS open-source repo)
 ├── frontend/                 ← Agent Library Next.js app → Vercel
 └── skills/                   ← Cursor Skills (one per published agent)
@@ -63,10 +71,11 @@ task/
 
 ```mermaid
 flowchart LR
-    subgraph docs [Google Docs Tasks]
+    subgraph docs [Curriculum Tasks]
         B[Basics B1–B6]
         I[Intermediate I1–I6]
         A[Advanced A1–A6]
+        D[Devops D1–D6]
     end
 
     subgraph repo [This Repository]
@@ -92,11 +101,12 @@ flowchart LR
     SK --> FE
 ```
 
-1. **Google Docs** defines what each task should accomplish and acceptance criteria.
-2. **Agent definitions** (`Basics/B1/repo-structure-mapper-agent.md`, etc.) are the executable prompts.
-3. **Cursor Skills** (`skills/`) wrap those prompts so you can invoke them with `/skill-name` or by having Cursor auto-load them.
+1. **Curriculum tasks** (Basics, Intermediate, Advanced, Devops) define what each agent should accomplish and acceptance criteria.
+2. **Agent definitions** (`Basics/B1/repo-structure-mapper-agent.md`, `Devops/D1/terraform-plan-agent.md`, etc.) are the executable prompts.
+3. **Cursor Skills** (`skills/`) wrap published prompts so you can invoke them with `/skill-name` or by having Cursor auto-load them (Basics, Intermediate, and Advanced A4/A5 only today).
 4. **`rabbit/`** (and smaller sample repos) are real codebases agents analyze or patch.
-5. **`frontend/`** publishes the agent catalog so anyone can browse definitions and demo outputs without opening the repo.
+5. **`frontend/`** publishes the nine published agents so anyone can browse definitions and demo outputs without opening the repo.
+6. **`Devops/`** agents produce infrastructure artifacts (Terraform, compose, CI YAML, K8s manifests) plus detailed `*-report.md` files — see [`Devops/README.md`](Devops/README.md).
 
 ---
 
@@ -143,6 +153,19 @@ These folders are part of the Google Docs curriculum but are **sample codebases*
 | **A2** | `Advanced/A2/` | Parallel worktree **execution report** — demo of lanes S + R merged |
 | **A3** | `Advanced/A3/` | Mini Fraud Score System — FastAPI ingestion, Node worker, Rust scorer |
 | **A6** | `Advanced/A6/` | Performance fix report — MongoDB text index for `rabbit` course search |
+
+### DevOps — infrastructure, CI/CD, and observability (not in web UI yet)
+
+These six agents follow the same `*-agent.md` + `*-report.md` pattern as the published catalog. They are **not** in the [Agent Library](https://task-phi-seven-94.vercel.app/) or `skills/` yet. Full usage guide: [`Devops/README.md`](Devops/README.md).
+
+| ID | Agent | Agent definition | Report (on run) | Time | What it does |
+|----|-------|------------------|-----------------|------|--------------|
+| **D1** | Terraform Plan | `Devops/D1/terraform-plan-agent.md` | `terraform-plan-report.md` | 60 min | Terraform for S3 + Lambda + API GW (or GCS + Cloud Run); `terraform validate` + clean plan against local/test backend. |
+| **D2** | Docker Compose E2E | `Devops/D2/docker-compose-e2e-agent.md` | `docker-compose-e2e-report.md` | 90 min | Multi-service stack (API + DB + worker), seed data, one-command E2E tests, inter-service logs, teardown + clean re-up. |
+| **D3** | CI Pipeline | `Devops/D3/ci-pipeline-agent.md` | `ci-pipeline-report.md` | 45 min | GitHub Actions or GitLab CI — lint, test, build/tag image; cache/matrix; passing run + failure-mode demo. |
+| **D4** | Kubernetes Manifests | `Devops/D4/kubernetes-manifests-agent.md` | `kubernetes-manifests-report.md` | 60 min | Deployment, Service, ConfigMap, optional Ingress; dry-run/kubeval; deploy on kind/minikube; curl proof. |
+| **D5** | Dev Environment Bootstrap | `Devops/D5/dev-environment-bootstrap-agent.md` | `dev-environment-bootstrap-report.md` | 45 min | Single-command bootstrap from fresh clone (devcontainer, Nix, or Makefile + mise); passing tests; implicit deps documented. |
+| **D6** | Observability Bolt-on | `Devops/D6/observability-bolt-on-agent.md` | `observability-bolt-on-report.md` | 60 min | Structured logging + `/metrics`; Prometheus + Grafana compose; load script; live dashboard panel. |
 
 ---
 
@@ -255,17 +278,23 @@ Most agents accept:
 | `flowTarget` | I2 only | `POST /api/v1/user/login` |
 | `symptom` | I6 optional | `Invalid JWT causes middleware to hang` |
 | PR URL | A5 | `https://github.com/org/repo/pull/123` |
+| `cloudProvider` | D1 | `aws` or `gcp` |
+| `outputDir` | D1, D2, D4, D6 | Where to write infra/stack files |
+| `ciPlatform` | D3 | `github-actions` or `gitlab-ci` |
+| `clusterType` | D4 | `kind` or `minikube` |
+| `bootstrapMethod` | D5 | `devcontainer`, `nix`, `makefile-mise`, or `auto` |
 
 ---
 
-## Google Docs task folders explained
+## Curriculum task folders explained
 
-The three top-level folders **Basics**, **Intermediate**, and **Advanced** are the structured curriculum from Google Docs. Difficulty increases along three axes:
+The four top-level folders **Basics**, **Intermediate**, **Advanced**, and **Devops** form the structured agent curriculum. Difficulty increases along these axes:
 
 ```text
 Basics        →  observe & document (no code changes)
 Intermediate  →  analyze deeper + make minimal edits / fix bugs
 Advanced      →  modernize, review PRs, orchestrate parallel work, multi-service builds
+Devops        →  infrastructure, CI/CD, Kubernetes, dev bootstrap, observability
 ```
 
 ### Basics (`Basics/`)
@@ -291,6 +320,19 @@ Advanced      →  modernize, review PRs, orchestrate parallel work, multi-servi
 - **A4–A5** — Published agents with sample reports (modernization of `frontend/`, PR review of an external repo)
 - **A6** — Performance optimization write-up for `rabbit` course search (MongoDB text index)
 
+### Devops (`Devops/`)
+
+**Goal:** Teach agents **production engineering** — declarative infra, container orchestration, CI gates, and observability.
+
+- **D1** — Terraform plan for a small cloud service (validate + plan only)
+- **D2** — Docker Compose multi-service stack with E2E tests against running containers
+- **D3** — CI workflow (lint, test, build image) with cache, matrix, and failure-mode demo
+- **D4** — Kubernetes manifests validated and deployed on kind/minikube with curl proof
+- **D5** — Reproducible dev bootstrap from a fresh clone (devcontainer, Nix, or Makefile + mise)
+- **D6** — Structured logging, Prometheus metrics, Grafana dashboard wired to real traffic
+
+See [`Devops/README.md`](Devops/README.md) for agent file paths, typical inputs, and report structure.
+
 ---
 
 ## Running an agent manually
@@ -305,7 +347,15 @@ You do not need the web UI or Cursor Skills to run an agent. Any LLM with repo a
 #    outputPath: ./Basics/B1/repo-structure-map.md
 ```
 
-Compare your output to the included sample report in the same folder.
+Compare your output to the included sample report in the same folder (published agents) or the report template inside the agent definition (Devops tasks).
+
+```bash
+# Example: run D2 manually in Cursor chat
+# 1. Open Devops/D2/docker-compose-e2e-agent.md
+# 2. Paste into chat with:
+#    outputDir: ./Devops/D2/stack/
+#    outputPath: ./Devops/D2/docker-compose-e2e-report.md
+```
 
 ---
 
@@ -357,12 +407,12 @@ See [`Advanced/A3/README.md`](Advanced/A3/README.md) for the full contract and p
 
 ## Contributing / extending
 
-1. **New agent** — Add `*-agent.md` + sample report under the right tier folder.
-2. **Cursor Skill** — Duplicate a `skills/*/SKILL.md` template and update the frontmatter `name` and `description`.
-3. **Web UI** — Register in `frontend/src/lib/agents.ts`.
+1. **New agent** — Add `*-agent.md` + sample report under the right tier folder (`Basics/`, `Intermediate/`, `Advanced/`, or `Devops/`).
+2. **Cursor Skill** — Duplicate a `skills/*/SKILL.md` template and update the frontmatter `name` and `description` (optional for Devops tasks).
+3. **Web UI** — Register in `frontend/src/lib/agents.ts` and add `outputRelativePath` in `load-agents.ts`.
 4. **Test target** — Use `rabbit/` for full-stack tasks or add a mini repo under Basics/Intermediate/Advanced.
 
-Keep agent definitions **read-only** unless the task explicitly requires code changes (I3, I6, A4, A6). Always include metadata in reports: agent name, start/end time, duration, repo path, and verification evidence.
+Keep agent definitions **read-only** unless the task explicitly requires code changes (I3, I6, A4, A6, D1–D6). Always include metadata in reports: agent name, start/end time, duration, repo path, and verification evidence.
 
 ---
 
@@ -375,4 +425,4 @@ Keep agent definitions **read-only** unless the task explicitly requires code ch
 
 ---
 
-**Made by Divyanshu Patel** · 9 published agents · 3 basics · 4 intermediate · 2 advanced
+**Made by Divyanshu Patel** · 9 published agents (web UI) · 6 DevOps agents · 24 curriculum tasks
