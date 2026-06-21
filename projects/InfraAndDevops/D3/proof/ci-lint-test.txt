@@ -1,0 +1,30 @@
+Captured: 2026-06-21T18:01:44Z
+Command: lint + test matrix (CI jobs lint + test)
+
+>>> Job: lint — ruff check
+[1;32mAll checks passed![0m
+
+>>> Job: lint — ruff format --check
+3 files already formatted
+
+>>> Job: test — pytest (Python 3.9)
+============================= test session starts ==============================
+platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0 -- /Users/divyanshupatel/Desktop/mf/Task/projects/InfraAndDevops/D3/.venv-py39/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/divyanshupatel/Desktop/mf/Task/projects/InfraAndDevops/D3
+configfile: pytest.ini
+plugins: anyio-4.12.1
+collecting ... collected 5 items
+
+tests/test_api.py::test_health_returns_ok PASSED                         [ 20%]
+tests/test_api.py::test_version_returns_app_version PASSED               [ 40%]
+tests/test_api.py::test_notify_accepts_valid_message PASSED              [ 60%]
+tests/test_api.py::test_notify_rejects_empty_message PASSED              [ 80%]
+tests/test_api.py::test_notify_rejects_missing_message PASSED            [100%]
+
+============================== 5 passed in 0.85s ===============================
+
+>>> Job: test — pytest (Python 3.11)
+SKIP Python 3.11 — interpreter not available (have 3.9)
+
+=== lint + test passed ===

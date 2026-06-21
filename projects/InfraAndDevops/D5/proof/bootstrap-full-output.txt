@@ -1,0 +1,36 @@
+Captured: 2026-06-21T18:01:47Z
+Command: make bootstrap
+Working directory: /Users/divyanshupatel/Desktop/mf/Task/projects/InfraAndDevops/D5
+
+=== Toolchain detection ===
+mise: not installed (bootstrap will use system python3)
+system python3: Python 3.9.6
+
+>>> mise not found — using system python3
+Python 3.9.6
+Python 3.9.6
+>>> Creating virtualenv at .venv
+>>> Installing dependencies
+>>> Setup complete
+>>> Running tests
+============================= test session starts ==============================
+platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0 -- /Users/divyanshupatel/Desktop/mf/Task/projects/InfraAndDevops/D5/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/divyanshupatel/Desktop/mf/Task/projects/InfraAndDevops/D5
+configfile: pytest.ini
+plugins: anyio-4.12.1
+collecting ... collected 5 items
+
+tests/test_api.py::test_health_returns_ok PASSED                         [ 20%]
+tests/test_api.py::test_ready_returns_default_env PASSED                 [ 40%]
+tests/test_api.py::test_ready_uses_app_env_variable PASSED               [ 60%]
+tests/test_api.py::test_echo_returns_text PASSED                         [ 80%]
+tests/test_api.py::test_echo_rejects_empty_text PASSED                   [100%]
+
+============================== 5 passed in 1.35s ===============================
+
+=== Bootstrap complete: all tests passed ===
+
+=== Post-bootstrap verification ===
+venv python: Python 3.9.6
+venv pytest: pytest 8.4.2

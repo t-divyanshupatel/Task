@@ -1,0 +1,49 @@
+Captured: 2026-06-21T19:57:02Z
+App: /Users/divyanshupatel/Desktop/mf/Task/projects/Advanced/A2/sandbox/enrollment-api
+
+=== pytest tests/ -v ===
+============================= test session starts ==============================
+platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0 -- /Users/divyanshupatel/Desktop/mf/Task/projects/Advanced/A2/sandbox/enrollment-api/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/divyanshupatel/Desktop/mf/Task/projects/Advanced/A2/sandbox/enrollment-api
+configfile: pytest.ini
+plugins: anyio-4.12.1
+collecting ... collected 7 items
+
+tests/test_enrollments.py::test_create_enrollment_returns_201 PASSED     [ 14%]
+tests/test_enrollments.py::test_enrollment_unknown_student_returns_404 PASSED [ 28%]
+tests/test_enrollments.py::test_list_enrollments_returns_array PASSED    [ 42%]
+tests/test_registry.py::test_registry_summary_counts PASSED              [ 57%]
+tests/test_students.py::test_register_student_returns_201 PASSED         [ 71%]
+tests/test_students.py::test_duplicate_email_returns_409 PASSED          [ 85%]
+tests/test_students.py::test_list_students_returns_array PASSED          [100%]
+
+============================== 7 passed in 0.19s ===============================
+
+=== conflict marker grep ===
+Clean
+
+=== curl smoke tests (port 8010) ===
+INFO:     Started server process [63644]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8010 (Press CTRL+C to quit)
+POST /students:
+INFO:     127.0.0.1:61097 - "POST /students HTTP/1.1" 201 Created
+{"id":1,"full_name":"Ada Lovelace","email":"ada-demo@uni.edu","program":"CS","registered_at":"2026-06-21T19:57:06.520327"}
+GET /students:
+INFO:     127.0.0.1:61098 - "GET /students HTTP/1.1" 200 OK
+[{"id":1,"full_name":"Ada Lovelace","email":"ada-demo@uni.edu","program":"CS","registered_at":"2026-06-21T19:57:06.520327"}]
+POST /enrollments:
+INFO:     127.0.0.1:61099 - "POST /enrollments HTTP/1.1" 201 Created
+{"id":1,"student_id":1,"course_code":"CS101","term":"2026-FALL","enrolled_at":"2026-06-21T19:57:06.569600"}
+GET /enrollments:
+INFO:     127.0.0.1:61100 - "GET /enrollments HTTP/1.1" 200 OK
+[{"id":1,"student_id":1,"course_code":"CS101","term":"2026-FALL","enrolled_at":"2026-06-21T19:57:06.569600"}]
+GET /registry/summary:
+INFO:     127.0.0.1:61101 - "GET /registry/summary HTTP/1.1" 200 OK
+{"student_count":1,"enrollment_count":1}
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [63644]

@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/fraud/transaction.schema.json",
+  "title": "TransactionIngest",
+  "description": "Payload accepted by FastAPI POST /transactions and passed to the Rust scorer.",
+  "type": "object",
+  "required": [
+    "transaction_id",
+    "user_id",
+    "amount",
+    "currency",
+    "merchant_category",
+    "country_code",
+    "device_id",
+    "timestamp"
+  ],
+  "properties": {
+    "transaction_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique transaction identifier (UUID v4)."
+    },
+    "user_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "amount": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Transaction amount in major currency units."
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "merchant_category": {
+      "type": "string",
+      "enum": [
+        "retail",
+        "grocery",
+        "travel",
+        "entertainment",
+        "gambling",
+        "crypto",
+        "wire_transfer",
+        "other"
+      ]
+    },
+    "country_code": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$"
+    },
+    "device_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

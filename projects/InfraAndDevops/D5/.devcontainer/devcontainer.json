@@ -1,0 +1,29 @@
+{
+  "name": "D5 Bootstrap Demo",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "username": "vscode"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    }
+  },
+  "postCreateCommand": "make bootstrap",
+  "forwardPorts": [8080],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "charliermarsh.ruff"
+      ]
+    }
+  },
+  "remoteEnv": {
+    "APP_ENV": "devcontainer"
+  }
+}

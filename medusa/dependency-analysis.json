@@ -1,0 +1,849 @@
+{
+  "totalPackages": 78,
+  "totalUniqueDependencies": 261,
+  "packagesWithMostDeps": [
+    {
+      "name": "@medusajs/medusa",
+      "path": "packages/medusa/package.json",
+      "dependencies": {
+        "@inquirer/checkbox": "^2.3.11",
+        "@inquirer/confirm": "^2.0.17",
+        "@inquirer/input": "^2.2.9",
+        "@medusajs/admin-bundler": "2.16.0",
+        "@medusajs/analytics": "2.16.0",
+        "@medusajs/analytics-local": "2.16.0",
+        "@medusajs/analytics-posthog": "2.16.0",
+        "@medusajs/api-key": "2.16.0",
+        "@medusajs/auth": "2.16.0",
+        "@medusajs/auth-emailpass": "2.16.0",
+        "@medusajs/auth-github": "2.16.0",
+        "@medusajs/auth-google": "2.16.0",
+        "@medusajs/cache-inmemory": "2.16.0",
+        "@medusajs/cache-redis": "2.16.0",
+        "@medusajs/caching": "2.16.0",
+        "@medusajs/caching-redis": "2.16.0",
+        "@medusajs/cart": "2.16.0",
+        "@medusajs/core-flows": "2.16.0",
+        "@medusajs/currency": "2.16.0",
+        "@medusajs/customer": "2.16.0",
+        "@medusajs/draft-order": "2.16.0",
+        "@medusajs/event-bus-local": "2.16.0",
+        "@medusajs/event-bus-redis": "2.16.0",
+        "@medusajs/file": "2.16.0",
+        "@medusajs/file-local": "2.16.0",
+        "@medusajs/file-s3": "2.16.0",
+        "@medusajs/fulfillment": "2.16.0",
+        "@medusajs/fulfillment-manual": "2.16.0",
+        "@medusajs/index": "2.16.0",
+        "@medusajs/inventory": "2.16.0",
+        "@medusajs/link-modules": "2.16.0",
+        "@medusajs/locking": "2.16.0",
+        "@medusajs/locking-postgres": "2.16.0",
+        "@medusajs/locking-redis": "2.16.0",
+        "@medusajs/notification": "2.16.0",
+        "@medusajs/notification-local": "2.16.0",
+        "@medusajs/notification-sendgrid": "2.16.0",
+        "@medusajs/order": "2.16.0",
+        "@medusajs/payment": "2.16.0",
+        "@medusajs/payment-stripe": "2.16.0",
+        "@medusajs/pricing": "2.16.0",
+        "@medusajs/product": "2.16.0",
+        "@medusajs/promotion": "2.16.0",
+        "@medusajs/rbac": "2.16.0",
+        "@medusajs/region": "2.16.0",
+        "@medusajs/sales-channel": "2.16.0",
+        "@medusajs/settings": "2.16.0",
+        "@medusajs/stock-location": "2.16.0",
+        "@medusajs/store": "2.16.0",
+        "@medusajs/tax": "2.16.0",
+        "@medusajs/telemetry": "2.16.0",
+        "@medusajs/translation": "2.16.0",
+        "@medusajs/user": "2.16.0",
+        "@medusajs/workflow-engine-inmemory": "2.16.0",
+        "@medusajs/workflow-engine-redis": "2.16.0",
+        "boxen": "^5.0.1",
+        "chalk": "^4.1.2",
+        "chokidar": "^4.0.3",
+        "compression": "^1.8.0",
+        "express": "^4.21.0",
+        "fs-exists-cached": "^1.0.0",
+        "jsonwebtoken": "^9.0.2",
+        "multer": "^2.0.2",
+        "node-schedule": "^2.1.1",
+        "qs": "^6.12.1",
+        "request-ip": "^3.3.0",
+        "slugify": "^1.6.6",
+        "uuid": "^11.1.1",
+        "@medusajs/framework": "2.16.0"
+      },
+      "depCount": 69
+    },
+    {
+      "name": "@medusajs/dashboard",
+      "path": "packages/admin/dashboard/package.json",
+      "dependencies": {
+        "@ariakit/react": "^0.4.15",
+        "@babel/runtime": "^7.26.10",
+        "@dnd-kit/core": "^6.1.0",
+        "@dnd-kit/sortable": "^8.0.0",
+        "@dnd-kit/utilities": "^3.2.2",
+        "@hookform/error-message": "^2.0.1",
+        "@hookform/resolvers": "3.4.2",
+        "@medusajs/admin-shared": "2.16.0",
+        "@medusajs/icons": "2.16.0",
+        "@medusajs/js-sdk": "2.16.0",
+        "@medusajs/ui": "4.1.16",
+        "@radix-ui/react-dialog": "1.1.4",
+        "@radix-ui/react-dismissable-layer": "1.1.4",
+        "@tanstack/react-query": "5.64.2",
+        "@tanstack/react-table": "8.20.5",
+        "@tanstack/react-virtual": "^3.8.3",
+        "@uiw/react-json-view": "^2.0.0-alpha.17",
+        "cmdk": "^0.2.0",
+        "copy-to-clipboard": "^3.3.3",
+        "date-fns": "^3.6.0",
+        "i18next": "23.7.11",
+        "i18next-browser-languagedetector": "7.2.0",
+        "lodash.debounce": "^4.0.8",
+        "lodash.isequal": "^4.5.0",
+        "match-sorter": "^6.3.4",
+        "motion": "^11.15.0",
+        "qrcode": "^1.5.4",
+        "qs": "^6.12.1",
+        "radix-ui": "1.1.2",
+        "react": "^18.3.1",
+        "react-country-flag": "^3.1.0",
+        "react-currency-input-field": "^3.6.11",
+        "react-dom": "^18.3.1",
+        "react-helmet-async": "^2.0.5",
+        "react-hook-form": "7.49.1",
+        "react-i18next": "13.5.0",
+        "react-jwt": "^1.2.0",
+        "react-router-dom": "6.30.4",
+        "zod": "4.2.0",
+        "@medusajs/admin-vite-plugin": "2.16.0",
+        "@medusajs/types": "2.16.0",
+        "@medusajs/ui-preset": "2.16.0",
+        "@types/qrcode": "^1.5.5",
+        "@typescript/native-preview": "^7.0.0-dev.20260423.1",
+        "eslint": "8",
+        "typescript": "5.9.3"
+      },
+      "depCount": 46
+    },
+    {
+      "name": "@medusajs/framework",
+      "path": "packages/core/framework/package.json",
+      "dependencies": {
+        "@aws-sdk/client-dynamodb": "^3.218.0",
+        "@jercle/yargonaut": "^1.1.5",
+        "@medusajs/deps": "2.16.0",
+        "@medusajs/modules-sdk": "2.16.0",
+        "@medusajs/orchestration": "2.16.0",
+        "@medusajs/telemetry": "2.16.0",
+        "@medusajs/types": "2.16.0",
+        "@medusajs/utils": "2.16.0",
+        "@medusajs/workflows-sdk": "2.16.0",
+        "@types/express": "^4.17.21",
+        "chokidar": "^4.0.3",
+        "compression": "^1.8.1",
+        "connect-dynamodb": "^3.0.5",
+        "connect-redis": "5.2.0",
+        "cookie-parser": "^1.4.6",
+        "cors": "^2.8.5",
+        "express": "^4.21.0",
+        "express-session": "^1.17.3",
+        "glob": "13.0.6",
+        "jsonwebtoken": "^9.0.2",
+        "lodash.memoize": "^4.1.2",
+        "morgan": "^1.9.1",
+        "path-to-regexp": "^8.2.0",
+        "tsconfig-paths": "^4.2.0",
+        "zod-validation-error": "5.0.0",
+        "@medusajs/cli": "2.16.0"
+      },
+      "depCount": 26
+    },
+    {
+      "name": "@medusajs/cli",
+      "path": "packages/cli/medusa-cli/package.json",
+      "dependencies": {
+        "@medusajs/deps": "2.16.0",
+        "@medusajs/telemetry": "2.16.0",
+        "@medusajs/utils": "2.16.0",
+        "@types/express": "^4.17.21",
+        "chalk": "^4.1.2",
+        "configstore": "^5.0.1",
+        "dotenv": "^16.4.5",
+        "execa": "^5.1.1",
+        "express": "^4.21.0",
+        "fs-exists-cached": "^1.0.0",
+        "fs-extra": "^11.1.1",
+        "glob": "13.0.6",
+        "hosted-git-info": "^4.0.2",
+        "inquirer": "^8.0.0",
+        "is-valid-path": "^0.1.1",
+        "meant": "^1.0.3",
+        "ora": "^5.4.1",
+        "prompts": "^2.4.2",
+        "resolve-cwd": "^3.0.0",
+        "stack-trace": "^0.0.10",
+        "ulid": "^2.3.0",
+        "winston": "^3.9.0",
+        "yargs": "^17.7.2"
+      },
+      "depCount": 23
+    },
+    {
+      "name": "@medusajs/ui",
+      "path": "packages/design-system/ui/package.json",
+      "dependencies": {
+        "@dnd-kit/core": "^6.1.0",
+        "@dnd-kit/sortable": "^8.0.0",
+        "@dnd-kit/utilities": "^3.2.2",
+        "@medusajs/icons": "2.16.0",
+        "@radix-ui/react-dialog": "1.1.4",
+        "@radix-ui/react-dismissable-layer": "1.1.4",
+        "@tanstack/react-table": "8.20.5",
+        "clsx": "^1.2.1",
+        "copy-to-clipboard": "^3.3.3",
+        "cva": "1.0.0-beta.1",
+        "lodash.isequal": "^4.5.0",
+        "prism-react-renderer": "^2.0.6",
+        "prismjs": "^1.30.0",
+        "radix-ui": "1.1.2",
+        "react-aria": "^3.33.1",
+        "react-currency-input-field": "^3.6.11",
+        "react-stately": "^3.31.1",
+        "sonner": "^1.5.0",
+        "tailwind-merge": "^2.2.1",
+        "@medusajs/ui-preset": "2.16.0",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
+      },
+      "depCount": 22
+    },
+    {
+      "name": "@medusajs/draft-order",
+      "path": "packages/plugins/draft-order/package.json",
+      "dependencies": {
+        "@ariakit/react": "^0.4.15",
+        "@babel/runtime": "^7.26.10",
+        "@hookform/resolvers": "3.4.2",
+        "@medusajs/js-sdk": "2.16.0",
+        "@tanstack/react-query": "5.64.2",
+        "@uiw/react-json-view": "^2.0.0-alpha.17",
+        "date-fns": "^3.6.0",
+        "lodash.debounce": "^4.0.8",
+        "lodash.isequal": "^4.5.0",
+        "match-sorter": "^6.3.4",
+        "radix-ui": "1.1.2",
+        "react-hook-form": "7.49.1",
+        "@medusajs/admin-sdk": "2.16.0",
+        "@medusajs/cli": "2.16.0",
+        "@medusajs/dashboard": "2.16.0",
+        "@medusajs/framework": "2.16.0",
+        "@medusajs/icons": "2.16.0",
+        "@medusajs/test-utils": "2.16.0",
+        "@medusajs/types": "2.16.0",
+        "@medusajs/ui": "4.1.16",
+        "@medusajs/ui-preset": "2.16.0"
+      },
+      "depCount": 21
+    },
+    {
+      "name": "create-medusa-app",
+      "path": "packages/cli/create-medusa-app/package.json",
+      "dependencies": {
+        "@medusajs/deps": "2.16.0",
+        "@medusajs/telemetry": "2.16.0",
+        "boxen": "^5.0.1",
+        "chalk": "^4.1.2",
+        "commander": "^11.0.0",
+        "inquirer": "^8.0.0",
+        "nanoid": "^4.0.2",
+        "node-emoji": "^2.0.2",
+        "node-fetch": "^3.3.1",
+        "open": "^9.1.0",
+        "ora": "^5.4.1",
+        "slugify": "^1.6.6",
+        "terminal-link": "^5.0.0",
+        "uuid": "^11.1.1",
+        "validator": "^13.15.22",
+        "wait-on": "^9.0.1",
+        "winston": "^3.9.0",
+        "yaml": "^2.8.3"
+      },
+      "depCount": 18
+    },
+    {
+      "name": "@medusajs/utils",
+      "path": "packages/core/utils/package.json",
+      "dependencies": {
+        "@graphql-codegen/core": "^4.0.2",
+        "@graphql-codegen/typescript": "^4.0.9",
+        "@graphql-tools/merge": "^9.0.7",
+        "@graphql-tools/schema": "^10.0.6",
+        "@medusajs/deps": "2.16.0",
+        "@types/pluralize": "^0.0.33",
+        "bignumber.js": "^9.1.2",
+        "dotenv": "^16.4.5",
+        "dotenv-expand": "^11.0.6",
+        "graphql": "^16.9.0",
+        "jsonwebtoken": "^9.0.2",
+        "pg-connection-string": "^2.7.0",
+        "pluralize": "^8.0.0",
+        "ulid": "^2.3.0",
+        "@medusajs/types": "2.16.0",
+        "express": "^4.21.0"
+      },
+      "depCount": 16
+    },
+    {
+      "name": "@medusajs/admin-bundler",
+      "path": "packages/admin/admin-bundler/package.json",
+      "dependencies": {
+        "@medusajs/admin-shared": "2.16.0",
+        "@medusajs/admin-vite-plugin": "2.16.0",
+        "@medusajs/dashboard": "2.16.0",
+        "@vitejs/plugin-react": "^4.2.1",
+        "autoprefixer": "^10.4.19",
+        "compression": "^1.8.0",
+        "express": "^4.21.0",
+        "get-port": "^5.1.1",
+        "glob": "13.0.6",
+        "outdent": "^0.8.0",
+        "postcss": "^8.4.38",
+        "tailwindcss": "^3.4.3",
+        "vite": "^5.4.21",
+        "@medusajs/types": "2.16.0"
+      },
+      "depCount": 14
+    },
+    {
+      "name": "@medusajs/loyalty-plugin",
+      "path": "packages/plugins/loyalty/package.json",
+      "dependencies": {
+        "@medusajs/admin-sdk": "2.16.0",
+        "@medusajs/cli": "2.16.0",
+        "@medusajs/dashboard": "2.16.0",
+        "@medusajs/framework": "2.16.0",
+        "@medusajs/icons": "2.16.0",
+        "@medusajs/test-utils": "2.16.0",
+        "@medusajs/types": "2.16.0",
+        "@medusajs/ui": "4.1.16",
+        "@medusajs/ui-preset": "2.16.0",
+        "@swc/core": "1.5.7",
+        "@types/node": "^20.0.0",
+        "cross-env": "^7.0.3",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.7.3"
+      },
+      "depCount": 14
+    },
+    {
+      "name": "medusa-dev-cli",
+      "path": "packages/cli/medusa-dev-cli/package.json",
+      "dependencies": {
+        "chokidar": "^3.5.3",
+        "configstore": "^5.0.1",
+        "del": "^6.0.0",
+        "dotenv": "^16.4.5",
+        "execa": "^5.1.1",
+        "find-yarn-workspace-root": "^2.0.0",
+        "fs-extra": "^11.1.1",
+        "glob": "13.0.6",
+        "got": "^11.8.6",
+        "lodash": "^4.17.21",
+        "signal-exit": "^3.0.7",
+        "verdaccio": "^5.0.0",
+        "yargs": "^17.7.2"
+      },
+      "depCount": 13
+    },
+    {
+      "name": "@medusajs/deps",
+      "path": "packages/deps/package.json",
+      "dependencies": {
+        "@mikro-orm/cli": "6.6.14",
+        "@mikro-orm/core": "6.6.14",
+        "@mikro-orm/knex": "6.6.14",
+        "@mikro-orm/migrations": "6.6.14",
+        "@mikro-orm/postgresql": "6.6.14",
+        "@opentelemetry/api": "^1.9.0",
+        "@opentelemetry/instrumentation-pg": "^0.52.0",
+        "@opentelemetry/resources": "^2.0.0",
+        "@opentelemetry/sdk-node": "^0.218.0",
+        "@opentelemetry/sdk-trace-node": "^2.0.0",
+        "awilix": "^8.0.1",
+        "pg": "^8.16.3",
+        "zod": "4.2.0"
+      },
+      "depCount": 13
+    },
+    {
+      "name": "@medusajs/medusa-oas-cli",
+      "path": "packages/cli/oas/medusa-oas-cli/package.json",
+      "dependencies": {
+        "@medusajs/medusa": "2.16.0",
+        "@medusajs/utils": "2.16.0",
+        "@readme/json-schema-ref-parser": "^1.2.0",
+        "@readme/openapi-parser": "^2.4.0",
+        "@redocly/cli": "1.25.3",
+        "commander": "^11.0.0",
+        "execa": "^5.1.1",
+        "lodash.mergewith": "^4.6.2",
+        "openapi3-ts": "^3.1.2",
+        "swagger-inline": "^6.1.0",
+        "yargs": "^17.7.2",
+        "@medusajs/types": "2.16.0"
+      },
+      "depCount": 12
+    },
+    {
+      "name": "@medusajs/toolbox",
+      "path": "packages/design-system/toolbox/package.json",
+      "dependencies": {
+        "@svgr/core": "8.0.0",
+        "@svgr/plugin-jsx": "8.0.1",
+        "@svgr/plugin-prettier": "8.0.1",
+        "@svgr/plugin-svgo": "8.0.1",
+        "axios": "^1.13.1",
+        "axios-retry": "^3.1.9",
+        "commander": "^11.0.0",
+        "dotenv": "^16.4.5",
+        "fs-extra": "^11.1.1",
+        "picocolors": "^1.1.0",
+        "ts-dedent": "2.2.0"
+      },
+      "depCount": 11
+    },
+    {
+      "name": "@medusajs/admin-vite-plugin",
+      "path": "packages/admin/admin-vite-plugin/package.json",
+      "dependencies": {
+        "@babel/parser": "7.25.6",
+        "@babel/traverse": "7.25.6",
+        "@babel/types": "7.25.6",
+        "@medusajs/admin-shared": "2.16.0",
+        "chokidar": "^3.5.3",
+        "fdir": "6.1.1",
+        "magic-string": "0.30.5",
+        "outdent": "^0.8.0",
+        "picocolors": "^1.1.0",
+        "vite": "^5.4.21"
+      },
+      "depCount": 10
+    },
+    {
+      "name": "@medusajs/telemetry",
+      "path": "packages/medusa-telemetry/package.json",
+      "dependencies": {
+        "@babel/runtime": "^7.26.10",
+        "axios": "^1.13.1",
+        "axios-retry": "^3.1.9",
+        "boxen": "^5.0.1",
+        "ci-info": "^3.2.0",
+        "configstore": "^5.0.1",
+        "is-docker": "^2.2.1",
+        "remove-trailing-slash": "^0.1.1",
+        "uuid": "^11.1.1"
+      },
+      "depCount": 9
+    },
+    {
+      "name": "@medusajs/auth",
+      "path": "packages/modules/auth/package.json",
+      "dependencies": {
+        "@otplib/core": "^13.4.0",
+        "@otplib/plugin-crypto-node": "^13.4.0",
+        "@otplib/totp": "^13.4.0",
+        "@otplib/uri": "^13.4.0",
+        "jsonwebtoken": "^9.0.2",
+        "jwks-rsa": "^3.1.0",
+        "scrypt-kdf": "^2.0.1",
+        "@medusajs/framework": "2.16.0",
+        "@medusajs/test-utils": "2.16.0"
+      },
+      "depCount": 9
+    },
+    {
+      "name": "@medusajs/http-types-generator",
+      "path": "packages/cli/http-types-generator/package.json",
+      "dependencies": {
+        "chalk": "^4.1.2",
+        "commander": "^11.0.0",
+        "glob": "13.0.6",
+        "pluralize": "^8.0.0",
+        "prettier": "^2.8.8",
+        "typescript": "^5.6.2",
+        "@types/node": "^20.12.11",
+        "@types/pluralize": "^0.0.33"
+      },
+      "depCount": 8
+    },
+    {
+      "name": "@medusajs/eslint-plugin",
+      "path": "packages/eslint-plugin/package.json",
+      "dependencies": {
+        "@typescript-eslint/parser": "^8.0.0",
+        "@typescript-eslint/utils": "^8.0.0",
+        "cron-parser": "^4.9.0",
+        "@types/eslint": "^9.6.1",
+        "@typescript-eslint/rule-tester": "^8.0.0",
+        "eslint": "^9.0.0",
+        "typescript": "^5.4.0"
+      },
+      "depCount": 7
+    },
+    {
+      "name": "@medusajs/test-utils",
+      "path": "packages/medusa-test-utils/package.json",
+      "dependencies": {
+        "@types/express": "^4.17.21",
+        "axios": "^1.13.1",
+        "express": "^4.21.0",
+        "get-port": "^5.1.1",
+        "ulid": "^2.3.0",
+        "@medusajs/core-flows": "2.16.0",
+        "@medusajs/framework": "2.16.0"
+      },
+      "depCount": 7
+    }
+  ],
+  "mostCommonDeps": [
+    {
+      "name": "@medusajs/framework",
+      "usedInPackages": 53,
+      "versions": [
+        "2.16.0"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "@medusajs/test-utils",
+      "usedInPackages": 32,
+      "versions": [
+        "2.16.0"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "@medusajs/types",
+      "usedInPackages": 12,
+      "versions": [
+        "2.16.0"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "@medusajs/deps",
+      "usedInPackages": 8,
+      "versions": [
+        "2.16.0"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "ulid",
+      "usedInPackages": 8,
+      "versions": [
+        "^2.3.0"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "@medusajs/utils",
+      "usedInPackages": 7,
+      "versions": [
+        "2.16.0"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "express",
+      "usedInPackages": 6,
+      "versions": [
+        "^4.21.0"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "jsonwebtoken",
+      "usedInPackages": 6,
+      "versions": [
+        "^9.0.2"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "glob",
+      "usedInPackages": 5,
+      "versions": [
+        "13.0.6"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "ioredis",
+      "usedInPackages": 5,
+      "versions": [
+        "^5.4.1"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "@medusajs/admin-shared",
+      "usedInPackages": 4,
+      "versions": [
+        "2.16.0"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "chokidar",
+      "usedInPackages": 4,
+      "versions": [
+        "^3.5.3",
+        "^4.0.3"
+      ],
+      "hasConflict": true
+    },
+    {
+      "name": "@medusajs/icons",
+      "usedInPackages": 4,
+      "versions": [
+        "2.16.0"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "@medusajs/ui-preset",
+      "usedInPackages": 4,
+      "versions": [
+        "2.16.0"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "typescript",
+      "usedInPackages": 4,
+      "versions": [
+        "5.9.3",
+        "^5.6.2",
+        "^5.4.0",
+        "^5.7.3"
+      ],
+      "hasConflict": true
+    },
+    {
+      "name": "@medusajs/telemetry",
+      "usedInPackages": 4,
+      "versions": [
+        "2.16.0"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "chalk",
+      "usedInPackages": 4,
+      "versions": [
+        "^4.1.2"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "commander",
+      "usedInPackages": 4,
+      "versions": [
+        "^11.0.0"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "dotenv",
+      "usedInPackages": 4,
+      "versions": [
+        "^16.4.5"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "execa",
+      "usedInPackages": 4,
+      "versions": [
+        "^5.1.1"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "@medusajs/dashboard",
+      "usedInPackages": 3,
+      "versions": [
+        "2.16.0"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "compression",
+      "usedInPackages": 3,
+      "versions": [
+        "^1.8.0",
+        "^1.8.1"
+      ],
+      "hasConflict": true
+    },
+    {
+      "name": "zod",
+      "usedInPackages": 3,
+      "versions": [
+        "4.2.0"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "@babel/runtime",
+      "usedInPackages": 3,
+      "versions": [
+        "^7.26.10"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "@medusajs/ui",
+      "usedInPackages": 3,
+      "versions": [
+        "4.1.16"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "lodash.isequal",
+      "usedInPackages": 3,
+      "versions": [
+        "^4.5.0"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "qs",
+      "usedInPackages": 3,
+      "versions": [
+        "^6.12.1"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "radix-ui",
+      "usedInPackages": 3,
+      "versions": [
+        "1.1.2"
+      ],
+      "hasConflict": false
+    },
+    {
+      "name": "react",
+      "usedInPackages": 3,
+      "versions": [
+        "^18.3.1",
+        "^18.3.1 || ^19.0.0"
+      ],
+      "hasConflict": true
+    },
+    {
+      "name": "boxen",
+      "usedInPackages": 3,
+      "versions": [
+        "^5.0.1"
+      ],
+      "hasConflict": false
+    }
+  ],
+  "versionConflicts": [
+    {
+      "name": "typescript",
+      "versions": [
+        "5.9.3",
+        "^5.6.2",
+        "^5.4.0",
+        "^5.7.3"
+      ],
+      "packages": [
+        "@medusajs/dashboard",
+        "@medusajs/http-types-generator",
+        "@medusajs/eslint-plugin",
+        "@medusajs/loyalty-plugin"
+      ]
+    },
+    {
+      "name": "compression",
+      "versions": [
+        "^1.8.0",
+        "^1.8.1"
+      ],
+      "packages": [
+        "@medusajs/admin-bundler",
+        "@medusajs/framework",
+        "@medusajs/medusa"
+      ]
+    },
+    {
+      "name": "chokidar",
+      "versions": [
+        "^3.5.3",
+        "^4.0.3"
+      ],
+      "packages": [
+        "@medusajs/admin-vite-plugin",
+        "medusa-dev-cli",
+        "@medusajs/framework",
+        "@medusajs/medusa"
+      ]
+    },
+    {
+      "name": "react",
+      "versions": [
+        "^18.3.1",
+        "^18.3.1 || ^19.0.0"
+      ],
+      "packages": [
+        "@medusajs/dashboard",
+        "@medusajs/icons",
+        "@medusajs/ui"
+      ]
+    },
+    {
+      "name": "eslint",
+      "versions": [
+        "8",
+        "^9.0.0"
+      ],
+      "packages": [
+        "@medusajs/dashboard",
+        "@medusajs/eslint-plugin"
+      ]
+    },
+    {
+      "name": "@types/node",
+      "versions": [
+        "^20.12.11",
+        "^20.0.0"
+      ],
+      "packages": [
+        "@medusajs/http-types-generator",
+        "@medusajs/loyalty-plugin"
+      ]
+    },
+    {
+      "name": "stripe",
+      "versions": [
+        "19.1.0",
+        "^15.5.0"
+      ],
+      "packages": [
+        "@medusajs/payment",
+        "@medusajs/payment-stripe"
+      ]
+    }
+  ]
+}

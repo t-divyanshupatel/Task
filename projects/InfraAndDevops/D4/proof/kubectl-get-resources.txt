@@ -1,0 +1,28 @@
+Captured: 2026-06-21T18:07:10Z
+
+=== kubectl get all -n d4-notify ===
+NAME                TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
+service/d4-notify   NodePort   10.43.118.1   <none>        80:30080/TCP   0s
+
+=== kubectl get svc,endpoints -n d4-notify ===
+NAME                TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
+service/d4-notify   NodePort   10.43.118.1   <none>        80:30080/TCP   0s
+
+NAME                  ENDPOINTS          AGE
+endpoints/d4-notify   192.168.5.2:8000   0s
+
+=== host-bridge mode (no Deployment — Endpoints route to host uvicorn) ===
+Name:         d4-notify
+Namespace:    d4-notify
+Labels:       app.kubernetes.io/name=d4-notify
+              d4-notify/mode=host-bridge
+Annotations:  <none>
+Subsets:
+  Addresses:          192.168.5.2
+  NotReadyAddresses:  <none>
+  Ports:
+    Name  Port  Protocol
+    ----  ----  --------
+    http  8000  TCP
+
+Events:  <none>

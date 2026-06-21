@@ -1,0 +1,103 @@
+==> Rust scorer tests
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running unittests src/lib.rs (target/debug/deps/fraud_scorer-498852bcac824054)
+
+running 4 tests
+test tests::low_risk_retail_us ... ok
+test tests::medium_risk_elevated_amount_abroad ... ok
+test tests::high_risk_combined_rules ... ok
+test tests::rejects_non_positive_amount ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/fraud_scorer-467958ab82c7289e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests fraud_scorer
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+==> FastAPI tests
+============================= test session starts ==============================
+platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0 -- /Users/divyanshupatel/Desktop/mf/Task/projects/Advanced/A3/api/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/divyanshupatel/Desktop/mf/Task/projects/Advanced/A3/api
+configfile: pytest.ini
+testpaths: tests
+plugins: anyio-4.12.1
+collecting ... collected 11 items
+
+tests/test_api.py::test_health PASSED                                    [  9%]
+tests/test_api.py::test_create_transaction_returns_pending PASSED        [ 18%]
+tests/test_api.py::test_get_pending_lists_unscored PASSED                [ 27%]
+tests/test_api.py::test_submit_score_marks_scored PASSED                 [ 36%]
+tests/test_api.py::test_submit_score_idempotent_conflict PASSED          [ 45%]
+tests/test_api.py::test_get_transaction_by_id PASSED                     [ 54%]
+tests/test_api.py::test_get_transaction_not_found PASSED                 [ 63%]
+tests/test_api.py::test_create_rejects_non_positive_amount PASSED        [ 72%]
+tests/test_api.py::test_submit_score_rejects_id_mismatch PASSED          [ 81%]
+tests/test_pipeline.py::test_full_ingest_score_retrieve_pipeline PASSED  [ 90%]
+tests/test_pipeline.py::test_score_submission_removed_from_pending_queue PASSED [100%]
+
+=============================== warnings summary ===============================
+app/main.py:23
+  /Users/divyanshupatel/Desktop/mf/Task/projects/Advanced/A3/api/app/main.py:23: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+.venv/lib/python3.9/site-packages/fastapi/applications.py:4579
+  /Users/divyanshupatel/Desktop/mf/Task/projects/Advanced/A3/api/.venv/lib/python3.9/site-packages/fastapi/applications.py:4579: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 11 passed, 2 warnings in 0.38s ========================
+==> Node worker tests
+
+> a3-fraud-worker@1.0.0 test
+> node --experimental-vm-modules node_modules/jest/bin/jest.js
+
+(node:22886) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22884) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22887) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS tests/process-batch.test.js
+  ● Console
+
+    console.log
+      [worker] no pending transactions
+
+      at processBatch (src/process-batch.js:8:13)
+
+    console.log
+      [worker] scored 550e8400-e29b-41d4-a716-446655440010 -> high (90)
+
+      at processBatch (src/process-batch.js:16:13)
+
+(node:22885) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS tests/score-runner.test.js
+PASS tests/integration.test.js
+PASS tests/api-client.test.js
+
+Test Suites: 4 passed, 4 total
+Tests:       10 passed, 10 total
+Snapshots:   0 total
+Time:        1.554 s, estimated 2 s
+Ran all test suites.
+==> All unit tests passed

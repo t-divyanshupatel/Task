@@ -1,0 +1,25 @@
+Captured: 2026-06-21T19:53:22Z
+Command: A1 plan validation
+
+=== Proof files present ===
+OK: proof/enrollment-contract.md (      64 lines)
+OK: proof/parallel-work-plan.md (     218 lines)
+OK: proof/orchestration-runbook.md (      94 lines)
+
+=== A1 section checklist (parallel-work-plan.md) ===
+## 1. Task decomposition
+## 2. Worktree and branch names
+## 3. Agent prompts (one per lane)
+## 4. Shared constraints (all lanes)
+## 5. Merge order
+## 6. Conflict and risk plan
+## 7. Verification plan
+
+=== Contract endpoints ===
+| POST   | `/students`           | `{ full_name, email, program }`                   | `201` Created student   |
+| GET    | `/students`           | —                                                 | `200` List of students  |
+| POST   | `/enrollments`        | `{ student_id, course_code, term }`               | `201` Created enrollment |
+| GET    | `/enrollments`        | —                                                 | `200` List of enrollments |
+| GET    | `/registry/summary`   | —                                                 | `200` `{ student_count, enrollment_count }` |
+
+A1 planning proof complete — execute lanes per orchestration-runbook.md

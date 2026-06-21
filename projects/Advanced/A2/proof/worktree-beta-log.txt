@@ -1,0 +1,15 @@
+Captured: 2026-06-21T19:54:14Z
+Lane: Beta (feat/enrollment-http)
+Worktree: /Users/divyanshupatel/Desktop/mf/Task/projects/Advanced/A2/sandbox/.parallel-demo/enrollment-api-beta
+Commit: c3ce7e3
+py_compile: OK (persistence layer merged later)
+
+git diff main --name-only:
+app/__init__.py
+app/main.py
+app/routes/__init__.py
+app/routes/enrollments.py
+app/routes/registry.py
+app/routes/students.py
+app/schemas.py
+requirements.txt

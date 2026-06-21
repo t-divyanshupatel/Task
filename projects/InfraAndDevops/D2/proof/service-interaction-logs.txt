@@ -1,0 +1,96 @@
+# D2 service logs — inter-service communication proof
+# Generated: 2026-06-21T17:32:14Z
+# Look for: event=db_ready (api/worker), event=job_created (api),
+#           event=job_picked / event=job_completed (worker), INSERT (db seed)
+
+db-1  | The files belonging to this database system will be owned by user "postgres".
+db-1  | This user must also own the server process.
+db-1  |
+db-1  | The database cluster will be initialized with locale "en_US.utf8".
+db-1  | The default database encoding has accordingly been set to "UTF8".
+db-1  | The default text search configuration will be set to "english".
+db-1  |
+db-1  | Data page checksums are disabled.
+db-1  |
+db-1  | fixing permissions on existing directory /var/lib/postgresql/data ... ok
+db-1  | creating subdirectories ... ok
+db-1  | selecting dynamic shared memory implementation ... posix
+db-1  | selecting default max_connections ... 100
+db-1  | selecting default shared_buffers ... 128MB
+db-1  | selecting default time zone ... UTC
+db-1  | creating configuration files ... ok
+db-1  | running bootstrap script ... ok
+db-1  | performing post-bootstrap initialization ... ok
+db-1  | syncing data to disk ... ok
+db-1  |
+db-1  | Success. You can now start the database server using:
+db-1  |
+db-1  |     pg_ctl -D /var/lib/postgresql/data -l logfile start
+db-1  |
+db-1  | waiting for server to start....2026-06-21 17:31:42.118 UTC [41] LOG:  starting PostgreSQL 16.6 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 13.2.1_git20240309) 13.2.1 20240309, 64-bit
+db-1  | 2026-06-21 17:31:42.119 UTC [41] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+db-1  | 2026-06-21 17:31:42.122 UTC [44] LOG:  database system was shut down at 2026-06-21 17:31:41 UTC
+db-1  | 2026-06-21 17:31:42.125 UTC [41] LOG:  database system is ready to accept connections
+db-1  |  done
+db-1  | server started
+db-1  | CREATE DATABASE
+db-1  |
+db-1  |
+db-1  | /usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-initdb.d/01-schema.sql
+db-1  | CREATE TABLE
+db-1  | CREATE INDEX
+db-1  | CREATE FUNCTION
+db-1  | DROP TRIGGER
+db-1  | CREATE TRIGGER
+db-1  |
+db-1  |
+db-1  | /usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-initdb.d/02-seed.sql
+db-1  | INSERT 0 3
+db-1  | UPDATE 1
+db-1  |
+db-1  |
+db-1  | waiting for server to shut down....2026-06-21 17:31:42.412 UTC [41] LOG:  received fast shutdown request
+db-1  | 2026-06-21 17:31:42.413 UTC [41] LOG:  aborting any active transactions
+db-1  | 2026-06-21 17:31:42.414 UTC [41] LOG:  background worker "logical replication launcher" (PID 47) exited with exit code 1
+db-1  | 2026-06-21 17:31:42.414 UTC [42] LOG:  shutting down
+db-1  | 2026-06-21 17:31:42.415 UTC [42] LOG:  checkpoint starting: shutdown immediate
+db-1  | 2026-06-21 17:31:42.441 UTC [42] LOG:  checkpoint complete: wrote 943 buffers (5.8%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.008 s, sync=0.017 s, total=0.027 s; sync files=312, longest=0.004 s, average=0.001 s; distance=4322 kB, estimate=4322 kB; lsn=0/192D3A0, redo lsn=0/192D3A0
+db-1  | 2026-06-21 17:31:42.444 UTC [41] LOG:  database system is shut down
+db-1  |  done
+db-1  | server stopped
+db-1  |
+db-1  | PostgreSQL init process complete; ready for start up.
+db-1  |
+db-1  | 2026-06-21 17:31:42.528 UTC [1] LOG:  starting PostgreSQL 16.6 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 13.2.1_git20240309) 13.2.1 20240309, 64-bit
+db-1  | 2026-06-21 17:31:42.528 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+db-1  | 2026-06-21 17:31:42.528 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+db-1  | 2026-06-21 17:31:42.530 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+db-1  | 2026-06-21 17:31:42.532 UTC [59] LOG:  database system was shut down at 2026-06-21 17:31:42 UTC
+db-1  | 2026-06-21 17:31:42.535 UTC [1] LOG:  database system is ready to accept connections
+api-1  | INFO:     Started server process [1]
+api-1  | INFO:     Waiting for application startup.
+api-1  | 2026-06-21 17:31:48,221 service=api event=db_ready attempt=1
+api-1  | INFO:     Application startup complete.
+api-1  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+api-1  | INFO:     127.0.0.1:51204 - "GET /health HTTP/1.1" 200 OK
+api-1  | INFO:     172.18.0.1:38912 - "GET /health HTTP/1.1" 200 OK
+api-1  | INFO:     172.18.0.1:38924 - "GET /health HTTP/1.1" 200 OK
+api-1  | INFO:     172.18.0.1:38930 - "GET /jobs HTTP/1.1" 200 OK
+api-1  | 2026-06-21 17:31:56,104 service=api event=job_created job_id=4 task=uppercase status=pending
+api-1  | INFO:     172.18.0.1:38936 - "POST /jobs HTTP/1.1" 201 Created
+api-1  | 2026-06-21 17:31:56,218 service=api event=job_created job_id=5 task=reverse status=pending
+api-1  | INFO:     172.18.0.1:38942 - "POST /jobs HTTP/1.1" 201 Created
+api-1  | INFO:     172.18.0.1:38942 - "GET /jobs/5 HTTP/1.1" 200 OK
+api-1  | INFO:     172.18.0.1:38942 - "GET /jobs/5 HTTP/1.1" 200 OK
+api-1  | INFO:     172.18.0.1:38948 - "GET /jobs HTTP/1.1" 200 OK
+api-1  | INFO:     172.18.0.1:38954 - "GET /jobs/999999 HTTP/1.1" 404 Not Found
+worker-1  | 2026-06-21 17:31:48,315 service=worker event=worker_start poll_interval=2.0
+worker-1  | 2026-06-21 17:31:48,328 service=worker event=db_ready attempt=1
+worker-1  | 2026-06-21 17:31:50,341 service=worker event=job_picked job_id=1 task=uppercase status=processing
+worker-1  | 2026-06-21 17:31:50,345 service=worker event=job_completed job_id=1 task=uppercase status=completed output=HELLO FROM SEED
+worker-1  | 2026-06-21 17:31:50,348 service=worker event=job_picked job_id=2 task=reverse status=processing
+worker-1  | 2026-06-21 17:31:50,351 service=worker event=job_completed job_id=2 task=reverse status=completed output=kcats rekcod
+worker-1  | 2026-06-21 17:31:56,412 service=worker event=job_picked job_id=4 task=uppercase status=processing
+worker-1  | 2026-06-21 17:31:56,416 service=worker event=job_completed job_id=4 task=uppercase status=completed output=E2E TEST JOB
+worker-1  | 2026-06-21 17:31:56,419 service=worker event=job_picked job_id=5 task=reverse status=processing
+worker-1  | 2026-06-21 17:31:56,422 service=worker event=job_completed job_id=5 task=reverse status=completed output=rekrow

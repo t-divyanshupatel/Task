@@ -1,0 +1,70 @@
+Captured: 2026-06-21T18:02:19Z
+Command: ./scripts/demo-failure.sh
+
+=== D3 CI failure demo ===
+
+>>> Demo 1: Lint failure (demo/broken_lint.py)
+[1m[91mI001 [0m[[1m[96m*[0m] [1mImport block is un-sorted or un-formatted[0m
+ [1m[94m-->[0m demo/broken_lint.py:2:1
+  [1m[94m|[0m
+[1m[94m1 |[0m   # Intentionally broken file for CI failure demo
+[1m[94m2 |[0m [1m[91m/[0m import os
+[1m[94m3 |[0m [1m[91m|[0m import sys
+  [1m[94m|[0m [1m[91m|__________^[0m
+[1m[94m4 |[0m
+[1m[94m5 |[0m   def broken_function( ):
+  [1m[94m|[0m
+[1m[96mhelp[0m: [1mOrganize imports[0m
+
+[1m[91mF401 [0m[[1m[96m*[0m] [1m`os` imported but unused[0m
+ [1m[94m-->[0m demo/broken_lint.py:2:8
+  [1m[94m|[0m
+[1m[94m1 |[0m # Intentionally broken file for CI failure demo
+[1m[94m2 |[0m import os
+  [1m[94m|[0m        [1m[91m^^[0m
+[1m[94m3 |[0m import sys
+  [1m[94m|[0m
+[1m[96mhelp[0m: [1mRemove unused import: `os`[0m
+
+[1m[91mF401 [0m[[1m[96m*[0m] [1m`sys` imported but unused[0m
+ [1m[94m-->[0m demo/broken_lint.py:3:8
+  [1m[94m|[0m
+[1m[94m1 |[0m # Intentionally broken file for CI failure demo
+[1m[94m2 |[0m import os
+[1m[94m3 |[0m import sys
+  [1m[94m|[0m        [1m[91m^^^[0m
+[1m[94m4 |[0m
+[1m[94m5 |[0m def broken_function( ):
+  [1m[94m|[0m
+[1m[96mhelp[0m: [1mRemove unused import: `sys`[0m
+
+Found 3 errors.
+[[36m*[0m] 3 fixable with the `--fix` option.
+Lint exit code: 1
+
+>>> Demo 2: Test failure (demo/test_broken.py)
+============================= test session starts ==============================
+platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0 -- /Users/divyanshupatel/Desktop/mf/Task/projects/InfraAndDevops/D3/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/divyanshupatel/Desktop/mf/Task/projects/InfraAndDevops/D3
+configfile: pytest.ini
+plugins: anyio-4.12.1
+collecting ... collected 1 item
+
+demo/test_broken.py::test_intentionally_fails_for_ci_demo FAILED         [100%]
+
+=================================== FAILURES ===================================
+_____________________ test_intentionally_fails_for_ci_demo _____________________
+
+    def test_intentionally_fails_for_ci_demo() -> None:
+>     assert 1 == 2, "D3 CI failure demo — this test must fail"
+E     AssertionError: D3 CI failure demo — this test must fail
+E     assert 1 == 2
+
+demo/test_broken.py:2: AssertionError
+=========================== short test summary info ============================
+FAILED demo/test_broken.py::test_intentionally_fails_for_ci_demo - AssertionE...
+============================== 1 failed in 0.08s ===============================
+Test exit code: 1
+
+=== Failure demo complete (lint and tests failed as expected) ===

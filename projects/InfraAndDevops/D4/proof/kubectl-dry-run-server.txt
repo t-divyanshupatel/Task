@@ -1,0 +1,23 @@
+Captured: 2026-06-21T18:06:59Z
+
+=== kubectl apply --dry-run=server (live API validation) ===
+namespace/d4-notify created
+--- k8s/configmap.yaml ---
+configmap/d4-notify-config created (server dry run)
+
+--- k8s/deployment.yaml ---
+deployment.apps/d4-notify created (server dry run)
+
+--- k8s/service.yaml ---
+service/d4-notify created (server dry run)
+
+--- k8s/service-nodeport.yaml ---
+service/d4-notify-nodeport created (server dry run)
+
+--- k8s/ingress.yaml ---
+ingress.networking.k8s.io/d4-notify created (server dry run)
+
+--- k8s/overlays/host-bridge/service.yaml ---
+service/d4-notify created (server dry run)
+
+namespace "d4-notify" deleted

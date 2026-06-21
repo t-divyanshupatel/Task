@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: d4-notify
+  namespace: d4-notify
+  labels:
+    app.kubernetes.io/name: d4-notify
+    app.kubernetes.io/component: api
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: d4-notify
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP

@@ -1,0 +1,34 @@
+Captured: 2026-06-21T18:07:05Z
+Command: CLUSTER_NAME=d4-notify IMAGE_NAME=d4-notify:local ./scripts/up.sh
+
+==> Using colima Kubernetes context
+Switched to context "colima".
+==> Build container image (production Dockerfile — FastAPI service)
+Sending build context to Docker daemon  336.7MB
+Step 1/9 : FROM python:3.11-slim
+Container image build failed:
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+failed to resolve reference "docker.io/library/python:3.11-slim": failed to do request: Head "https://registry-1.docker.io/v2/library/python/manifests/3.11-slim": tls: failed to verify certificate: x509: certificate signed by unknown authority
+==> Falling back to host-bridge (real FastAPI process on host)
+==> Deploy mode: host-bridge (real FastAPI on host + K8s Endpoints)
+    Use when container registry pulls fail (e.g. colima TLS).
+Host FastAPI service ready on port 8000 (pid 4033)
+namespace/d4-notify created
+configmap/d4-notify-config created
+service/d4-notify created
+endpoints/d4-notify created
+Host-bridge endpoints: 192.168.5.2:8000 -> Service d4-notify:80 (NodePort 30080)
+
+==> Pod / endpoint status
+NAME                TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
+service/d4-notify   NodePort   10.43.118.1   <none>        80:30080/TCP   0s
+
+NAME                  ENDPOINTS          AGE
+endpoints/d4-notify   192.168.5.2:8000   0s
+
+Cluster is up. Try:
+  curl -s http://127.0.0.1:30080/health
+  curl -s -X POST http://127.0.0.1:30080/notify -H 'Content-Type: application/json' -d '{"message":"hello"}'

@@ -1,435 +1,704 @@
-# Agent Task Library
+# Task
 
-A hands-on workspace for designing, documenting, and evaluating **Cursor AI agents**. Each agent is defined as a markdown prompt, paired with a **Cursor Skill** (`skills/`), sample output, and (where needed) a real codebase to run against.
+A hands-on evaluation library for **Cursor coding agents**: runnable sandboxes, structured agent workflows, and a real-world monorepo target. Together they answer the framework question *What can you do using a coding agent?* across **24 eval items** (B1–B6, I1–I6, A1–A6, D1–D6).
 
-**Live demo:** [Agent Library](https://task-phi-seven-94.vercel.app/) — browse all agent definitions, copy prompts, and view sample reports in the browser.
+| Path | Role | Catalog |
+|------|------|---------|
+| [`agents/`](agents/README.md) | 10 Cursor slash-command agents — analyze or modify repos | [Agent library →](agents/README.md) |
+| [`projects/`](projects/README.md) | 14 self-contained sandboxes — APIs, CLIs, infra stacks | [Project library →](projects/README.md) |
+| [`medusa/`](medusa/) | Vendored Medusa v2 commerce monorepo — default agent target | [Medusa upstream →](medusa/README.md) |
+
+Cursor skill entry points live at [`.cursor/skills/`](../.cursor/skills/) in the workspace root (one skill per agent).
 
 ---
 
-## What is in this repo?
+## Table of contents
 
-| Folder | Purpose |
-|--------|---------|
-| [`Basics/`](Basics/) | **Beginner agent tasks** (Google Docs assignments) — read-only repo analysis agents |
-| [`Intermediate/`](Intermediate/) | **Intermediate agent tasks** — deeper analysis, small code changes, bug diagnosis |
-| [`Advanced/`](Advanced/) | **Advanced agent tasks** — modernization, PR review, parallel worktrees, multi-service systems |
-| [`Devops/`](Devops/) | **DevOps agent tasks** — Terraform, Docker Compose, CI/CD, Kubernetes, dev bootstrap, observability |
-| [`rabbit/`](rabbit/) | **Sample open-source repo** — a full-stack LMS used as the default target for most agents |
-| [`frontend/`](frontend/) | **Agent Library web app** — Next.js UI deployed to Vercel |
-| [`skills/`](skills/) | **Cursor Skills** — installable skill files that invoke each agent inside Cursor |
+1. [What we built](#what-we-built)
+2. [Design approach](#design-approach)
+3. [Repository layout](#repository-layout)
+4. [How the three pillars connect](#how-the-three-pillars-connect)
+5. [Agent workflow (Plan → Execute → Verify)](#agent-workflow-plan--execute--verify)
+6. [Eval framework index (24 items)](#eval-framework-index-24-items)
+7. [Agents — full catalog](#agents--full-catalog)
+8. [Projects — full catalog](#projects--full-catalog)
+9. [Medusa — analysis target](#medusa--analysis-target)
+10. [Quick start](#quick-start)
+11. [Navigation index](#navigation-index)
 
-The **Basics**, **Intermediate**, **Advanced**, and **Devops** folders correspond to the structured curriculum. Each agent task folder typically contains:
+---
 
-- An **agent definition** (`*-agent.md`) — the full prompt/spec a developer (or Cursor) follows
-- A **sample output report** — what a successful run looks like
-- Sometimes a **mini codebase** (B4–B6, I4–I5, A3) — a small, self-contained project agents can analyze or modify
+## What we built
+
+This repository packages three complementary deliverables:
+
+```mermaid
+flowchart TB
+    subgraph Task["Task/"]
+        A["agents/<br/>10 Cursor agents<br/>B1–B3, I1–I3, I6, A4–A6"]
+        P["projects/<br/>14 runnable sandboxes<br/>B4–B6, I4–I5, A1–A3, D1–D6"]
+        M["medusa/<br/>Vendored commerce monorepo<br/>463 routes, 139 tables, 1000+ tests"]
+    end
+
+    SK[".cursor/skills/<br/>Slash-command entry points"]
+    SK --> A
+    A -->|"analyze / modify"| M
+    A -->|"can target any repo"| EXT["External repos"]
+    P -->|"greenfield build & verify"| DEV["Developer exercises"]
+```
+
+| Deliverable | Count | What was done |
+|-------------|-------|---------------|
+| **Agents** | 10 | Each agent has a 3-phase workflow (`planning.md` → `execute.md` → `verify.md`), a dedicated Cursor skill, sample `proof/` reports, and optional Next.js website output |
+| **Projects** | 14 | Each sandbox ships source, tests, README, and captured `proof/` artifacts (screenshots, logs, command output) |
+| **Medusa** | 1 | Full vendored monorepo used as the realistic analysis target in agent proof reports |
+| **Skills** | 10 | One `.cursor/skills/{name}/SKILL.md` per agent — invoke with `/skill-name` in Agent chat |
+
+---
+
+## Design approach
+
+### Core principles
+
+| Principle | How we applied it |
+|-----------|-------------------|
+| **Spec-first agents** | Every agent reads `agent/agent.md` then follows `planning.md` → `execute.md` → `verify.md` in order. No phase is skipped. |
+| **Evidence over claims** | Reports cite `path:line`, config keys, and real command output. Gaps are marked `unknown` or `[NEEDS CLARIFICATION]`. |
+| **Read-only by default** | 7 of 10 agents never edit source. Change-capable agents (I3, I6, A4, A6) stage edits but do not commit unless asked. |
+| **Dual output format** | Every agent supports **markdown** (report in `proof/`) or **website** (Next.js dashboard copied from `agents/frontend/`). |
+| **Runnable proof** | Projects include `proof/` with screenshots and logs. Agents include sample reports demonstrating Medusa analysis. |
+| **Tiered difficulty** | Basics → Intermediate → Advanced → Infra & DevOps maps to increasing scope and risk. |
+
+### Agent vs project split
+
+```mermaid
+flowchart LR
+    subgraph Agents["agents/ — HOW to use a coding agent"]
+        direction TB
+        B1["B1 Structure map"]
+        B2["B2 Route map"]
+        B3["B3 Test discovery"]
+        I1["I1 ER diagram"]
+        I2["I2 E2E trace"]
+        I3["I3 Focused change"]
+        I6["I6 Bug diagnosis"]
+        A4["A4 Modernizer"]
+        A5["A5 PR review"]
+        A6["A6 Perf optimizer"]
+    end
+
+    subgraph Projects["projects/ — WHAT to build & verify"]
+        direction TB
+        B4["B4 FastAPI ledger"]
+        B5["B5 Node ledger"]
+        B6["B6 Rust CLI"]
+        I4["I4 Currency converter"]
+        I5["I5 Docker image"]
+        A1["A1 Worktree plan"]
+        A2["A2 Worktree merge"]
+        A3["A3 Fraud pipeline"]
+        D1["D1 Terraform"]
+        D2["D2 Compose"]
+        D3["D3 CI pipeline"]
+        D4["D4 Kubernetes"]
+        D5["D5 Bootstrap"]
+        D6["D6 Observability"]
+    end
+
+    Agents -->|"operate on"| Target["Any repo<br/>(default: medusa/)"]
+    Projects -->|"self-contained<br/>build targets"| Proof["proof/ artifacts"]
+```
+
+**Agents** define *how* a coding agent should behave when analyzing or changing a repository.  
+**Projects** define *what* to build from scratch — greenfield APIs, polyglot pipelines, and infra stacks.  
+**Medusa** is the shared realistic target for agent exercises at scale.
 
 ---
 
 ## Repository layout
 
 ```
-task/
-├── README.md                 ← you are here
-├── Basics/                   ← Google Docs: beginner tasks
-│   ├── B1/                   agent: Repo Structure Mapper + sample report
-│   ├── B2/                   agent: Route & API Mapper + sample report
-│   ├── B3/                   agent: Test Discovery + sample report
-│   ├── B4/                   sample FastAPI Transaction Ledger API
-│   ├── B5/                   sample Node.js Transaction Ledger API
-│   └── B6/                   sample Rust log-counter CLI
-├── Intermediate/             ← Google Docs: intermediate tasks
-│   ├── I1/                   agent: ER Diagram + sample report
-│   ├── I2/                   agent: E2E Flow Tracer + sample report
-│   ├── I3/                   agent: Minimal Change + sample report
-│   ├── I4/                   sample Currency Converter (FastAPI + Node CLI)
-│   ├── I5/                   sample Currency Converter (Dockerized)
-│   └── I6/                   agent: Seeded Bug Diagnosis + sample report
-├── Advanced/                 ← Google Docs: advanced tasks
-│   ├── A1/                   agent: Parallel Worktree Plan + sample plan
-│   ├── A2/                   agent: Parallel Worktree Execution + sample report
-│   ├── A3/                   Mini Fraud Score System (FastAPI + Node + Rust)
-│   ├── A3-worktrees/         git worktree lane demos (service + scorer)
-│   ├── A4/                   agent: Repo Modernization + sample report
-│   ├── A5/                   agent: PR Review + sample report
-│   └── A6/                   agent: Performance Optimization + sample report (rabbit)
-├── Devops/                   ← DevOps curriculum tasks (see Devops/README.md)
-│   ├── D1/                   terraform-plan-agent.md
-│   ├── D2/                   docker-compose-e2e-agent.md
-│   ├── D3/                   ci-pipeline-agent.md
-│   ├── D4/                   kubernetes-manifests-agent.md
-│   ├── D5/                   dev-environment-bootstrap-agent.md
-│   └── D6/                   observability-bolt-on-agent.md
-├── rabbit/                   ← primary test target (LMS open-source repo)
-├── frontend/                 ← Agent Library Next.js app → Vercel
-└── skills/                   ← Cursor Skills (one per published agent)
+Task/
+├── README.md                          ← You are here
+├── agents/
+│   ├── README.md                      ← Agent library catalog + skill usage guide
+│   ├── frontend/                      ← Shared Next.js template (copy only — DO NOT EDIT)
+│   │   └── README.md
+│   ├── Basics/
+│   │   ├── B1/README.md               ← Repo Structure Mapper
+│   │   ├── B2/README.md               ← Route & API Mapper
+│   │   └── B3/README.md               ← Test Discovery
+│   ├── Intermediate/
+│   │   ├── I1/README.md               ← ER Diagram
+│   │   ├── I2/README.md               ← E2E Flow Tracer
+│   │   ├── I3/README.md               ← Focused Module Change
+│   │   └── I6/README.md               ← Seeded Bug Diagnosis
+│   └── Advanced/
+│       ├── A4/README.md               ← Repo Modernizer
+│       ├── A5/README.md               ← PR Review
+│       └── A6/README.md               ← Performance Optimizer
+├── projects/
+│   ├── README.md                      ← Project library catalog
+│   ├── Basics/
+│   │   ├── B4/README.md               ← Transaction Ledger API (FastAPI)
+│   │   ├── B5/README.md               ← Transaction Ledger API (Node.js)
+│   │   └── B6/README.md               ← Log Counter CLI (Rust)
+│   ├── Intermediate/
+│   │   ├── I4/README.md               ← Currency Converter (FastAPI + Node CLI)
+│   │   └── I5/README.md               ← Currency Converter Docker
+│   ├── Advanced/
+│   │   ├── A1/README.md               ← Multi-worktree parallel plan
+│   │   ├── A2/README.md               ← Two-lane worktree execution
+│   │   ├── A3/README.md               ← Fraud scoring pipeline
+│   │   └── A3/contracts/README.md     ← JSON Schema data contract
+│   └── InfraAndDevops/
+│       ├── D1/README.md                 ← Terraform AWS stack
+│       ├── D2/README.md                 ← Multi-service Docker Compose
+│       ├── D3/README.md                 ← GitHub Actions CI pipeline
+│       ├── D4/README.md                 ← Kubernetes manifests
+│       ├── D5/README.md                 ← One-command bootstrap
+│       └── D6/README.md                 ← Observability bolt-on
+└── medusa/                            ← Vendored Medusa v2 monorepo
+    └── README.md
+```
+
+### Per-agent internal layout
+
+Every agent follows the same folder contract:
+
+```
+{Tier}/{ID}/
+├── README.md              ← Human guide (purpose, usage, outputs)
+├── agent/
+│   ├── agent.md           ← Entry point — agent reads this first
+│   ├── planning.md        ← Phase 1: MCQ inputs via AskQuestion
+│   ├── execute.md         ← Phase 2: detailed task instructions
+│   └── verify.md          ← Phase 3: completion checklist
+└── proof/                 ← Sample markdown deliverables
+    └── *-report.md
+```
+
+### Per-project internal layout
+
+```
+{Tier}/{ID}/
+├── README.md              ← Install, run, test, proof instructions
+├── {app,api,service}/     ← Source code (varies by project)
+├── tests/                 ← Automated tests
+├── proof/                 ← Screenshots, logs, captured output
+└── scripts/               ← Proof regeneration, E2E, bootstrap helpers
 ```
 
 ---
 
-## How the pieces connect
+## How the three pillars connect
+
+```mermaid
+flowchart TD
+    DEV["Developer in Cursor Agent chat"]
+    DEV -->|"types /skill-name"| SKILL[".cursor/skills/{name}/SKILL.md"]
+    SKILL --> AGENT["agents/{Tier}/{ID}/agent/*.md"]
+    AGENT -->|"Phase 1"| PLAN["planning.md<br/>MCQ: repo path, output format"]
+    PLAN -->|"Phase 2"| EXEC["execute.md<br/>Discovery, analysis, or code change"]
+    EXEC -->|"Phase 3"| VER["verify.md<br/>Checklist before done"]
+    VER --> OUT{{Output format?}}
+    OUT -->|markdown| PROOF["agents/{ID}/proof/*-report.md"]
+    OUT -->|website| SITE["agents/{ID}/agent/*-site/<br/>http://localhost:3000"]
+
+    EXEC -->|"reads / modifies"| REPO["Target repo<br/>(default: medusa/)"]
+    PROJECTS["projects/{Tier}/{ID}/"] -->|"build & verify skills"| DEV
+```
+
+| Relationship | Description |
+|--------------|-------------|
+| Skills → Agents | Each `/slash-command` loads one skill that points to one agent's `agent/` folder |
+| Agents → Medusa | Default analysis target; proof reports demonstrate real Medusa discoveries |
+| Agents → Any repo | All agents accept a custom repo path — Medusa is not required |
+| Projects → Agents | Independent sandboxes for greenfield building; not agent instruction folders |
+| `agents/frontend/` → Website output | Shared Next.js template copied per-agent for interactive dashboards |
+
+---
+
+## Agent workflow (Plan → Execute → Verify)
+
+```mermaid
+sequenceDiagram
+    participant U as Developer
+    participant S as Cursor Skill
+    participant A as Agent (agent.md)
+    participant P as planning.md
+    participant E as execute.md
+    participant V as verify.md
+    participant R as Target Repo
+    participant O as proof/ or website
+
+    U->>S: /basics-repo-structure-mapper on Task/medusa
+    S->>A: Load agent instructions
+    A->>P: Phase 1 — AskQuestion MCQs
+    P->>U: Repo path? Output format?
+    U-->>P: Task/medusa, markdown
+    P->>E: Phase 2 — Execute task
+    E->>R: Read files, run commands
+    R-->>E: Source, config, test output
+    E->>O: Write report or build website
+    E->>V: Phase 3 — Verify checklist
+    V-->>U: Done — report path + summary
+```
+
+### Shared rules (all agents)
+
+1. **Never edit `agents/frontend/`** — copy to `{agent}/agent/*-site/` for website output
+2. **Reports go to `proof/`** — not inside the analyzed repository
+3. **Evidence required** — cite `path:line`, config files, or command output
+4. **Three phases mandatory** — Plan → Execute → Verify before claiming done
+5. **Single deliverable** — markdown **or** website per run
+6. **No commits by default** — change-capable agents stage edits but do not commit unless asked
+
+Full usage guide: [`agents/README.md`](agents/README.md)
+
+---
+
+## Eval framework index (24 items)
+
+The eval framework maps **agent capabilities** (read/analyze/modify) and **project deliverables** (build/deploy/verify) across four tiers.
+
+```mermaid
+flowchart TB
+    subgraph Basics["Basics — discovery & greenfield"]
+        B1["B1 Structure map<br/><i>agent</i>"]
+        B2["B2 Route map<br/><i>agent</i>"]
+        B3["B3 Test discovery<br/><i>agent</i>"]
+        B4["B4 FastAPI ledger<br/><i>project</i>"]
+        B5["B5 Node ledger<br/><i>project</i>"]
+        B6["B6 Rust CLI<br/><i>project</i>"]
+    end
+
+    subgraph Intermediate["Intermediate — deep analysis & multi-component"]
+        I1["I1 ER diagram<br/><i>agent</i>"]
+        I2["I2 E2E trace<br/><i>agent</i>"]
+        I3["I3 Focused change<br/><i>agent</i>"]
+        I4["I4 Currency converter<br/><i>project</i>"]
+        I5["I5 Docker image<br/><i>project</i>"]
+        I6["I6 Bug diagnosis<br/><i>agent</i>"]
+    end
+
+    subgraph Advanced["Advanced — modernization, review, parallelism"]
+        A1["A1 Worktree plan<br/><i>project</i>"]
+        A2["A2 Worktree merge<br/><i>project</i>"]
+        A3["A3 Fraud pipeline<br/><i>project</i>"]
+        A4["A4 Modernizer<br/><i>agent</i>"]
+        A5["A5 PR review<br/><i>agent</i>"]
+        A6["A6 Perf optimizer<br/><i>agent</i>"]
+    end
+
+    subgraph Infra["Infra & DevOps — platform engineering"]
+        D1["D1 Terraform"]
+        D2["D2 Compose"]
+        D3["D3 CI pipeline"]
+        D4["D4 Kubernetes"]
+        D5["D5 Bootstrap"]
+        D6["D6 Observability"]
+    end
+```
+
+| Tier | Agents | Projects | Focus |
+|------|--------|----------|-------|
+| **Basics** | [B1](agents/Basics/B1/README.md), [B2](agents/Basics/B2/README.md), [B3](agents/Basics/B3/README.md) | [B4](projects/Basics/B4/README.md), [B5](projects/Basics/B5/README.md), [B6](projects/Basics/B6/README.md) | Repo discovery; single-language greenfield apps |
+| **Intermediate** | [I1](agents/Intermediate/I1/README.md), [I2](agents/Intermediate/I2/README.md), [I3](agents/Intermediate/I3/README.md), [I6](agents/Intermediate/I6/README.md) | [I4](projects/Intermediate/I4/README.md), [I5](projects/Intermediate/I5/README.md) | Schema/flow analysis; small code changes; multi-service + Docker |
+| **Advanced** | [A4](agents/Advanced/A4/README.md), [A5](agents/Advanced/A5/README.md), [A6](agents/Advanced/A6/README.md) | [A1](projects/Advanced/A1/README.md), [A2](projects/Advanced/A2/README.md), [A3](projects/Advanced/A3/README.md) | Modernization, PR review, perf; git worktrees; polyglot pipelines |
+| **Infra & DevOps** | — | [D1](projects/InfraAndDevops/D1/README.md)–[D6](projects/InfraAndDevops/D6/README.md) | Terraform, Compose, CI, K8s, bootstrap, observability |
+
+---
+
+## Agents — full catalog
+
+> Detailed catalog and skill usage: [`agents/README.md`](agents/README.md)
+
+### Basics — read-only discovery
+
+| ID | Name | Slash command | Modifies repo? | Approach | What was done | Docs |
+|----|------|---------------|----------------|----------|---------------|------|
+| **B1** | Repo Structure Mapper | `/basics-repo-structure-mapper` | No | Glob + grep symbol discovery across 10 categories; Mermaid layer diagrams | Inventories classes, services, controllers, models, repos, jobs, consumers, configs, utilities with `path:line` citations | [B1/README.md](agents/Basics/B1/README.md) |
+| **B2** | Route & API Mapper | `/basics-route-api-mapper` | No | Framework-aware route parsing (React Router, Next.js, Spring, Express) + API correlation | Maps frontend routes, inbound/outbound HTTP endpoints, and route↔API confidence table | [B2/README.md](agents/Basics/B2/README.md) |
+| **B3** | Test Discovery | `/basics-test-discovery` | No* | CI/script mining → run real test commands → classify failures | Finds frameworks, test files, exact commands, and captures stdout/stderr | [B3/README.md](agents/Basics/B3/README.md) |
+
+\* B3 may run dependency install to enable tests; does not edit source.
+
+#### B1 — Repo Structure Mapper
+
+- **Approach:** Ten-category symbol inventory → layer relationship mapping → Mermaid flowchart + pie chart
+- **Output:** [`proof/repo-structure-map.md`](agents/Basics/B1/proof/repo-structure-map.md)
+- **Sample result:** 310 controllers, 111 services, 124 models on Medusa; API routes → workflows → module services → DML
+- **Agent files:** [`agent.md`](agents/Basics/B1/agent/agent.md) · [`planning.md`](agents/Basics/B1/agent/planning.md) · [`execute.md`](agents/Basics/B1/agent/execute.md) · [`verify.md`](agents/Basics/B1/agent/verify.md)
+- **Skill:** [`.cursor/skills/basics-repo-structure-mapper/SKILL.md`](../.cursor/skills/basics-repo-structure-mapper/SKILL.md)
+
+#### B2 — Route & API Mapper
+
+- **Approach:** Parse routing config + controller annotations → correlate UI pages to API calls
+- **Output:** [`proof/route-api-map.md`](agents/Basics/B2/proof/route-api-map.md)
+- **Agent files:** [`agent.md`](agents/Basics/B2/agent/agent.md) · [`planning.md`](agents/Basics/B2/agent/planning.md) · [`execute.md`](agents/Basics/B2/agent/execute.md) · [`verify.md`](agents/Basics/B2/agent/verify.md)
+- **Skill:** [`.cursor/skills/basics-route-api-mapper/SKILL.md`](../.cursor/skills/basics-route-api-mapper/SKILL.md)
+
+#### B3 — Test Discovery
+
+- **Approach:** Detect framework → find test roots → extract CI commands → execute and interpret
+- **Output:** [`proof/test-discovery-report.md`](agents/Basics/B3/proof/test-discovery-report.md)
+- **Agent files:** [`agent.md`](agents/Basics/B3/agent/agent.md) · [`planning.md`](agents/Basics/B3/agent/planning.md) · [`execute.md`](agents/Basics/B3/agent/execute.md) · [`verify.md`](agents/Basics/B3/agent/verify.md)
+- **Skill:** [`.cursor/skills/basics-test-discovery/SKILL.md`](../.cursor/skills/basics-test-discovery/SKILL.md)
+
+---
+
+### Intermediate — analysis and small changes
+
+| ID | Name | Slash command | Modifies repo? | Approach | What was done | Docs |
+|----|------|---------------|----------------|----------|---------------|------|
+| **I1** | ER Diagram | `/intermediate-repo-er-diagram` | No | ORM/migration/DDL parsing → relationship inference → Mermaid ER | Maps 139 Medusa tables with PKs, FKs, and confidence-rated relationships | [I1/README.md](agents/Intermediate/I1/README.md) |
+| **I2** | E2E Flow Tracer | `/intermediate-repo-e2e-flow-tracer` | No | Single-entry call-chain walk → side-effect inventory → sequence diagram | Traces one HTTP/event/cron path from entry to final DB/API/queue write | [I2/README.md](agents/Intermediate/I2/README.md) |
+| **I3** | Focused Module Change | `/intermediate-focused-module-change` | **Yes** | Pick unfamiliar module → TDD minimal fix → narrowest test run | Surgical diff (≤3 prod files); adds/updates one test; documents risk + rollback | [I3/README.md](agents/Intermediate/I3/README.md) |
+| **I6** | Seeded Bug Diagnosis | `/intermediate-seeded-bug-diagnosis` | **Yes** | Reproduce → root-cause with citations → minimal fix → before/after verify | On-call style debugging; works for seeded eval bugs or real symptoms | [I6/README.md](agents/Intermediate/I6/README.md) |
+
+#### I1 — ER Diagram
+
+- **Approach:** Detect MikroORM/JPA/Prisma/TypeORM/Flyway → entity list → Mermaid `erDiagram`
+- **Output:** [`proof/er-diagram-report.md`](agents/Intermediate/I1/proof/er-diagram-report.md)
+- **Agent files:** [`agent.md`](agents/Intermediate/I1/agent/agent.md) · [`planning.md`](agents/Intermediate/I1/agent/planning.md) · [`execute.md`](agents/Intermediate/I1/agent/execute.md) · [`verify.md`](agents/Intermediate/I1/agent/verify.md)
+- **Skill:** [`.cursor/skills/intermediate-repo-er-diagram/SKILL.md`](../.cursor/skills/intermediate-repo-er-diagram/SKILL.md)
+
+#### I2 — E2E Flow Tracer
+
+- **Approach:** User specifies one entry point → static call-graph walk → Mermaid sequence diagram
+- **Extra input:** Flow target (endpoint, event handler, or cron job)
+- **Output:** [`proof/e2e-flow-trace-report.md`](agents/Intermediate/I2/proof/e2e-flow-trace-report.md)
+- **Agent files:** [`agent.md`](agents/Intermediate/I2/agent/agent.md) · [`planning.md`](agents/Intermediate/I2/agent/planning.md) · [`execute.md`](agents/Intermediate/I2/agent/execute.md) · [`verify.md`](agents/Intermediate/I2/agent/verify.md)
+- **Skill:** [`.cursor/skills/intermediate-repo-e2e-flow-tracer/SKILL.md`](../.cursor/skills/intermediate-repo-e2e-flow-tracer/SKILL.md)
+
+#### I3 — Focused Module Change
+
+- **Approach:** Module recon → define acceptance criteria → write test → minimal prod diff → verify
+- **Extra input:** Change scope (user-specified or agent selects)
+- **Output:** [`proof/focused-module-change-report.md`](agents/Intermediate/I3/proof/focused-module-change-report.md)
+- **Sample:** Auth utils — reject empty verification tokens in `hashVerificationToken`
+- **Agent files:** [`agent.md`](agents/Intermediate/I3/agent/agent.md) · [`planning.md`](agents/Intermediate/I3/agent/planning.md) · [`execute.md`](agents/Intermediate/I3/agent/execute.md) · [`verify.md`](agents/Intermediate/I3/agent/verify.md)
+- **Skill:** [`.cursor/skills/intermediate-focused-module-change/SKILL.md`](../.cursor/skills/intermediate-focused-module-change/SKILL.md)
+
+#### I6 — Seeded Bug Diagnosis
+
+- **Approach:** Symptom → reproduce with exact commands → cite root cause → fix → before/after output
+- **Extra input:** Symptom / failure description
+- **Output:** [`proof/bug-diagnosis-report.md`](agents/Intermediate/I6/proof/bug-diagnosis-report.md)
+- **Agent files:** [`agent.md`](agents/Intermediate/I6/agent/agent.md) · [`planning.md`](agents/Intermediate/I6/agent/planning.md) · [`execute.md`](agents/Intermediate/I6/agent/execute.md) · [`verify.md`](agents/Intermediate/I6/agent/verify.md)
+- **Skill:** [`.cursor/skills/intermediate-seeded-bug-diagnosis/SKILL.md`](../.cursor/skills/intermediate-seeded-bug-diagnosis/SKILL.md)
+
+---
+
+### Advanced — modernization, review, performance
+
+| ID | Name | Slash command | Modifies repo? | Approach | What was done | Docs |
+|----|------|---------------|----------------|----------|---------------|------|
+| **A4** | Repo Modernizer | `/advance-repo-modernizer` | **Yes** (1 step) | Scan 10 modernization categories → score value×risk → implement #1 only | Full findings backlog + one reversible change + verification + rollback | [A4/README.md](agents/Advanced/A4/README.md) |
+| **A5** | PR Review | `/advance-pr-review` | No | Five-dimension review (correctness, security, tests, perf, maintainability) → merge verdict | Structured issues with severity, blocking flag, suggested fix, verification steps | [A5/README.md](agents/Advanced/A5/README.md) |
+| **A6** | Performance Optimizer | `/advance-perf-optimizer` | **Yes** | Baseline → profile hot path → surgical fix → re-measure delta | Before/after benchmarks on one bottleneck; tests must still pass | [A6/README.md](agents/Advanced/A6/README.md) |
+
+#### A4 — Repo Modernizer
+
+- **Approach:** Recon stack/CI/deps → scan 10 categories → rank findings → implement highest-value/lowest-risk step
+- **Categories:** Dependencies, security, CI/CD, code quality, type safety, testing, architecture, performance, docs, tooling
+- **Output:** [`proof/modernization-report.md`](agents/Advanced/A4/proof/modernization-report.md)
+- **Agent files:** [`agent.md`](agents/Advanced/A4/agent/agent.md) · [`planning.md`](agents/Advanced/A4/agent/planning.md) · [`execute.md`](agents/Advanced/A4/agent/execute.md) · [`verify.md`](agents/Advanced/A4/agent/verify.md)
+- **Skill:** [`.cursor/skills/advance-repo-modernizer/SKILL.md`](../.cursor/skills/advance-repo-modernizer/SKILL.md)
+
+#### A5 — PR Review
+
+- **Approach:** Diff scope → five-dimension analysis → issue table → APPROVE / REQUEST CHANGES / COMMENT
+- **Extra input:** PR URL, branch name, or diff scope
+- **Output:** [`proof/pr-review-report.md`](agents/Advanced/A5/proof/pr-review-report.md)
+- **Agent files:** [`agent.md`](agents/Advanced/A5/agent/agent.md) · [`planning.md`](agents/Advanced/A5/agent/planning.md) · [`execute.md`](agents/Advanced/A5/agent/execute.md) · [`verify.md`](agents/Advanced/A5/agent/verify.md)
+- **Skill:** [`.cursor/skills/advance-pr-review/SKILL.md`](../.cursor/skills/advance-pr-review/SKILL.md)
+
+#### A6 — Performance Optimizer
+
+- **Approach:** Document baseline → profile → explain → fix one hot path → re-measure with same harness
+- **Output:** [`proof/performance-optimization-report.md`](agents/Advanced/A6/proof/performance-optimization-report.md)
+- **Agent files:** [`agent.md`](agents/Advanced/A6/agent/agent.md) · [`planning.md`](agents/Advanced/A6/agent/planning.md) · [`execute.md`](agents/Advanced/A6/agent/execute.md) · [`verify.md`](agents/Advanced/A6/agent/verify.md)
+- **Skill:** [`.cursor/skills/advance-perf-optimizer/SKILL.md`](../.cursor/skills/advance-perf-optimizer/SKILL.md)
+
+---
+
+### Agent capability matrix
+
+```mermaid
+quadrantChart
+    title Agent capabilities by tier
+    x-axis Low repo impact --> High repo impact
+    y-axis Read-only analysis --> Code modification
+    quadrant-1 Surgical changes
+    quadrant-2 Deep analysis
+    quadrant-3 Discovery
+    quadrant-4 Modernization & perf
+    B1: [0.1, 0.15]
+    B2: [0.1, 0.15]
+    B3: [0.15, 0.2]
+    I1: [0.1, 0.45]
+    I2: [0.1, 0.5]
+    I3: [0.55, 0.75]
+    I6: [0.6, 0.8]
+    A4: [0.7, 0.7]
+    A5: [0.1, 0.55]
+    A6: [0.75, 0.85]
+```
+
+---
+
+## Projects — full catalog
+
+> Detailed catalog with quick-start commands: [`projects/README.md`](projects/README.md)
+
+### Project relationships
 
 ```mermaid
 flowchart LR
-    subgraph docs [Curriculum Tasks]
-        B[Basics B1–B6]
-        I[Intermediate I1–I6]
-        A[Advanced A1–A6]
-        D[Devops D1–D6]
+    B4["B4 FastAPI ledger"] <-->|"same domain"| B5["B5 Node ledger"]
+    I4["I4 Currency converter"] -->|"dockerized as"| I5["I5 Docker image"]
+    A1["A1 3-lane worktree plan"] -->|"simplified to"| A2["A2 2-lane merge"]
+    A3["A3 Fraud pipeline<br/>(standalone)"]
+    D3["D3 CI pipeline"] -.->|"similar notify app"| D4["D4 Kubernetes"]
+    D6["D6 Observability<br/>(order API + metrics)"]
+```
+
+| From | To | Relationship |
+|------|----|--------------|
+| B4 | B5 | Same Transaction Ledger API, different language |
+| I4 | I5 | I5 Docker image packages I4 FastAPI service |
+| A1 | A2 | A1 plans 3-lane work; A2 executes simplified 2-lane merge |
+| D3 | D4 | Similar notify-service pattern; D3 = CI, D4 = K8s deploy |
+
+---
+
+### Basics — greenfield single-language apps
+
+| ID | Name | Stack | Approach | What was done | Tests | Docs |
+|----|------|-------|----------|---------------|-------|------|
+| **B4** | Transaction Ledger API | FastAPI, Pydantic, pytest | In-memory REST API with validation + business rules | `POST/GET /transactions`, `GET /balance`; rejects overdrafts | 17 pytest | [B4/README.md](projects/Basics/B4/README.md) |
+| **B5** | Transaction Ledger API | Express, Zod, Vitest | Same domain as B4 in Node.js for cross-language comparison | Identical API shape and business rules to B4 | 16 Vitest | [B5/README.md](projects/Basics/B5/README.md) |
+| **B6** | Log Counter CLI | Rust, Cargo | File I/O CLI with severity precedence rules | Counts INFO/WARN/ERROR lines; ERROR > WARN > INFO | 11 Cargo | [B6/README.md](projects/Basics/B6/README.md) |
+
+---
+
+### Intermediate — multi-component and container work
+
+| ID | Name | Stack | Approach | What was done | Tests | Docs |
+|----|------|-------|----------|---------------|-------|------|
+| **I4** | Currency Converter | FastAPI + Node CLI | Two-terminal multi-service with HTTP contract | Service: `GET /health`, `GET /rates`, `POST /convert`; CLI: `convert <amount> <from> <to>` | 16 pytest + 9 Vitest | [I4/README.md](projects/Intermediate/I4/README.md) |
+| **I5** | Currency Converter Docker | Docker, Python 3.11-slim | Containerize I4 service with health check | Image `currency-converter-api:i5`; build from `Intermediate/` parent | Smoke tests | [I5/README.md](projects/Intermediate/I5/README.md) |
+
+---
+
+### Advanced — parallel git worktrees and polyglot pipelines
+
+| ID | Name | Stack | Approach | What was done | Proof | Docs |
+|----|------|-------|----------|---------------|-------|------|
+| **A1** | Multi-Worktree Parallel Plan | git worktrees (docs) | Decompose enrollment API into 3 parallel agent lanes | Contract freeze + parallel work plan + 45-min orchestration runbook | Plan docs | [A1/README.md](projects/Advanced/A1/README.md) |
+| **A2** | Two-Lane Worktree Execution | FastAPI, SQLAlchemy, SQLite | Execute 2-lane split (persistence + HTTP) → clean merge | Merged app in `sandbox/enrollment-api/` with 7 pytest + curl logs | E2E proof | [A2/README.md](projects/Advanced/A2/README.md) |
+| **A3** | Fraud Scoring Pipeline | FastAPI + Node worker + Rust CLI | Ingest → poll queue → score via Rust CLI → store results | `POST /transactions` → pending → worker → `POST /transactions/{id}/score` | 4 Rust + 11 pytest + 10 Jest | [A3/README.md](projects/Advanced/A3/README.md) |
+
+**A3 data contract:** [`projects/Advanced/A3/contracts/README.md`](projects/Advanced/A3/contracts/README.md)
+
+#### A3 — Fraud pipeline flow
+
+```mermaid
+sequenceDiagram
+    participant API as FastAPI (ingestion)
+    participant DB as SQLite queue
+    participant W as Node.js worker
+    participant R as Rust scoring CLI
+
+    API->>DB: POST /transactions (status=pending)
+    loop Poll every N seconds
+        W->>DB: Fetch pending transactions
+        W->>R: Score transaction JSON
+        R-->>W: risk_score, risk_level, reasons
+        W->>API: POST /transactions/{id}/score
+        API->>DB: Update status=scored
     end
-
-    subgraph repo [This Repository]
-        AD[Agent definitions *.md]
-        SK[skills/*.md]
-        RAB[rabbit LMS]
-        MINI[Mini codebases B4–B6, I4–I5, A3]
-        FE[frontend Agent Library]
-    end
-
-    subgraph cursor [Cursor IDE]
-        USR[Developer]
-        AGT[AI Agent]
-    end
-
-    docs --> AD
-    AD --> SK
-    SK --> AGT
-    USR --> AGT
-    AGT --> RAB
-    AGT --> MINI
-    AD --> FE
-    SK --> FE
-```
-
-1. **Curriculum tasks** (Basics, Intermediate, Advanced, Devops) define what each agent should accomplish and acceptance criteria.
-2. **Agent definitions** (`Basics/B1/repo-structure-mapper-agent.md`, `Devops/D1/terraform-plan-agent.md`, etc.) are the executable prompts.
-3. **Cursor Skills** (`skills/`) wrap published prompts so you can invoke them with `/skill-name` or by having Cursor auto-load them (Basics, Intermediate, and Advanced A1/A2/A4/A5/A6).
-4. **`rabbit/`** (and smaller sample repos) are real codebases agents analyze or patch.
-5. **`frontend/`** publishes all twelve published agents so anyone can browse definitions and demo outputs without opening the repo.
-6. **`Devops/`** agents produce infrastructure artifacts (Terraform, compose, CI YAML, K8s manifests) plus detailed `*-report.md` files — see [`Devops/README.md`](Devops/README.md).
-
----
-
-## Agent catalog
-
-Twelve agents are published in the [Agent Library](https://task-phi-seven-94.vercel.app/). Each maps 1:1 to a task folder and a Cursor Skill.
-
-### Basics — read-only analysis
-
-| ID | Agent | Skill folder | Target repo (sample run) | What it does |
-|----|-------|--------------|--------------------------|--------------|
-| **B1** | Repo Structure Mapper | `skills/basics-repo-structure-mapper/` | `rabbit/` | Inventories classes, services, controllers, models, configs, jobs, etc. Writes `repo-structure-map.md`. |
-| **B2** | Route & API Mapper | `skills/basics-repo-route-api-mapper/` | `rabbit/` | Maps every frontend route and backend API endpoint. Writes `route-api-map.md`. |
-| **B3** | Test Discovery | `skills/basics-repo-test-discovery/` | `rabbit/` | Detects test frameworks, runs tests, captures output. Writes `test-discovery-report.md`. |
-
-### Intermediate — analysis + small changes
-
-| ID | Agent | Skill folder | Target repo (sample run) | What it does |
-|----|-------|--------------|--------------------------|--------------|
-| **I1** | ER Diagram | `skills/intermediate-repo-er-diagram/` | `rabbit/` | Discovers MongoDB/Mongoose entities, keys, relationships. Outputs Mermaid ER diagram. |
-| **I2** | E2E Flow Tracer | `skills/intermediate-repo-e2e-flow-tracer/` | `rabbit/` | Traces one HTTP/event/cron flow end-to-end with sequence diagram. |
-| **I3** | Minimal Change | `skills/intermediate-repo-minimal-change/` | `rabbit/` | Picks an unfamiliar module, makes one surgical fix + test, writes change report. |
-| **I6** | Bug Diagnosis | `skills/intermediate-repo-seeded-bug-diagnosis/` | `rabbit/` | Reproduces a seeded bug, finds root cause, applies minimal fix, verifies. |
-
-### Advanced — parallel work, performance, modernization, review
-
-| ID | Agent | Skill folder | Target (sample run) | What it does |
-|----|-------|--------------|---------------------|--------------|
-| **A1** | Parallel Worktree Plan | `skills/advance-parallel-worktree-plan/` | `Advanced/A3/` (fraud pipeline) | Decomposes a feature into parallel lanes — task split, branch/worktree names, agent prompts, merge order, conflict plan, verification gates. Writes `parallel-worktree-plan.md`. |
-| **A2** | Parallel Worktree Execution | `skills/advance-parallel-worktree-execution/` | `Advanced/A3/` + `A3-worktrees/` | Creates two+ git worktrees, implements independent lane changes, merges and resolves conflicts, runs post-merge tests. Writes `parallel-worktree-execution-report.md`. |
-| **A4** | Repo Modernization | `skills/advance-repo-modernization/` | `frontend/` | Audits deps/tooling/CI, prioritizes upgrades, implements highest-value lowest-risk step. |
-| **A5** | PR Review | `skills/advance-pr-review/` | External PR (e.g. GitHub) | Structured review: correctness, security, tests, performance, maintainability. |
-| **A6** | Performance Optimization | `skills/advance-performance-optimization/` | `rabbit/` | Profiles a real bottleneck, applies a minimal fix, re-measures with before/after numbers, verifies behavior unchanged. Writes `performance-optimization-report.md`. |
-
-### Supporting tasks (not in the web UI yet)
-
-These folders are part of the Google Docs curriculum but are **sample codebases** or **orchestration docs** rather than standalone published agents:
-
-| ID | Folder | Contents |
-|----|--------|----------|
-| **B4** | `Basics/B4/` | FastAPI Transaction Ledger — deposits, withdrawals, balance |
-| **B5** | `Basics/B5/` | Node.js version of the same ledger API |
-| **B6** | `Basics/B6/` | Rust CLI that counts INFO/WARN/ERROR lines in log files |
-| **I4** | `Intermediate/I4/` | Currency converter — FastAPI service + Node CLI client |
-| **I5** | `Intermediate/I5/` | Dockerized currency converter (multi-stage build + compose) |
-| **A3** | `Advanced/A3/` | Mini Fraud Score System — FastAPI ingestion, Node worker, Rust scorer (target for A1/A2 demos) |
-
-### DevOps — infrastructure, CI/CD, and observability (not in web UI yet)
-
-These six agents follow the same `*-agent.md` + `*-report.md` pattern as the published catalog. They are **not** in the [Agent Library](https://task-phi-seven-94.vercel.app/) or `skills/` yet. Full usage guide: [`Devops/README.md`](Devops/README.md).
-
-| ID | Agent | Agent definition | Report (on run) | Time | What it does |
-|----|-------|------------------|-----------------|------|--------------|
-| **D1** | Terraform Plan | `Devops/D1/terraform-plan-agent.md` | `terraform-plan-report.md` | 60 min | Terraform for S3 + Lambda + API GW (or GCS + Cloud Run); `terraform validate` + clean plan against local/test backend. |
-| **D2** | Docker Compose E2E | `Devops/D2/docker-compose-e2e-agent.md` | `docker-compose-e2e-report.md` | 90 min | Multi-service stack (API + DB + worker), seed data, one-command E2E tests, inter-service logs, teardown + clean re-up. |
-| **D3** | CI Pipeline | `Devops/D3/ci-pipeline-agent.md` | `ci-pipeline-report.md` | 45 min | GitHub Actions or GitLab CI — lint, test, build/tag image; cache/matrix; passing run + failure-mode demo. |
-| **D4** | Kubernetes Manifests | `Devops/D4/kubernetes-manifests-agent.md` | `kubernetes-manifests-report.md` | 60 min | Deployment, Service, ConfigMap, optional Ingress; dry-run/kubeval; deploy on kind/minikube; curl proof. |
-| **D5** | Dev Environment Bootstrap | `Devops/D5/dev-environment-bootstrap-agent.md` | `dev-environment-bootstrap-report.md` | 45 min | Single-command bootstrap from fresh clone (devcontainer, Nix, or Makefile + mise); passing tests; implicit deps documented. |
-| **D6** | Observability Bolt-on | `Devops/D6/observability-bolt-on-agent.md` | `observability-bolt-on-report.md` | 60 min | Structured logging + `/metrics`; Prometheus + Grafana compose; load script; live dashboard panel. |
-
----
-
-## `rabbit/` — the sample open-source repo
-
-**rabbit** is a [Learning Management System (LMS)](rabbit/README.md) cloned/adapted from an open-source project. It is the **default sandbox** where most agents are tested.
-
-| Layer | Stack |
-|-------|-------|
-| Frontend | React 18, Vite, Redux Toolkit, Tailwind CSS, shadcn/ui |
-| Backend | Node.js (ESM), Express 4, Mongoose 8, JWT auth |
-| Database | MongoDB |
-| Features | Course CRUD, role-based access (Admin/Instructor/Student), Stripe payments, Cloudinary uploads |
-
-**Why rabbit?** It is large enough to be realistic (controllers, models, middleware, frontend routes, tests) but small enough for an agent to scan in one session. Sample reports in B1–B3, I1–I3, and I6 all target `rabbit/`.
-
-### Quick start (rabbit)
-
-```bash
-cd rabbit
-npm install
-
-# Configure MongoDB (see rabbit/README.md)
-# Create .env with MONGO_URI, JWT_SECRET, etc.
-
-npm run dev
-# Frontend: http://localhost:5173 (Vite)
-# Backend:  http://localhost:3000 (Express)
 ```
 
 ---
 
-## `frontend/` — Agent Library (Vercel)
+### Infra & DevOps — infrastructure and platform engineering
 
-The **Agent Library** is a [Next.js 16](frontend/) app that renders every published agent definition and its sample output as readable markdown.
+| ID | Name | Stack | Approach | What was done | Docs |
+|----|------|-------|----------|---------------|------|
+| **D1** | Terraform AWS Stack | Terraform, LocalStack, Lambda | IaC with variables + local backend | S3 (versioned) + Lambda + IAM + API Gateway REST API | [D1/README.md](projects/InfraAndDevops/D1/README.md) |
+| **D2** | Multi-Service Compose | Docker Compose, Postgres | Three-service job processing stack | API creates jobs; worker processes (`uppercase`, `reverse`) | [D2/README.md](projects/InfraAndDevops/D2/README.md) |
+| **D3** | CI Pipeline | GitHub Actions, Ruff | Lint + test matrix (Python 3.9/3.11) + Docker build | Notify service CI; intentional failure demo in `demo/` | [D3/README.md](projects/InfraAndDevops/D3/README.md) |
+| **D4** | Kubernetes Manifests | kind/minikube, kubectl | Deploy notify service to local cluster | Deployment (2 replicas) + ConfigMap + NodePort + optional Ingress | [D4/README.md](projects/InfraAndDevops/D4/README.md) |
+| **D5** | One-Command Bootstrap | Makefile, mise, Dev Container | Eliminate implicit setup | `make bootstrap` → Python pin, venv, deps, tests | [D5/README.md](projects/InfraAndDevops/D5/README.md) |
+| **D6** | Observability Bolt-on | Prometheus, Grafana | Structured JSON logging + `/metrics` middleware | Order API + Prometheus (:9090) + Grafana dashboard (:3000) | [D6/README.md](projects/InfraAndDevops/D6/README.md) |
 
-| | |
-|---|---|
-| **Live URL** | https://task-phi-seven-94.vercel.app/ |
-| **Stack** | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, react-markdown |
-| **Node version** | 24+ (see `frontend/.nvmrc`) |
+#### D6 — Observability stack
 
-### Features
-
-- Filter agents by category: **Basics**, **Intermediate**, **Advanced**
-- **Preview** rendered markdown or view **Raw** source
-- **Copy .md** or **Download** agent definitions
-- Toggle between **Agent Definition** and **Demo Output** tabs
-
-### Local development
-
-```bash
-cd frontend
-nvm use          # Node 24+
-npm install
-npm run dev      # http://localhost:3000
+```mermaid
+flowchart LR
+    LOAD["scripts/load.sh<br/>generate traffic"] --> API["FastAPI order service<br/>JSON logs + /metrics"]
+    API --> PROM["Prometheus :9090<br/>scrape /metrics"]
+    PROM --> GRAF["Grafana :3000<br/>provisioned dashboard"]
+    VERIFY["scripts/verify.sh"] --> PROM
+    VERIFY --> GRAF
 ```
-
-### How it loads agents
-
-Agent metadata lives in `frontend/src/lib/agents.ts`. At build/runtime, `frontend/src/lib/load-agents.ts` reads markdown files from the parent `task/` directory (one level up from `frontend/`). When deploying to Vercel, ensure the repo root includes both `frontend/` and the task folders so paths resolve correctly.
-
-To add a new agent to the UI:
-
-1. Create the agent definition + sample report in the appropriate `Basics/`, `Intermediate/`, or `Advanced/` folder.
-2. Add a matching entry to `frontend/src/lib/agents.ts`.
-3. Add a Cursor Skill under `skills/` (optional but recommended).
 
 ---
 
-## `skills/` — Cursor Skills
+### Tech stack summary
 
-Each subfolder under `skills/` contains a **`SKILL.md`** file — Cursor's format for reusable agent instructions. Skills mirror the agent definitions in the task folders but are optimized for invocation inside the IDE.
-
-| Skill path | Invokes | Read-only? |
-|------------|---------|------------|
-| `skills/basics-repo-structure-mapper/SKILL.md` | B1 Repo Structure Mapper | Yes — only writes report |
-| `skills/basics-repo-route-api-mapper/SKILL.md` | B2 Route & API Mapper | Yes |
-| `skills/basics-repo-test-discovery/SKILL.md` | B3 Test Discovery | Yes (runs tests, no source edits) |
-| `skills/intermediate-repo-er-diagram/SKILL.md` | I1 ER Diagram | Yes |
-| `skills/intermediate-repo-e2e-flow-tracer/SKILL.md` | I2 E2E Flow Tracer | Yes |
-| `skills/intermediate-repo-minimal-change/SKILL.md` | I3 Minimal Change | No — may edit source + tests |
-| `skills/intermediate-repo-seeded-bug-diagnosis/SKILL.md` | I6 Bug Diagnosis | No — may edit source + tests |
-| `skills/advance-parallel-worktree-plan/SKILL.md` | A1 Parallel Worktree Plan | Yes — writes plan only |
-| `skills/advance-parallel-worktree-execution/SKILL.md` | A2 Parallel Worktree Execution | No — creates worktrees, edits lane-owned code |
-| `skills/advance-repo-modernization/SKILL.md` | A4 Repo Modernization | No — implements one modernization step |
-| `skills/advance-pr-review/SKILL.md` | A5 PR Review | Yes by default (fixes only if asked) |
-| `skills/advance-performance-optimization/SKILL.md` | A6 Performance Optimization | No — minimal targeted performance fix |
-
-### Installing skills in Cursor
-
-Copy or symlink the skill folders into your Cursor skills directory, for example:
-
-```bash
-# User-level skills (available in all projects)
-cp -R skills/basics-repo-structure-mapper ~/.cursor/skills/
-
-# Or link the entire skills tree
-ln -s "$(pwd)/skills/basics-repo-structure-mapper" ~/.cursor/skills/basics-repo-structure-mapper
-```
-
-After installation, Cursor can auto-suggest the skill when your prompt matches its description, or you can reference it explicitly in chat.
-
-### Typical inputs
-
-Most agents accept:
-
-| Input | Required | Example |
-|-------|----------|---------|
-| `repoPath` | Yes | `./rabbit` or absolute path |
-| `outputPath` | No | Defaults to a report inside the task folder |
-| `scope` | No | Limit to `backend/` or a package in a monorepo |
-| `flowTarget` | I2 only | `POST /api/v1/user/login` |
-| `symptom` | I6 optional | `Invalid JWT causes middleware to hang` |
-| `featureTask` | A1 | Build A3 fraud pipeline in parallel |
-| `planPath` | A2 | `Advanced/A1/parallel-worktree-plan.md` |
-| `hotPath` | A6 | `GET /api/v1/course/search` or handler name |
-| PR URL | A5 | `https://github.com/org/repo/pull/123` |
-| `cloudProvider` | D1 | `aws` or `gcp` |
-| `outputDir` | D1, D2, D4, D6 | Where to write infra/stack files |
-| `ciPlatform` | D3 | `github-actions` or `gitlab-ci` |
-| `clusterType` | D4 | `kind` or `minikube` |
-| `bootstrapMethod` | D5 | `devcontainer`, `nix`, `makefile-mise`, or `auto` |
+| Project | Languages | Frameworks / Tools | Database | Container |
+|---------|-----------|-------------------|----------|-----------|
+| B4 | Python | FastAPI, pytest | In-memory | — |
+| B5 | JavaScript | Express, Vitest, Zod | In-memory | — |
+| B6 | Rust | Cargo | File I/O | — |
+| I4 | Python + JS | FastAPI + Node CLI | — | — |
+| I5 | Python | FastAPI (in Docker) | — | Docker |
+| A1 | — (docs) | git worktrees | — | — |
+| A2 | Python | FastAPI, SQLAlchemy, SQLite | SQLite | — |
+| A3 | Python + JS + Rust | FastAPI, Node worker, Rust CLI | SQLite | — |
+| D1 | Python + HCL | Terraform, Lambda, LocalStack | S3 | Docker (LocalStack) |
+| D2 | Python + SQL | FastAPI, Docker Compose | PostgreSQL | Docker Compose |
+| D3 | Python | FastAPI, GitHub Actions, Ruff | — | Docker |
+| D4 | Python + YAML | FastAPI, kubectl, kind | — | Docker + K8s |
+| D5 | Python + Make | FastAPI, mise, Dev Container | — | Dev Container |
+| D6 | Python + YAML | FastAPI, Prometheus, Grafana | — | Docker Compose |
 
 ---
 
-## Curriculum task folders explained
+## Medusa — analysis target
 
-The four top-level folders **Basics**, **Intermediate**, **Advanced**, and **Devops** form the structured agent curriculum. Difficulty increases along these axes:
+Vendored **Medusa v2** TypeScript commerce monorepo. Default target for agent exercises; any repo path works.
+
+| Property | Value |
+|----------|-------|
+| Stack | TypeScript, Yarn 3 workspaces, Turbo, Jest, MikroORM |
+| Scale | 463 HTTP routes, 139 DB tables, 1000+ test files |
+| Modules | cart, order, payment, product, auth, fulfillment, pricing, promotion, … |
+| Docs | [medusa/README.md](medusa/README.md) |
+
+### Why Medusa?
+
+```mermaid
+flowchart TD
+    M["Medusa v2 monorepo"]
+    M --> B1u["B1: 10-category symbol map"]
+    M --> B2u["B2: 463 route inventory"]
+    M --> B3u["B3: Jest + Turbo test matrix"]
+    M --> I1u["I1: 139-table ER diagram"]
+    M --> I2u["I2: Cart complete flow trace"]
+    M --> I3u["I3: Auth module surgical fix"]
+    M --> I6u["I6: Seeded bug in auth utils"]
+    M --> A4u["A4: Dependency modernization scan"]
+    M --> A6u["A6: Hot-path optimization"]
+```
+
+### Local run prerequisites
+
+- Node ≥ 20, Yarn 3 (`corepack enable`)
+- PostgreSQL and Redis for full integration tests
+
+---
+
+## Quick start
+
+### Run an agent
 
 ```text
-Basics        →  observe & document (no code changes)
-Intermediate  →  analyze deeper + make minimal edits / fix bugs
-Advanced      →  modernize, review PRs, orchestrate parallel work, multi-service builds
-Devops        →  infrastructure, CI/CD, Kubernetes, dev bootstrap, observability
+# 1. Open Cursor → Agent mode (not Ask)
+# 2. Type slash command + target repo:
+
+/basics-repo-structure-mapper on Task/medusa — markdown output
+
+# 3. Answer planning MCQs (repo path, output format)
+# 4. Read report:
+
+Task/agents/Basics/B1/proof/repo-structure-map.md
 ```
 
-### Basics (`Basics/`)
+### Run a project
 
-**Goal:** Teach agents to **explore unfamiliar repos safely** without modifying code.
+```bash
+# FastAPI ledger (B4)
+cd Task/projects/Basics/B4
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt && pytest -v
 
-- **B1–B3** — Agent prompts + completed sample reports (all ran against `rabbit/`)
-- **B4–B6** — Small standalone projects in Python, Node, and Rust for agents to map routes, structure, or tests when you want a lighter target than rabbit
+# Fraud pipeline integration (A3)
+cd Task/projects/Advanced/A3
+./scripts/run-integration.sh
 
-### Intermediate (`Intermediate/`)
+# Observability stack (D6)
+cd Task/projects/InfraAndDevops/D6
+./scripts/up.sh && ./scripts/verify.sh
+```
 
-**Goal:** Teach agents to **reason about data, flows, and production-like fixes**.
+### Website output (any agent)
 
-- **I1–I3, I6** — Agent prompts + sample reports (mostly `rabbit/`)
-- **I4–I5** — Progressive currency-converter exercise: bare FastAPI + CLI → Dockerized deployment
-
-### Advanced (`Advanced/`)
-
-**Goal:** Teach agents **multi-agent coordination, quality gates, and real-world engineering**.
-
-- **A1** — Parallel worktree **planning** agent + sample plan for the A3 fraud system
-- **A2** — Parallel worktree **execution** agent + demo report (lanes S + R merged)
-- **A3** — Three-language micro-pipeline (contract-first JSON schemas, FastAPI, Node worker, Rust scorer)
-- **A4–A5** — Modernization and PR review agents with sample reports
-- **A6** — Performance optimization agent + sample report (`rabbit` course search, MongoDB text index)
-
-### Devops (`Devops/`)
-
-**Goal:** Teach agents **production engineering** — declarative infra, container orchestration, CI gates, and observability.
-
-- **D1** — Terraform plan for a small cloud service (validate + plan only)
-- **D2** — Docker Compose multi-service stack with E2E tests against running containers
-- **D3** — CI workflow (lint, test, build image) with cache, matrix, and failure-mode demo
-- **D4** — Kubernetes manifests validated and deployed on kind/minikube with curl proof
-- **D5** — Reproducible dev bootstrap from a fresh clone (devcontainer, Nix, or Makefile + mise)
-- **D6** — Structured logging, Prometheus metrics, Grafana dashboard wired to real traffic
-
-See [`Devops/README.md`](Devops/README.md) for agent file paths, typical inputs, and report structure.
+When you select **website** format, the agent copies [`agents/frontend/`](agents/frontend/README.md) into `{agent}/agent/*-site/` and serves an interactive dashboard at **http://localhost:3000**.
 
 ---
 
-## Running an agent manually
+## Navigation index
 
-You do not need the web UI or Cursor Skills to run an agent. Any LLM with repo access can follow the markdown spec:
+### Top-level READMEs
 
-```bash
-# Example: run B1 manually in Cursor chat
-# 1. Open Basics/B1/repo-structure-mapper-agent.md
-# 2. Paste into chat with:
-#    repoPath: ./rabbit
-#    outputPath: ./Basics/B1/repo-structure-map.md
+| Document | Description |
+|----------|-------------|
+| [Task/README.md](README.md) | This file — overview, diagrams, full index |
+| [agents/README.md](agents/README.md) | Agent library + Cursor skill usage guide |
+| [projects/README.md](projects/README.md) | Project library + quick-start commands |
+| [medusa/README.md](medusa/README.md) | Vendored Medusa upstream README |
+
+### Agent READMEs
+
+| Tier | Links |
+|------|-------|
+| Basics | [B1](agents/Basics/B1/README.md) · [B2](agents/Basics/B2/README.md) · [B3](agents/Basics/B3/README.md) |
+| Intermediate | [I1](agents/Intermediate/I1/README.md) · [I2](agents/Intermediate/I2/README.md) · [I3](agents/Intermediate/I3/README.md) · [I6](agents/Intermediate/I6/README.md) |
+| Advanced | [A4](agents/Advanced/A4/README.md) · [A5](agents/Advanced/A5/README.md) · [A6](agents/Advanced/A6/README.md) |
+
+### Project READMEs
+
+| Tier | Links |
+|------|-------|
+| Basics | [B4](projects/Basics/B4/README.md) · [B5](projects/Basics/B5/README.md) · [B6](projects/Basics/B6/README.md) |
+| Intermediate | [I4](projects/Intermediate/I4/README.md) · [I5](projects/Intermediate/I5/README.md) |
+| Advanced | [A1](projects/Advanced/A1/README.md) · [A2](projects/Advanced/A2/README.md) · [A3](projects/Advanced/A3/README.md) · [A3/contracts](projects/Advanced/A3/contracts/README.md) |
+| Infra & DevOps | [D1](projects/InfraAndDevops/D1/README.md) · [D2](projects/InfraAndDevops/D2/README.md) · [D3](projects/InfraAndDevops/D3/README.md) · [D4](projects/InfraAndDevops/D4/README.md) · [D5](projects/InfraAndDevops/D5/README.md) · [D6](projects/InfraAndDevops/D6/README.md) |
+
+### Cursor skills (slash commands)
+
+| Skill file | Slash command |
+|------------|---------------|
+| [basics-repo-structure-mapper](../.cursor/skills/basics-repo-structure-mapper/SKILL.md) | `/basics-repo-structure-mapper` |
+| [basics-route-api-mapper](../.cursor/skills/basics-route-api-mapper/SKILL.md) | `/basics-route-api-mapper` |
+| [basics-test-discovery](../.cursor/skills/basics-test-discovery/SKILL.md) | `/basics-test-discovery` |
+| [intermediate-repo-er-diagram](../.cursor/skills/intermediate-repo-er-diagram/SKILL.md) | `/intermediate-repo-er-diagram` |
+| [intermediate-repo-e2e-flow-tracer](../.cursor/skills/intermediate-repo-e2e-flow-tracer/SKILL.md) | `/intermediate-repo-e2e-flow-tracer` |
+| [intermediate-focused-module-change](../.cursor/skills/intermediate-focused-module-change/SKILL.md) | `/intermediate-focused-module-change` |
+| [intermediate-seeded-bug-diagnosis](../.cursor/skills/intermediate-seeded-bug-diagnosis/SKILL.md) | `/intermediate-seeded-bug-diagnosis` |
+| [advance-repo-modernizer](../.cursor/skills/advance-repo-modernizer/SKILL.md) | `/advance-repo-modernizer` |
+| [advance-pr-review](../.cursor/skills/advance-pr-review/SKILL.md) | `/advance-pr-review` |
+| [advance-perf-optimizer](../.cursor/skills/advance-perf-optimizer/SKILL.md) | `/advance-perf-optimizer` |
+
+### Example invocations
+
+```text
+/basics-repo-structure-mapper on Task/medusa — markdown output
+/basics-route-api-mapper on my-app
+/basics-test-discovery on Task/medusa
+/intermediate-repo-er-diagram on Task/medusa
+/intermediate-repo-e2e-flow-tracer on Task/medusa
+  Trace POST /store/carts/{id}/complete
+/intermediate-focused-module-change on Task/medusa
+/intermediate-seeded-bug-diagnosis on Task/medusa
+  Symptom: verification token hash accepts empty string
+/advance-repo-modernizer on Task/medusa
+/advance-pr-review
+  Review branch feature/auth-fix vs main in Task/medusa
+/advance-perf-optimizer on Task/medusa
 ```
-
-Compare your output to the included sample report in the same folder (published agents) or the report template inside the agent definition (Devops tasks).
-
-```bash
-# Example: run D2 manually in Cursor chat
-# 1. Open Devops/D2/docker-compose-e2e-agent.md
-# 2. Paste into chat with:
-#    outputDir: ./Devops/D2/stack/
-#    outputPath: ./Devops/D2/docker-compose-e2e-report.md
-```
-
----
-
-## Sample mini codebases (quick reference)
-
-### B4 / B5 — Transaction Ledger
-
-Identical REST API in two stacks — useful for comparing agent output across languages.
-
-```bash
-# FastAPI (B4)
-cd Basics/B4 && python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt && uvicorn app.main:app --reload
-
-# Node.js (B5)
-cd Basics/B5 && npm install && npm start
-```
-
-Endpoints: `POST /transactions`, `GET /transactions`, `GET /balance`
-
-### B6 — Rust Log Counter
-
-```bash
-cd Basics/B6 && cargo run -- examples/sample.log
-```
-
-### I4 / I5 — Currency Converter
-
-```bash
-# I4 — local FastAPI + Node CLI
-cd Intermediate/I4/service && pip install -r requirements.txt && uvicorn app.main:app --reload
-cd Intermediate/I4/client && npm install && node src/cli.js 100 USD EUR
-
-# I5 — Docker
-cd Intermediate/I5 && docker compose up --build
-```
-
-### A3 — Mini Fraud Score System
-
-```bash
-cd Advanced/A3/service && pip install -r requirements.txt && uvicorn app.main:app --reload
-cd Advanced/A3/scorer && cargo build --release
-cd Advanced/A3/worker && npm install && npm start
-```
-
-See [`Advanced/A3/README.md`](Advanced/A3/README.md) for the full contract and pipeline diagram.
-
----
-
-## Contributing / extending
-
-1. **New agent** — Add `*-agent.md` + sample report under the right tier folder (`Basics/`, `Intermediate/`, `Advanced/`, or `Devops/`).
-2. **Cursor Skill** — Duplicate a `skills/*/SKILL.md` template and update the frontmatter `name` and `description` (optional for Devops tasks).
-3. **Web UI** — Register in `frontend/src/lib/agents.ts` and add `outputRelativePath` in `load-agents.ts`.
-4. **Test target** — Use `rabbit/` for full-stack tasks or add a mini repo under Basics/Intermediate/Advanced.
-
-Keep agent definitions **read-only** unless the task explicitly requires code changes (I3, I6, A2, A4, A6, D1–D6). Always include metadata in reports: agent name, start/end time, duration, repo path, and verification evidence.
-
----
-
-## Links
-
-| Resource | URL |
-|----------|-----|
-| Agent Library (live) | https://task-phi-seven-94.vercel.app/ |
-| rabbit upstream inspiration | https://github.com/abhishekprajapatt/rabbit |
-
----
-
-**Made by Divyanshu Patel** · 12 published agents (web UI) · 6 DevOps agents · 24 curriculum tasks

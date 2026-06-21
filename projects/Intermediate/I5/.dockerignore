@@ -1,0 +1,13 @@
+# Build context: Task/projects/Intermediate (parent of I4 and I5)
+
+I4/client/
+I4/proof/
+I5/proof/
+
+**/.venv/
+**/__pycache__/
+**/.pytest_cache/
+**/node_modules/
+**/target/
+**/.git/
+**/*.png

@@ -1,0 +1,4 @@
+Captured: 2026-06-21T18:01:38Z
+SKIP apply/smoke — Docker not available.
+Run with Docker to generate proof/terraform-apply-smoke.txt:
+  cd D1 && ./scripts/capture-proof.sh

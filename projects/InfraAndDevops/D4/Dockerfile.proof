@@ -1,0 +1,12 @@
+# Offline-proof image (DEPRECATED — do not use for live proof).
+# POST /notify returns 501 with busybox httpd. Use production Dockerfile or host-bridge mode.
+# See scripts/up.sh and README.md.
+FROM rancher/mirrored-library-busybox:1.37.0
+
+RUN mkdir -p /www && \
+    printf '%s\n' '{"status":"ok","service":"d4-notify","log_level":"info"}' > /www/health && \
+    printf '%s\n' '{"version":"1.0.0","service":"d4-notify"}' > /www/version
+
+EXPOSE 8000
+
+CMD ["httpd", "-f", "-p", "8000", "-h", "/www"]

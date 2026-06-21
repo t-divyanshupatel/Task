@@ -1,0 +1,137 @@
+==> Build Rust scorer
+    Finished `release` profile [optimized] target(s) in 0.06s
+==> Install Python deps
+WARNING: You are using pip version 21.2.4; however, version 26.0.1 is available.
+You should consider upgrading via the '/Users/divyanshupatel/Desktop/mf/Task/projects/Advanced/A3/api/.venv/bin/python3 -m pip install --upgrade pip' command.
+==> Install Node deps
+==> Start FastAPI on port 63867 (isolated DB)
+INFO:     Started server process [22938]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:63867 (Press CTRL+C to quit)
+INFO:     127.0.0.1:63885 - "GET /health HTTP/1.1" 200 OK
+==> Submit test transaction
+INFO:     127.0.0.1:63886 - "POST /transactions HTTP/1.1" 201 Created
+{
+    "transaction_id": "2322a5c4-ff81-4e50-b902-0fd3f149df31",
+    "user_id": "demo-user",
+    "amount": 15000.0,
+    "currency": "USD",
+    "merchant_category": "crypto",
+    "country_code": "NG",
+    "device_id": "demo-device",
+    "timestamp": "2026-06-21T15:00:00Z",
+    "status": "pending",
+    "risk_score": null,
+    "risk_level": null,
+    "reasons": null,
+    "scored_at": null,
+    "created_at": "2026-06-21T18:31:18.327220Z"
+}
+==> Run worker once
+[worker] API=http://127.0.0.1:63867 scorer=/Users/divyanshupatel/Desktop/mf/Task/projects/Advanced/A3/scorer/target/release/fraud-scorer
+INFO:     127.0.0.1:63887 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63888 - "GET /transactions/pending?limit=10 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63887 - "POST /transactions/2322a5c4-ff81-4e50-b902-0fd3f149df31/score HTTP/1.1" 200 OK
+[worker] scored 2322a5c4-ff81-4e50-b902-0fd3f149df31 -> high (90)
+[worker] processed 1 transaction(s)
+==> Verify scored transaction
+INFO:     127.0.0.1:63891 - "GET /transactions/2322a5c4-ff81-4e50-b902-0fd3f149df31 HTTP/1.1" 200 OK
+{
+  "transaction_id": "2322a5c4-ff81-4e50-b902-0fd3f149df31",
+  "status": "scored",
+  "risk_score": 90.0,
+  "risk_level": "high",
+  "reasons": [
+    "high_amount",
+    "high_risk_category",
+    "high_risk_country"
+  ]
+}
+INFO:     127.0.0.1:63892 - "GET /transactions/pending HTTP/1.1" 200 OK
+pending queue empty — worker processed transaction
+==> Run unit tests
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (target/debug/deps/fraud_scorer-498852bcac824054)
+
+running 4 tests
+test tests::low_risk_retail_us ... ok
+test tests::high_risk_combined_rules ... ok
+test tests::rejects_non_positive_amount ... ok
+test tests::medium_risk_elevated_amount_abroad ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/fraud_scorer-467958ab82c7289e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests fraud_scorer
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+...........                                                              [100%]
+=============================== warnings summary ===============================
+app/main.py:23
+  /Users/divyanshupatel/Desktop/mf/Task/projects/Advanced/A3/api/app/main.py:23: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+.venv/lib/python3.9/site-packages/fastapi/applications.py:4579
+  /Users/divyanshupatel/Desktop/mf/Task/projects/Advanced/A3/api/.venv/lib/python3.9/site-packages/fastapi/applications.py:4579: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+11 passed, 2 warnings in 0.35s
+
+> a3-fraud-worker@1.0.0 test
+> node --experimental-vm-modules node_modules/jest/bin/jest.js
+
+(node:23026) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23028) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23029) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS tests/process-batch.test.js
+  ● Console
+
+    console.log
+      [worker] no pending transactions
+
+      at processBatch (src/process-batch.js:8:13)
+
+    console.log
+      [worker] scored 550e8400-e29b-41d4-a716-446655440010 -> high (90)
+
+      at processBatch (src/process-batch.js:16:13)
+
+PASS tests/score-runner.test.js
+(node:23027) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS tests/integration.test.js
+PASS tests/api-client.test.js
+
+Test Suites: 4 passed, 4 total
+Tests:       10 passed, 10 total
+Snapshots:   0 total
+Time:        1.497 s, estimated 2 s
+Ran all test suites.
+==> Integration complete (API port 63867)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [22938]

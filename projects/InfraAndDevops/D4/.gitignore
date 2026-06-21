@@ -1,0 +1,8 @@
+.pytest_cache/
+__pycache__/
+.venv/
+.venv-host/
+.host-service.pid
+.host-service.log
+.tools/bin/
+*.pyc

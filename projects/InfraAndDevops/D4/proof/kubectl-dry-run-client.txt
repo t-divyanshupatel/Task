@@ -1,0 +1,21 @@
+Captured: 2026-06-21T18:06:51Z
+
+=== kubectl apply --dry-run=client (offline object build) ===
+--- k8s/namespace.yaml ---
+namespace/d4-notify
+
+--- k8s/configmap.yaml ---
+configmap/d4-notify-config
+
+--- k8s/deployment.yaml ---
+deployment.apps/d4-notify
+
+--- k8s/service.yaml ---
+service/d4-notify
+
+--- k8s/service-nodeport.yaml ---
+service/d4-notify-nodeport
+
+--- k8s/ingress.yaml ---
+ingress.networking.k8s.io/d4-notify
+

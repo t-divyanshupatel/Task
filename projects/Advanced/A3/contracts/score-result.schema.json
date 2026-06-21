@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/fraud/score-result.schema.json",
+  "title": "FraudScoreResult",
+  "description": "Output from the Rust scorer CLI and stored by the API after worker processing.",
+  "type": "object",
+  "required": ["transaction_id", "risk_score", "risk_level", "reasons"],
+  "properties": {
+    "transaction_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "risk_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

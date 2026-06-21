@@ -1,0 +1,148 @@
+[d2-e2e] === D2 docker-compose E2E ===
+[d2-e2e] Step 1/7 — teardown from zero (containers + volumes)
+==> Stopping D2 stack...
+ Container d2-worker-1  Stopping
+ Container d2-worker-1  Stopped
+ Container d2-worker-1  Removing
+ Container d2-worker-1  Removed
+ Container d2-api-1  Stopping
+ Container d2-api-1  Stopped
+ Container d2-api-1  Removing
+ Container d2-api-1  Removed
+ Container d2-db-1  Stopping
+ Container d2-db-1  Stopped
+ Container d2-db-1  Removing
+ Container d2-db-1  Removed
+ Volume d2_d2-pgdata  Removing
+ Volume d2_d2-pgdata  Removed
+ Network d2_default  Removing
+ Network d2_default  Removed
+==> D2 stack stopped (volumes removed).
+[d2-e2e] Step 2/7 — build and start stack
+#0 building with "desktop-linux" instance using docker driver
+#1 [api internal] load build definition from Dockerfile
+#1 DONE 0.0s
+#2 [worker internal] load build definition from Dockerfile
+#2 DONE 0.0s
+...
+Successfully built d2-job-api:latest
+Successfully built d2-job-worker:latest
+ Network d2_default  Creating
+ Network d2_default  Created
+ Volume d2_d2-pgdata  Creating
+ Volume d2_d2-pgdata  Created
+ Container d2-db-1  Creating
+ Container d2-db-1  Created
+ Container d2-api-1  Creating
+ Container d2-api-1  Created
+ Container d2-worker-1  Creating
+ Container d2-worker-1  Created
+ Container d2-db-1  Starting
+ Container d2-db-1  Started
+ Container d2-db-1  Waiting
+ Container d2-db-1  Healthy
+ Container d2-api-1  Starting
+ Container d2-api-1  Started
+ Container d2-db-1  Waiting
+ Container d2-api-1  Waiting
+ Container d2-db-1  Healthy
+ Container d2-api-1  Healthy
+ Container d2-worker-1  Starting
+ Container d2-worker-1  Started
+[d2-e2e] Step 3/7 — wait for API health (includes DB connectivity)
+[d2-e2e] API healthy at http://127.0.0.1:8000 (database connected)
+[d2-e2e] Step 4/7 — install e2e deps and run pytest
+============================= test session starts ==============================
+platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0 -- /Users/divyanshupatel/Desktop/mf/Task/projects/InfraAndDevops/D2/.venv-e2e/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/divyanshupatel/Desktop/mf/Task/projects/InfraAndDevops/D2
+plugins: anyio-4.12.1
+collecting ... collected 6 items
+
+api/tests/test_e2e.py::test_health_reports_database_connected PASSED    [ 16%]
+api/tests/test_e2e.py::test_list_jobs_includes_seed_data PASSED         [ 33%]
+api/tests/test_e2e.py::test_create_job_returns_pending PASSED           [ 50%]
+api/tests/test_e2e.py::test_worker_processes_created_job PASSED         [ 66%]
+api/tests/test_e2e.py::test_worker_processes_seed_jobs PASSED           [ 83%]
+api/tests/test_e2e.py::test_get_job_not_found PASSED                    [100%]
+
+============================== 6 passed in 4.21s ===============================
+[d2-e2e] Step 5/7 — capture cross-service logs
+[d2-e2e] Step 6/7 — teardown and clean re-up from zero
+# D2 teardown and fresh re-up proof
+# Generated: 2026-06-21T17:32:18Z
+
+==> Teardown (containers + volumes)
+==> Stopping D2 stack...
+ Container d2-worker-1  Stopping
+ Container d2-worker-1  Stopped
+ Container d2-worker-1  Removing
+ Container d2-worker-1  Removed
+ Container d2-api-1  Stopping
+ Container d2-api-1  Stopped
+ Container d2-api-1  Removing
+ Container d2-api-1  Removed
+ Container d2-db-1  Stopping
+ Container d2-db-1  Stopped
+ Container d2-db-1  Removing
+ Container d2-db-1  Removed
+ Volume d2_d2-pgdata  Removing
+ Volume d2_d2-pgdata  Removed
+ Network d2_default  Removing
+ Network d2_default  Removed
+==> D2 stack stopped (volumes removed).
+
+==> Fresh build and start
+ Container d2-db-1  Starting
+ Container d2-db-1  Started
+ Container d2-db-1  Healthy
+ Container d2-api-1  Started
+ Container d2-api-1  Healthy
+ Container d2-worker-1  Started
+
+==> Wait for health
+[d2-e2e] API healthy at http://127.0.0.1:8000 (database connected)
+{
+    "status": "ok",
+    "database": "connected"
+}
+
+==> Seed jobs visible via API
+[
+    {
+        "id": 1,
+        "payload": {
+            "task": "uppercase",
+            "text": "hello from seed"
+        },
+        "status": "pending",
+        "result": null
+    },
+    {
+        "id": 2,
+        "payload": {
+            "task": "reverse",
+            "text": "docker stack"
+        },
+        "status": "pending",
+        "result": null
+    },
+    {
+        "id": 3,
+        "payload": {
+            "task": "uppercase",
+            "text": "already done"
+        },
+        "status": "completed",
+        "result": {
+            "output": "ALREADY DONE"
+        }
+    }
+]
+
+Fresh re-up from zero succeeded.
+[d2-e2e] Step 7/7 — proof artifacts written
+[d2-e2e]   /Users/divyanshupatel/Desktop/mf/Task/projects/InfraAndDevops/D2/proof/e2e-tests-all-green.txt (run with: tee proof/e2e-tests-all-green.txt)
+[d2-e2e]   /Users/divyanshupatel/Desktop/mf/Task/projects/InfraAndDevops/D2/proof/service-interaction-logs.txt
+[d2-e2e]   /Users/divyanshupatel/Desktop/mf/Task/projects/InfraAndDevops/D2/proof/teardown-and-fresh-reup.txt
+[d2-e2e] SUCCESS — all E2E tests passed

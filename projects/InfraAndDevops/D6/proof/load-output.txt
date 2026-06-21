@@ -1,0 +1,33 @@
+[d6-up] Building and starting observability stack
+#0 building with "desktop-linux" instance using docker driver
+...
+Successfully built d6-order-api:latest
+ Container d6-api-1  Creating
+ Container d6-prometheus-1  Creating
+ Container d6-grafana-1  Creating
+ Container d6-api-1  Started
+ Container d6-api-1  Healthy
+ Container d6-prometheus-1  Started
+ Container d6-grafana-1  Started
+[d6-up] Waiting for API at http://127.0.0.1:8080
+[d6-up] Waiting for Prometheus at http://127.0.0.1:9090
+[d6-up] Services:
+NAME              IMAGE                     STATUS
+d6-api-1          d6-order-api:latest       Up (healthy)
+d6-prometheus-1   prom/prometheus:v2.55.1   Up
+d6-grafana-1      grafana/grafana:11.4.0    Up
+[d6-up] SUCCESS
+[d6-up]   API:        http://127.0.0.1:8080
+[d6-up]   Metrics:    http://127.0.0.1:8080/metrics
+[d6-up]   Prometheus: http://127.0.0.1:9090
+[d6-up]   Grafana:    http://127.0.0.1:3000/d/d6-order-api/d6-order-api (admin/admin)
+=== load.sh ===
+[d6-load] Target: http://127.0.0.1:8080 (60 iterations)
+[d6-load] Completed — ok=180 fail=0
+[d6-verify] Step 3: wait for Prometheus scrape
+[d6-verify] Step 4: capture /metrics sample
+[d6-verify] Step 5: capture structured JSON logs
+[d6-verify] Step 6: query Prometheus for dashboard panel data
+[d6-verify] Step 7: validate non-zero request rate
+[d6-verify] Prometheus request rate: 4.283333333333334 req/s
+[d6-verify] SUCCESS — observability proof captured

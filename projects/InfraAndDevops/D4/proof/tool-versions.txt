@@ -1,0 +1,8 @@
+Captured: 2026-06-21T18:06:51Z
+
+=== kubectl client version ===
+Client Version: v1.32.2
+Kustomize Version: v5.5.0
+
+=== kubeconform version ===
+v0.6.7

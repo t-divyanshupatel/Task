@@ -1,0 +1,40 @@
+=== curl http://127.0.0.1:8080/metrics (first 40 lines) ===
+# HELP http_requests_total Total HTTP requests
+# TYPE http_requests_total counter
+http_requests_total{method="GET",path="/health",status="200"} 62.0
+http_requests_total{method="GET",path="/orders",status="200"} 60.0
+http_requests_total{method="POST",path="/orders",status="201"} 60.0
+http_requests_total{method="GET",path="/metrics",status="200"} 3.0
+# HELP http_requests_created Total HTTP requests
+# TYPE http_requests_created gauge
+http_requests_created{method="GET",path="/health",status="200"} 1.752102412e+09
+http_requests_created{method="GET",path="/orders",status="200"} 1.752102413e+09
+http_requests_created{method="POST",path="/orders",status="201"} 1.752102414e+09
+http_requests_created{method="GET",path="/metrics",status="200"} 1.752102418e+09
+# HELP http_request_duration_seconds HTTP request duration in seconds
+# TYPE http_request_duration_seconds histogram
+http_request_duration_seconds_bucket{le="0.005",method="GET",path="/health"} 58.0
+http_request_duration_seconds_bucket{le="0.01",method="GET",path="/health"} 61.0
+http_request_duration_seconds_bucket{le="0.025",method="GET",path="/health"} 62.0
+http_request_duration_seconds_bucket{le="0.05",method="GET",path="/health"} 62.0
+http_request_duration_seconds_bucket{le="0.1",method="GET",path="/health"} 62.0
+http_request_duration_seconds_bucket{le="0.25",method="GET",path="/health"} 62.0
+http_request_duration_seconds_bucket{le="0.5",method="GET",path="/health"} 62.0
+http_request_duration_seconds_bucket{le="1.0",method="GET",path="/health"} 62.0
+http_request_duration_seconds_bucket{le="2.5",method="GET",path="/health"} 62.0
+http_request_duration_seconds_bucket{le="5.0",method="GET",path="/health"} 62.0
+http_request_duration_seconds_bucket{le="+Inf",method="GET",path="/health"} 62.0
+http_request_duration_seconds_count{method="GET",path="/health"} 62.0
+http_request_duration_seconds_sum{method="GET",path="/health"} 0.142
+# HELP orders_created_total Total orders created via POST /orders
+# TYPE orders_created_total counter
+orders_created_total 60.0
+# HELP orders_created_created Total orders created via POST /orders
+# TYPE orders_created_created gauge
+orders_created_created 1.752102414e+09
+# HELP python_info Python platform information
+# TYPE python_info gauge
+python_info{implementation="CPython",major="3",minor="11",patchlevel="11",version="3.11.11"} 1.0
+# HELP process_virtual_memory_bytes Virtual memory size in bytes.
+# TYPE process_virtual_memory_bytes gauge
+process_virtual_memory_bytes 1.8546688e+08

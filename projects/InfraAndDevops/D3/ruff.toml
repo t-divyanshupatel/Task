@@ -1,0 +1,9 @@
+target-version = "py39"
+line-length = 100
+exclude = ["demo", ".venv"]
+
+[lint]
+select = ["E", "F", "I", "UP"]
+
+[format]
+quote-style = "double"

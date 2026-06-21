@@ -1,0 +1,9 @@
+Captured: 2026-06-21T18:02:19Z
+SKIP full CI — Docker not available or daemon not running.
+
+Lint + test proof is in proof/ci-lint-test.txt
+To complete proof, install/start Docker and rerun:
+  ./scripts/capture-proof.sh
+
+Or run only the build job:
+  docker build -t d3-notify-service:local .

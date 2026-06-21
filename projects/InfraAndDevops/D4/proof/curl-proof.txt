@@ -1,0 +1,27 @@
+Captured: 2026-06-21T18:07:15Z
+
+=== curl via NodePort GET /health ===
+{"status":"ok","service":"d4-notify","log_level":"info"}
+HTTP_STATUS:200
+
+=== curl via NodePort GET /version ===
+{"version":"1.0.0","service":"d4-notify"}
+HTTP_STATUS:200
+
+=== curl via NodePort POST /notify ===
+{"message":"proof from capture-proof.sh","status":"queued"}
+HTTP_STATUS:201
+
+=== curl via port-forward (ClusterIP service) ===
+=== port-forward GET /health ===
+
+HTTP_STATUS:000
+HTTP_STATUS:000
+
+=== port-forward POST /notify ===
+
+HTTP_STATUS:000
+HTTP_STATUS:000
+
+=== proof summary ===
+All endpoints should return HTTP_STATUS:200 or HTTP_STATUS:201

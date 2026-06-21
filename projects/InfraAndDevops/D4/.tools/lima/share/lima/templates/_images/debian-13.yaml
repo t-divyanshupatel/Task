@@ -1,0 +1,31 @@
+images:
+# Try to use release-yyyyMMdd image if available. Note that release-yyyyMMdd will be removed after several months.
+
+- location: "https://cloud.debian.org/images/cloud/trixie/20260615-2510/debian-13-genericcloud-amd64-20260615-2510.qcow2"
+  arch: "x86_64"
+  digest: "sha512:35337a6bcd9c6a0f57fdc9a479c0328024cfa1503bb2f4176df541de4eff5c24f285a8aa357f60c8855c35e2f0190f5b7669fdf3a262aa16922acdc0729f17eb"
+- location: "https://cloud.debian.org/images/cloud/trixie/20260615-2510/debian-13-genericcloud-arm64-20260615-2510.qcow2"
+  arch: "aarch64"
+  digest: "sha512:6cc5e16f7f83df57b6a4025c06e2b767a8d30baaa9cdd645055a0d62b46cd4be78cab7b034a474d40503a3e42822e051dfb4f0bb3c1a90f0ba0ee62b5a741013"
+- location: "https://cloud.debian.org/images/cloud/trixie/20260615-2510/debian-13-generic-ppc64el-20260615-2510.qcow2"
+  arch: "ppc64le"
+  digest: "sha512:122aaf193c4d6d7b4a5ba2dfd274441666405cf87c4e78cc9853f13f7cb7558f729e889bf5c60f8a96858852d3a26eedd019a5d7bcd1a0e184beb1d73bf8638c"
+- location: "https://cloud.debian.org/images/cloud/trixie/20260615-2510/debian-13-generic-riscv64-20260615-2510.qcow2"
+  arch: "riscv64"
+  digest: "sha512:533a51314786b766b5239976c23bf05ca8104f926f50027986c87326cfab839d35b6d106487e8217318bd6f2a46c0a85123de7ac38128cbdd927b92ee5c1e8e7"
+# Fallback to the latest release image.
+# Hint: run `limactl prune` to invalidate the cache
+
+- location: https://cloud.debian.org/images/cloud/trixie/daily/latest/debian-13-genericcloud-amd64-daily.qcow2
+  arch: x86_64
+
+- location: https://cloud.debian.org/images/cloud/trixie/daily/latest/debian-13-genericcloud-arm64-daily.qcow2
+  arch: aarch64
+
+- location: https://cloud.debian.org/images/cloud/trixie/daily/latest/debian-13-generic-ppc64el-daily.qcow2
+  arch: ppc64le
+
+- location: https://cloud.debian.org/images/cloud/trixie/daily/latest/debian-13-generic-riscv64-daily.qcow2
+  arch: riscv64
+
+mountTypesUnsupported: [9p]

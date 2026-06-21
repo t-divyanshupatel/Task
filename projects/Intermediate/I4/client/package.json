@@ -1,0 +1,25 @@
+{
+  "name": "currency-converter-cli",
+  "version": "1.0.0",
+  "description": "Node.js CLI client for the I4 Currency Converter FastAPI service",
+  "type": "module",
+  "bin": {
+    "currency-cli": "src/cli.js"
+  },
+  "scripts": {
+    "convert": "node src/cli.js convert",
+    "health": "node src/cli.js health",
+    "rates": "node src/cli.js rates",
+    "test": "node --experimental-vm-modules node_modules/vitest/vitest.mjs run",
+    "verify": "node scripts/verify-client.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.5"
+  }
+}

@@ -1,0 +1,15 @@
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform/build/
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# Local Terraform binary (optional download)
+.tools/

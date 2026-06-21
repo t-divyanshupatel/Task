@@ -1,0 +1,35 @@
+images:
+# Try to use release-yyyyMMdd image if available. Note that release-yyyyMMdd will be removed after several months.
+
+- location: "https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-GenericCloud-9-20260615.0.x86_64.qcow2"
+  arch: "x86_64"
+  digest: "sha256:13baa70caebd7d5dc6cebe816f3bc8fbe357ce330af4155255c7648c2798ff1c"
+- location: "https://cloud.centos.org/centos/9-stream/aarch64/images/CentOS-Stream-GenericCloud-9-20260615.0.aarch64.qcow2"
+  arch: "aarch64"
+  digest: "sha256:7f449b6c9b180ae3ba88f0beee3290d9b753e993419091140e4324241011cfed"
+- location: "https://cloud.centos.org/centos/9-stream/s390x/images/CentOS-Stream-GenericCloud-9-20260615.0.s390x.qcow2"
+  arch: "s390x"
+  digest: "sha256:202fc8f38489fb15f40dbb709c2992d473113215417f6577d3ec3e6639156fdb"
+- location: "https://cloud.centos.org/centos/9-stream/ppc64le/images/CentOS-Stream-GenericCloud-9-20260615.0.ppc64le.qcow2"
+  arch: "ppc64le"
+  digest: "sha256:937a7c0d2e0e262745a0867625f7f70e11f773e2ebc8adcd2d052d537c8a564e"
+# Fallback to the latest release image.
+# Hint: run `limactl prune` to invalidate the cache
+
+- location: https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-GenericCloud-9-latest.x86_64.qcow2
+  arch: x86_64
+
+- location: https://cloud.centos.org/centos/9-stream/aarch64/images/CentOS-Stream-GenericCloud-9-latest.aarch64.qcow2
+  arch: aarch64
+
+- location: https://cloud.centos.org/centos/9-stream/s390x/images/CentOS-Stream-GenericCloud-9-latest.s390x.qcow2
+  arch: s390x
+
+- location: https://cloud.centos.org/centos/9-stream/ppc64le/images/CentOS-Stream-GenericCloud-9-latest.ppc64le.qcow2
+  arch: ppc64le
+
+mountTypesUnsupported: [9p]
+
+firmware:
+  # CentOS Stream 9 still requires legacyBIOS, while AlmaLinux 9 and Rocky Linux 9 do not.
+  legacyBIOS: true

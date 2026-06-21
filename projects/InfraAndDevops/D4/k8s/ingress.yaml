@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: d4-notify
+  namespace: d4-notify
+  labels:
+    app.kubernetes.io/name: d4-notify
+    app.kubernetes.io/component: ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: d4-notify.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: d4-notify
+                port:
+                  number: 80
