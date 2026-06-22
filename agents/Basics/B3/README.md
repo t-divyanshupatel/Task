@@ -30,7 +30,7 @@ Finds how tests work in a repository and **runs real commands**:
 **Example invocation:**
 
 ```
-/basics-test-discovery on Task/medusa — markdown output
+/basics-test-discovery on Task/extra/medusa — markdown output
 ```
 
 ---
@@ -40,7 +40,7 @@ Finds how tests work in a repository and **runs real commands**:
 ```
 /basics-test-discovery
 
-Analyze Task/medusa. Output format: markdown.
+Analyze Task/extra/medusa. Output format: markdown.
 ```
 
 ### Phase 1 — Planning ([`agent/planning.md`](./agent/planning.md))

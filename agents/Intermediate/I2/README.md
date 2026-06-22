@@ -30,7 +30,7 @@ Delivers step-by-step call path, external dependencies, DB/API/queue side effect
 **Example invocation:**
 
 ```
-/intermediate-repo-e2e-flow-tracer on Task/medusa
+/intermediate-repo-e2e-flow-tracer on Task/extra/medusa
 Trace POST /store/carts/{id}/complete
 ```
 
@@ -41,7 +41,7 @@ Trace POST /store/carts/{id}/complete
 ```
 /intermediate-repo-e2e-flow-tracer
 
-Analyze Task/medusa. Trace POST /store/carts/{id}/complete. Markdown output.
+Analyze Task/extra/medusa. Trace POST /store/carts/{id}/complete. Markdown output.
 ```
 
 ### Phase 1 — Planning ([`agent/planning.md`](./agent/planning.md))

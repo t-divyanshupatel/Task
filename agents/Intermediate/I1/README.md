@@ -30,7 +30,7 @@ Detects JPA `@Entity`, MikroORM/DML models, Prisma schema, Flyway/Liquibase migr
 **Example invocation:**
 
 ```
-/intermediate-repo-er-diagram on Task/medusa — markdown output
+/intermediate-repo-er-diagram on Task/extra/medusa — markdown output
 ```
 
 ---
@@ -40,7 +40,7 @@ Detects JPA `@Entity`, MikroORM/DML models, Prisma schema, Flyway/Liquibase migr
 ```
 /intermediate-repo-er-diagram
 
-Analyze Task/medusa. Output format: markdown.
+Analyze Task/extra/medusa. Output format: markdown.
 ```
 
 ### Phase 1 — Planning ([`agent/planning.md`](./agent/planning.md))

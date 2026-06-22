@@ -396,7 +396,7 @@ cd Task/projects/{Tier}/{ID}
 |------|------|
 | [`Task/projects/`](../projects/) | Runnable sandboxes — APIs, CLIs, infra stacks |
 | [`Task/agents/`](../agents/README.md) | Cursor agent definitions — analyze repos, produce reports |
-| [`Task/medusa/`](../medusa/) | Sample commerce monorepo used as agent analysis target |
+| [`Task/extra/medusa/`](../extra/medusa/) | Sample commerce monorepo used as agent analysis target |
 
 Agents (B1–B3, I1–I3, A4–A6) operate on **external repos** like Medusa. Projects here are **targets for building and verifying** greenfield skills — not agent instruction folders.
 

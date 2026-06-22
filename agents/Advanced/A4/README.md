@@ -37,7 +37,7 @@ Delivers full findings backlog + implemented step + verification + rollback note
 **Example invocation:**
 
 ```
-/advance-repo-modernizer on Task/medusa — markdown output
+/advance-repo-modernizer on Task/extra/medusa — markdown output
 ```
 
 ---
@@ -47,7 +47,7 @@ Delivers full findings backlog + implemented step + verification + rollback note
 ```
 /advance-repo-modernizer
 
-Analyze Task/medusa. Output format: markdown.
+Analyze Task/extra/medusa. Output format: markdown.
 ```
 
 ### Phase 1 — Planning ([`agent/planning.md`](./agent/planning.md))

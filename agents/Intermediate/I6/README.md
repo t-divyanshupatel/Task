@@ -30,7 +30,7 @@ Designed for evaluation scenarios where a bug was intentionally seeded, but work
 **Example invocation:**
 
 ```
-/intermediate-seeded-bug-diagnosis on Task/medusa
+/intermediate-seeded-bug-diagnosis on Task/extra/medusa
 Symptom: verification token hash accepts empty string
 ```
 
@@ -41,7 +41,7 @@ Symptom: verification token hash accepts empty string
 ```
 /intermediate-seeded-bug-diagnosis
 
-Analyze Task/medusa. Symptom: verification token hash accepts empty string. Markdown output.
+Analyze Task/extra/medusa. Symptom: verification token hash accepts empty string. Markdown output.
 ```
 
 ### Phase 1 — Planning ([`agent/planning.md`](./agent/planning.md))

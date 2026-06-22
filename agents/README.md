@@ -79,13 +79,13 @@ After the skill loads, tell the agent **which repo to analyze** in the same mess
 ```
 /basics-test-discovery
 
-Analyze Task/medusa. Output format: markdown.
+Analyze Task/extra/medusa. Output format: markdown.
 ```
 
 | Part | Meaning |
 |------|---------|
 | `/basics-test-discovery` | Loads the B3 Test Discovery skill and agent instructions |
-| `Task/medusa` | Repository path relative to workspace root (or an absolute path) |
+| `Task/extra/medusa` | Repository path relative to workspace root (or an absolute path) |
 | `markdown` | Output format — `markdown` (report in `proof/`) or `website` (Next.js on localhost) |
 
 You do **not** need to `@`-mention `Task/agents/Basics/B3` — the skill already points to the correct agent files.
@@ -143,8 +143,8 @@ All skills live under `.cursor/skills/` in this repo:
 
 ### Tips
 
-- **Combine skill + context in one message** for fastest start: `/basics-test-discovery on Task/medusa, markdown output`.
-- **Optional `@` mentions** — you may `@Task/medusa` to attach the repo folder as context, but the `/` skill is the required invocation method.
+- **Combine skill + context in one message** for fastest start: `/basics-test-discovery on Task/extra/medusa, markdown output`.
+- **Optional `@` mentions** — you may `@Task/extra/medusa` to attach the repo folder as context, but the `/` skill is the required invocation method.
 - **Re-run safely** — each run overwrites the report in `proof/` for that agent; change-capable agents (I3, I6, A4, A6) do not commit unless you ask.
 - **Skills not showing?** — Reload the window or confirm `.cursor/skills/{name}/SKILL.md` exists with a valid `name:` in the YAML frontmatter.
 
@@ -213,37 +213,37 @@ The site embeds discovery data as JSON/TS under `data/` and replaces the default
 
 ```text
 # Map repo structure (markdown)
-/basics-repo-structure-mapper on Task/medusa — markdown output
+/basics-repo-structure-mapper on Task/extra/medusa — markdown output
 
 # Find all routes and APIs
 /basics-route-api-mapper on my-app
 
 # Test framework discovery
-/basics-test-discovery on Task/medusa
+/basics-test-discovery on Task/extra/medusa
 
 # ER diagram for a backend
-/intermediate-repo-er-diagram on Task/medusa
+/intermediate-repo-er-diagram on Task/extra/medusa
 
 # Trace POST /store/carts flow
-/intermediate-repo-e2e-flow-tracer on Task/medusa
+/intermediate-repo-e2e-flow-tracer on Task/extra/medusa
 Trace POST /store/carts/{id}/complete
 
 # Small fix in one module
-/intermediate-focused-module-change on Task/medusa
+/intermediate-focused-module-change on Task/extra/medusa
 
 # Diagnose a failing test
-/intermediate-seeded-bug-diagnosis on Task/medusa
+/intermediate-seeded-bug-diagnosis on Task/extra/medusa
 Symptom: verification token hash accepts empty string
 
 # Modernization analysis + first step
-/advance-repo-modernizer on Task/medusa
+/advance-repo-modernizer on Task/extra/medusa
 
 # Review a PR
 /advance-pr-review
-Review branch feature/auth-fix vs main in Task/medusa
+Review branch feature/auth-fix vs main in Task/extra/medusa
 
 # Performance bottleneck fix
-/advance-perf-optimizer on Task/medusa
+/advance-perf-optimizer on Task/extra/medusa
 ```
 
 ---
@@ -262,6 +262,7 @@ Review branch feature/auth-fix vs main in Task/medusa
 
 | Path | Purpose |
 |------|---------|
-| `Task/medusa/` | Sample commerce monorepo used in proof reports |
+| `Task/extra/medusa/` | Sample commerce monorepo used in proof reports |
+| `Task/extra/frontend/` | Agent & project library showcase site |
 | `Task/projects/` | Separate project sandboxes (not agent definitions) |
 | `.cursor/skills/` | Cursor skill entry points — invoke with `/skill-name` |

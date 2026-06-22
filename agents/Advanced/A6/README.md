@@ -29,7 +29,7 @@ Finds a **real, measurable performance bottleneck** in a small service or script
 **Example invocation:**
 
 ```
-/advance-perf-optimizer on Task/medusa — markdown output
+/advance-perf-optimizer on Task/extra/medusa — markdown output
 ```
 
 ---
@@ -39,7 +39,7 @@ Finds a **real, measurable performance bottleneck** in a small service or script
 ```
 /advance-perf-optimizer
 
-Analyze Task/medusa. Output format: markdown.
+Analyze Task/extra/medusa. Output format: markdown.
 ```
 
 ### Phase 1 — Planning ([`agent/planning.md`](./agent/planning.md))

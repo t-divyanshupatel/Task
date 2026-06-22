@@ -31,7 +31,7 @@ Each issue gets **severity**, **blocking vs non-blocking**, **suggested fix**, a
 
 ```
 /advance-pr-review
-Review branch feature/auth-fix vs main in Task/medusa
+Review branch feature/auth-fix vs main in Task/extra/medusa
 ```
 
 ---
@@ -41,7 +41,7 @@ Review branch feature/auth-fix vs main in Task/medusa
 ```
 /advance-pr-review
 
-Review branch feature/auth-fix vs main in Task/medusa. Markdown output.
+Review branch feature/auth-fix vs main in Task/extra/medusa. Markdown output.
 ```
 
 ### Phase 1 — Planning ([`agent/planning.md`](./agent/planning.md))

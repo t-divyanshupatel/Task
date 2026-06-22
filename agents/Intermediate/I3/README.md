@@ -31,7 +31,7 @@ Unlike Basics agents, I3 **edits production and test code** in the target repo (
 **Example invocation:**
 
 ```
-/intermediate-focused-module-change on Task/medusa — markdown output
+/intermediate-focused-module-change on Task/extra/medusa — markdown output
 ```
 
 ---
@@ -41,7 +41,7 @@ Unlike Basics agents, I3 **edits production and test code** in the target repo (
 ```
 /intermediate-focused-module-change
 
-Analyze Task/medusa. Output format: markdown.
+Analyze Task/extra/medusa. Output format: markdown.
 ```
 
 ### Phase 1 — Planning ([`agent/planning.md`](./agent/planning.md))

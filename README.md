@@ -6,7 +6,7 @@ A hands-on evaluation library for **Cursor coding agents**: runnable sandboxes, 
 |------|------|---------|
 | [`agents/`](agents/README.md) | 10 Cursor slash-command agents — analyze or modify repos | [Agent library →](agents/README.md) |
 | [`projects/`](projects/README.md) | 14 self-contained sandboxes — APIs, CLIs, infra stacks | [Project library →](projects/README.md) |
-| [`medusa/`](medusa/) | Vendored Medusa v2 commerce monorepo — default agent target | [Medusa upstream →](medusa/README.md) |
+| [`extra/`](extra/) | Vendored Medusa monorepo + agent library showcase site | [Extra →](extra/) |
 
 Cursor skill entry points live at [`.cursor/skills/`](../.cursor/skills/) in the workspace root (one skill per agent).
 
@@ -23,8 +23,9 @@ Cursor skill entry points live at [`.cursor/skills/`](../.cursor/skills/) in the
 7. [Agents — full catalog](#agents--full-catalog)
 8. [Projects — full catalog](#projects--full-catalog)
 9. [Medusa — analysis target](#medusa--analysis-target)
-10. [Quick start](#quick-start)
-11. [Navigation index](#navigation-index)
+10. [Showcase frontend](#showcase-frontend)
+11. [Quick start](#quick-start)
+12. [Navigation index](#navigation-index)
 
 ---
 
@@ -37,7 +38,7 @@ flowchart TB
     subgraph Task["Task/"]
         A["agents/<br/>10 Cursor agents<br/>B1–B3, I1–I3, I6, A4–A6"]
         P["projects/<br/>14 runnable sandboxes<br/>B4–B6, I4–I5, A1–A3, D1–D6"]
-        M["medusa/<br/>Vendored commerce monorepo<br/>463 routes, 139 tables, 1000+ tests"]
+        M["extra/medusa/<br/>Vendored commerce monorepo<br/>463 routes, 139 tables, 1000+ tests"]
     end
 
     SK[".cursor/skills/<br/>Slash-command entry points"]
@@ -105,13 +106,13 @@ flowchart LR
         D6["D6 Observability"]
     end
 
-    Agents -->|"operate on"| Target["Any repo<br/>(default: medusa/)"]
+    Agents -->|"operate on"| Target["Any repo<br/>(default: extra/medusa/)"]
     Projects -->|"self-contained<br/>build targets"| Proof["proof/ artifacts"]
 ```
 
 **Agents** define *how* a coding agent should behave when analyzing or changing a repository.  
 **Projects** define *what* to build from scratch — greenfield APIs, polyglot pipelines, and infra stacks.  
-**Medusa** is the shared realistic target for agent exercises at scale.
+**Medusa** (under `extra/medusa/`) is the shared realistic target for agent exercises at scale.
 
 ---
 
@@ -158,8 +159,12 @@ Task/
 │       ├── D4/README.md                 ← Kubernetes manifests
 │       ├── D5/README.md                 ← One-command bootstrap
 │       └── D6/README.md                 ← Observability bolt-on
-└── medusa/                            ← Vendored Medusa v2 monorepo
-    └── README.md
+└── extra/                             ← Optional vendored target + showcase site
+    ├── README.md                      ← Extra folder catalog
+    ├── frontend/                      ← Agent & project library showcase (Next.js)
+    │   └── README.md
+    └── medusa/                        ← Vendored Medusa v2 monorepo
+        └── README.md
 ```
 
 ### Per-agent internal layout
@@ -205,7 +210,7 @@ flowchart TD
     OUT -->|markdown| PROOF["agents/{ID}/proof/*-report.md"]
     OUT -->|website| SITE["agents/{ID}/agent/*-site/<br/>http://localhost:3000"]
 
-    EXEC -->|"reads / modifies"| REPO["Target repo<br/>(default: medusa/)"]
+    EXEC -->|"reads / modifies"| REPO["Target repo<br/>(default: extra/medusa/)"]
     PROJECTS["projects/{Tier}/{ID}/"] -->|"build & verify skills"| DEV
 ```
 
@@ -232,11 +237,11 @@ sequenceDiagram
     participant R as Target Repo
     participant O as proof/ or website
 
-    U->>S: /basics-repo-structure-mapper on Task/medusa
+    U->>S: /basics-repo-structure-mapper on Task/extra/medusa
     S->>A: Load agent instructions
     A->>P: Phase 1 — AskQuestion MCQs
     P->>U: Repo path? Output format?
-    U-->>P: Task/medusa, markdown
+    U-->>P: Task/extra/medusa, markdown
     P->>E: Phase 2 — Execute task
     E->>R: Read files, run commands
     R-->>E: Source, config, test output
@@ -571,14 +576,14 @@ flowchart LR
 
 ## Medusa — analysis target
 
-Vendored **Medusa v2** TypeScript commerce monorepo. Default target for agent exercises; any repo path works.
+Vendored **Medusa v2** TypeScript commerce monorepo at [`extra/medusa/`](extra/medusa/). Default target for agent exercises; any repo path works.
 
 | Property | Value |
 |----------|-------|
 | Stack | TypeScript, Yarn 3 workspaces, Turbo, Jest, MikroORM |
 | Scale | 463 HTTP routes, 139 DB tables, 1000+ test files |
 | Modules | cart, order, payment, product, auth, fulfillment, pricing, promotion, … |
-| Docs | [medusa/README.md](medusa/README.md) |
+| Docs | [extra/medusa/README.md](extra/medusa/README.md) |
 
 ### Why Medusa?
 
@@ -603,6 +608,21 @@ flowchart TD
 
 ---
 
+## Showcase frontend
+
+The **agent & project library browser** lives at [`extra/frontend/`](extra/frontend/) — a Next.js site for exploring all 10 agents and 14 projects with architecture diagrams, stats, docs, and agent download bundles.
+
+```bash
+cd Task/extra/frontend
+npm install
+npm run dev
+# Open http://localhost:3000 (or next available port)
+```
+
+This is separate from [`agents/frontend/`](agents/frontend/README.md), which is the **shared template** agents copy when producing per-agent website output.
+
+---
+
 ## Quick start
 
 ### Run an agent
@@ -611,7 +631,7 @@ flowchart TD
 # 1. Open Cursor → Agent mode (not Ask)
 # 2. Type slash command + target repo:
 
-/basics-repo-structure-mapper on Task/medusa — markdown output
+/basics-repo-structure-mapper on Task/extra/medusa — markdown output
 
 # 3. Answer planning MCQs (repo path, output format)
 # 4. Read report:
@@ -651,7 +671,9 @@ When you select **website** format, the agent copies [`agents/frontend/`](agents
 | [Task/README.md](README.md) | This file — overview, diagrams, full index |
 | [agents/README.md](agents/README.md) | Agent library + Cursor skill usage guide |
 | [projects/README.md](projects/README.md) | Project library + quick-start commands |
-| [medusa/README.md](medusa/README.md) | Vendored Medusa upstream README |
+| [extra/README.md](extra/README.md) | Vendored Medusa target + showcase frontend |
+| [extra/medusa/README.md](extra/medusa/README.md) | Vendored Medusa upstream README |
+| [extra/frontend/README.md](extra/frontend/README.md) | Agent & project library showcase site |
 
 ### Agent READMEs
 
@@ -688,17 +710,17 @@ When you select **website** format, the agent copies [`agents/frontend/`](agents
 ### Example invocations
 
 ```text
-/basics-repo-structure-mapper on Task/medusa — markdown output
+/basics-repo-structure-mapper on Task/extra/medusa — markdown output
 /basics-route-api-mapper on my-app
-/basics-test-discovery on Task/medusa
-/intermediate-repo-er-diagram on Task/medusa
-/intermediate-repo-e2e-flow-tracer on Task/medusa
+/basics-test-discovery on Task/extra/medusa
+/intermediate-repo-er-diagram on Task/extra/medusa
+/intermediate-repo-e2e-flow-tracer on Task/extra/medusa
   Trace POST /store/carts/{id}/complete
-/intermediate-focused-module-change on Task/medusa
-/intermediate-seeded-bug-diagnosis on Task/medusa
+/intermediate-focused-module-change on Task/extra/medusa
+/intermediate-seeded-bug-diagnosis on Task/extra/medusa
   Symptom: verification token hash accepts empty string
-/advance-repo-modernizer on Task/medusa
+/advance-repo-modernizer on Task/extra/medusa
 /advance-pr-review
-  Review branch feature/auth-fix vs main in Task/medusa
-/advance-perf-optimizer on Task/medusa
+  Review branch feature/auth-fix vs main in Task/extra/medusa
+/advance-perf-optimizer on Task/extra/medusa
 ```

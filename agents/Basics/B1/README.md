@@ -37,7 +37,7 @@ Every symbol cites **`path:line`**. Layer relationships (controller → service 
 **Example invocation:**
 
 ```
-/basics-repo-structure-mapper on Task/medusa — markdown output
+/basics-repo-structure-mapper on Task/extra/medusa — markdown output
 ```
 
 ---
