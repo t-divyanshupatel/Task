@@ -6,14 +6,16 @@ Built for **Basics B6**: Cargo project, file-path CLI, level counting, graceful 
 
 ## Requirements checklist
 
+
 | Requirement                     | Status                                                       |
 | ------------------------------- | ------------------------------------------------------------ |
 | Cargo project                   | `Cargo.toml` + `src/main.rs` / `src/lib.rs`                  |
 | CLI accepts file path           | `log-counter <log-file>`                                     |
 | Counts INFO / WARN / ERROR      | One count per line; highest severity wins if multiple appear |
 | Handles missing file gracefully | Prints `error: file not found: …` and exits `1`              |
-| At least 3 tests                | **11 automated tests** (8 unit + 3 integration)              |
+| At least 3 tests                | **10 automated tests** (7 unit + 3 integration)              |
 | README with cargo commands      | See [Build](#build), [Run](#run), and [Test](#test) below    |
+
 
 ## Project layout
 
@@ -26,7 +28,6 @@ B6/
 │   └── cli.rs        # Integration tests (binary + exit codes)
 ├── examples/
 │   └── sample.log    # Sample input for manual runs
-├── proof/            # Screenshots proving tests and CLI run
 ├── Cargo.toml
 └── README.md
 ```
@@ -61,30 +62,14 @@ ERROR: 1
 
 - **Rust 1.70+** via [rustup](https://rustup.rs/) (`cargo` on your PATH)
 
-Verify (after [installing Rust](#install-rust)):
+Verify:
 
 ```bash
-cargo --version
-rustc --version
+
 ```
 
-### Install Rust
-
-If `cargo` is not found, install via [rustup](https://rustup.rs/):
-
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
-
-Then load it into your **current terminal** (required once per new shell session until added to your profile):
-
-```bash
-source "$HOME/.cargo/env"
-cargo --version
-rustc --version
-```
-
-## Build
+## cargo --version
+rustc --versionBuild
 
 From the repository root:
 
@@ -173,9 +158,9 @@ ERROR: 1
 Expected output from step 3:
 
 ```
-running 8 tests
+running 7 tests
 ...
-test result: ok. 8 passed; 0 failed
+test result: ok. 7 passed; 0 failed
 
 running 3 tests
 ...
@@ -208,6 +193,7 @@ cargo test --lib
 
 ## Test coverage summary
 
+
 | Area            | What is tested                                                    |
 | --------------- | ----------------------------------------------------------------- |
 | Level counting  | Mixed levels, bracket/colon formats, empty input                  |
@@ -216,21 +202,8 @@ cargo test --lib
 | File I/O        | Missing file returns `MissingFile` error; temp file read succeeds |
 | CLI integration | Sample log output, missing file exit `1`, usage exit `2`          |
 
-**11 automated tests** — exceeds the B6 minimum of 3.
 
-## Proof it runs (screenshots)
-
-### All tests pass (`cargo test`)
-
-<p align="center">
-  <img src="proof/cargo-test-all-tests-passed.png" alt="Terminal showing cargo test with all 11 tests passed (8 unit + 3 integration)" width="900" />
-</p>
-
-### CLI counts sample log (`cargo run -- examples/sample.log`)
-
-<p align="center">
-  <img src="proof/cargo-run-sample-log.png" alt="Terminal showing cargo test and cargo run with INFO WARN ERROR counts for examples/sample.log" width="900" />
-</p>
+**10 automated tests** — exceeds the B6 minimum of 3.
 
 ## Format & lint
 

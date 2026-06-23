@@ -6,11 +6,11 @@ Run after [execute.md](./execute.md) deliverable is written and the fix is appli
 
 ## Universal checks (both formats)
 
-- [ ] Planning MCQ completed — `repoPath`, `symptom`, and `outputFormat` were confirmed
-- [ ] **Agent name** `repo-seeded-bug-diagnosis` appears in deliverable metadata
-- [ ] **Started at**, **Completed at**, **Duration** present
-- [ ] **Repository** path matches user input
-- [ ] **Expected vs actual** documented before fix was applied
+- [x] Planning MCQ completed — `repoPath`, `symptom`, and `outputFormat` were confirmed
+- [x] **Agent name** `repo-seeded-bug-diagnosis` appears in deliverable metadata
+- [x] **Started at**, **Completed at**, **Duration** present
+- [x] **Repository** path matches user input
+- [x] **Expected vs actual** documented before fix was applied
 - [ ] **Reproduction steps** and **before-fix output** present (or **Blocked** section explains why not)
 - [ ] **Root cause** cites `path:line` and includes call path table
 - [ ] **Minimal fix** diff shown — no drive-by refactors beyond primary bug
@@ -70,7 +70,7 @@ Deliverable: `{agentDir}/bug-diagnosis-site/`
 - [ ] `data/bug-diagnosis.json` (or equivalent) contains full diagnosis data
 - [ ] `npm install` completed without errors
 - [ ] `npm run build` passes
-- [ ] `npm run dev` serves on **http://localhost:3000**
+- [ ] `npm run dev` serves on **[http://localhost:3000](http://localhost:3000)**
 - [ ] Overview shows metadata, fix status, and verification result
 - [ ] Reproduction timeline shows steps and before-fix output
 - [ ] Root cause panel shows file citations and call path
@@ -84,7 +84,7 @@ Deliverable: `{agentDir}/bug-diagnosis-site/`
 
 ### Website smoke test
 
-1. Open http://localhost:3000
+1. Open [http://localhost:3000](http://localhost:3000)
 2. Confirm symptom and fix status match diagnosis
 3. Expand reproduction steps — verify before-fix output present
 4. View root cause — file path and line citation visible
@@ -94,16 +94,18 @@ Deliverable: `{agentDir}/bug-diagnosis-site/`
 
 ## Failure handling
 
-| Failure | Action |
-|---------|--------|
-| Cannot reproduce | Document in **Blocked**; do not apply fix; partial report OK |
-| Root cause unclear | Document ambiguities; do not guess — set fix status BLOCKED |
-| Fix does not pass verification | Revert or iterate; update report with FAIL status |
-| Missing source citation | Re-scan repo; add citation or move to Ambiguities |
-| Diff in report ≠ actual changes | Reconcile `git diff` with report |
-| Website build fails | Fix errors in `bug-diagnosis-site/` only |
-| Unrelated files in diff | Revert scope creep; document secondary issues only |
-| Fabricated output suspected | Re-run commands; paste real output |
+
+| Failure                         | Action                                                       |
+| ------------------------------- | ------------------------------------------------------------ |
+| Cannot reproduce                | Document in **Blocked**; do not apply fix; partial report OK |
+| Root cause unclear              | Document ambiguities; do not guess — set fix status BLOCKED  |
+| Fix does not pass verification  | Revert or iterate; update report with FAIL status            |
+| Missing source citation         | Re-scan repo; add citation or move to Ambiguities            |
+| Diff in report ≠ actual changes | Reconcile `git diff` with report                             |
+| Website build fails             | Fix errors in `bug-diagnosis-site/` only                     |
+| Unrelated files in diff         | Revert scope creep; document secondary issues only           |
+| Fabricated output suspected     | Re-run commands; paste real output                           |
+
 
 Do not report success until all applicable checks pass.
 
@@ -122,3 +124,4 @@ Tell the user:
 Example:
 
 > Bug diagnosis complete. Report: `Task/agents/Intermediate/I6/proof/bug-diagnosis-report.md` — reproduced failing test `test_convert_usd_eur`, root cause `src/converter.py:42` (inverted rate divisor), minimal 1-line fix applied, verification PASS. Manual review pending: full test suite, staging deploy. Fix is uncommitted in `Task/my-app/`.
+
