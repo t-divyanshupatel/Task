@@ -1,0 +1,153 @@
+================================================================================
+I4 Currency Converter — Verification Log
+Generated: 2026-06-23T06:05:07Z
+Project:   Task/projects/Intermediate/I4
+Python:    Python 3.9.6
+Node.js:   v18.20.8
+================================================================================
+
+=== STEP 1: Service tests (pytest -v) ===
+Command: cd service && source .venv/bin/activate && pytest -v
+--------------------------------------------------------------------------------
+============================= test session starts ==============================
+platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0 -- /Users/divyanshupatel/Desktop/mf/Task/projects/Intermediate/I4/service/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/divyanshupatel/Desktop/mf/Task/projects/Intermediate/I4/service
+configfile: pytest.ini
+plugins: anyio-4.12.1
+collecting ... collected 16 items
+
+tests/test_api.py::test_health_returns_200_with_ok_status PASSED         [  6%]
+tests/test_api.py::test_rates_returns_all_supported_currencies PASSED    [ 12%]
+tests/test_api.py::test_rates_include_usd_as_unity PASSED                [ 18%]
+tests/test_api.py::test_rates_entries_are_sorted_by_currency_code PASSED [ 25%]
+tests/test_api.py::test_convert_usd_to_eur PASSED                        [ 31%]
+tests/test_api.py::test_convert_eur_to_usd PASSED                        [ 37%]
+tests/test_api.py::test_convert_same_currency_returns_unchanged_amount PASSED [ 43%]
+tests/test_api.py::test_convert_normalizes_lowercase_currency_codes PASSED [ 50%]
+tests/test_api.py::test_convert_rejects_zero_amount PASSED               [ 56%]
+tests/test_api.py::test_convert_rejects_negative_amount PASSED           [ 62%]
+tests/test_api.py::test_convert_rejects_missing_amount PASSED            [ 68%]
+tests/test_api.py::test_convert_rejects_missing_from_currency PASSED     [ 75%]
+tests/test_api.py::test_convert_rejects_missing_to_currency PASSED       [ 81%]
+tests/test_api.py::test_convert_rejects_invalid_from_currency PASSED     [ 87%]
+tests/test_api.py::test_convert_rejects_invalid_to_currency PASSED       [ 93%]
+tests/test_api.py::test_openapi_docs_available PASSED                    [100%]
+
+============================== 16 passed in 0.70s ==============================
+
+Exit code: 0
+
+=== STEP 2: Client tests (npm test) ===
+Command: cd client && npm test
+--------------------------------------------------------------------------------
+
+> currency-converter-cli@1.0.0 test
+> node --experimental-vm-modules node_modules/vitest/vitest.mjs run
+
+
+ RUN  v3.2.6 /Users/divyanshupatel/Desktop/mf/Task/projects/Intermediate/I4/client
+
+ ✓ tests/api.test.js (4 tests) 16ms
+ ✓ tests/validate.test.js (5 tests) 11ms
+
+ Test Files  2 passed (2)
+      Tests  9 passed (9)
+   Start at  11:35:18
+   Duration  1.36s (transform 102ms, setup 0ms, collect 229ms, tests 27ms, environment 1ms, prepare 447ms)
+
+
+Exit code: 0
+
+=== STEP 3: Start FastAPI service (uvicorn) ===
+Command: cd service && uvicorn app.main:app --host 127.0.0.1 --port 8000
+--------------------------------------------------------------------------------
+INFO:     Started server process [56519]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+
+=== STEP 4: CLI client smoke tests (Terminal 2) ===
+Command: cd client && node src/cli.js ...
+--------------------------------------------------------------------------------
+
+--- node src/cli.js health ---
+{
+  "status": "ok"
+}
+Exit code: 0
+
+--- node src/cli.js rates ---
+Base: USD
+Rates (units per 1 USD):
+  EUR: 0.92
+  GBP: 0.79
+  INR: 83.12
+  JPY: 157.5
+  USD: 1
+Exit code: 0
+
+--- node src/cli.js convert 100 USD EUR ---
+Converted 100 USD -> 92 EUR
+Rate: 0.92
+Exit code: 0
+
+=== STEP 5: Live client verification script ===
+Command: cd client && npm run verify
+--------------------------------------------------------------------------------
+
+> currency-converter-cli@1.0.0 verify
+> node scripts/verify-client.js
+
+Verifying CLI against http://127.0.0.1:8000
+
+health: {
+  "status": "ok"
+}
+
+rates:
+Base: USD
+Rates (units per 1 USD):
+  EUR: 0.92
+  GBP: 0.79
+  INR: 83.12
+  JPY: 157.5
+  USD: 1
+
+convert:
+Converted 100 USD -> 92 EUR
+Rate: 0.92
+
+All client verification checks passed.
+
+Exit code: 0
+
+=== STEP 6: curl API smoke tests ===
+--------------------------------------------------------------------------------
+
+--- GET /health ---
+{"status":"ok"}
+HTTP Status: 200
+
+--- GET /rates ---
+{"base":"USD","currencies":[{"currency":"EUR","rate_to_usd":0.92},{"currency":"GBP","rate_to_usd":0.79},{"currency":"INR","rate_to_usd":83.12},{"currency":"JPY","rate_to_usd":157.5},{"currency":"USD","rate_to_usd":1.0}]}
+HTTP Status: 200
+
+--- POST /convert (100 USD -> EUR) ---
+{"amount":100.0,"from_currency":"USD","to_currency":"EUR","rate":0.92,"converted_amount":92.0}
+HTTP Status: 200
+
+--- POST /convert validation error (negative amount, expect 422) ---
+{"detail":[{"type":"greater_than","loc":["body","amount"],"msg":"Input should be greater than 0","input":-1,"ctx":{"gt":0.0}}]}
+HTTP Status: 422
+
+================================================================================
+VERIFICATION SUMMARY
+================================================================================
+Service tests:  16/16 passed (pytest exit code 0)
+Client tests:   9/9 passed (npm test exit code 0)
+Server:         Running on http://127.0.0.1:8000
+CLI smoke:      health=0, rates=0, convert=0
+Live verify:    npm run verify exit code 0
+Status:         PASS — two-component system builds, tests pass, and API+CLI work
+================================================================================

@@ -1,0 +1,101 @@
+================================================================================
+B4 Transaction Ledger API — Verification Log
+Generated: 2026-06-23T05:59:45Z
+Project:   Task/projects/Basics/B4
+Python:    Python 3.9.6
+================================================================================
+
+=== STEP 1: Run all tests (pytest -v) ===
+Command: pytest -v
+--------------------------------------------------------------------------------
+============================= test session starts ==============================
+platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0 -- /Users/divyanshupatel/Desktop/mf/Task/projects/Basics/B4/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/divyanshupatel/Desktop/mf/Task/projects/Basics/B4
+plugins: anyio-4.12.1
+collecting ... collected 17 items
+
+tests/test_api.py::test_post_deposit_returns_201_with_transaction_fields PASSED [  5%]
+tests/test_api.py::test_post_withdrawal_returns_201 PASSED               [ 11%]
+tests/test_api.py::test_post_deposit_without_description PASSED          [ 17%]
+tests/test_api.py::test_withdrawal_at_exact_balance_succeeds PASSED      [ 23%]
+tests/test_api.py::test_withdrawal_rejected_when_insufficient_balance PASSED [ 29%]
+tests/test_api.py::test_get_transactions_empty_list PASSED               [ 35%]
+tests/test_api.py::test_get_transactions_returns_created_in_order PASSED [ 41%]
+tests/test_api.py::test_get_balance_empty_ledger PASSED                  [ 47%]
+tests/test_api.py::test_get_balance_after_mixed_transactions PASSED      [ 52%]
+tests/test_api.py::test_validation_rejects_negative_amount PASSED        [ 58%]
+tests/test_api.py::test_validation_rejects_zero_amount PASSED            [ 64%]
+tests/test_api.py::test_validation_rejects_invalid_type PASSED           [ 70%]
+tests/test_api.py::test_validation_rejects_missing_amount PASSED         [ 76%]
+tests/test_api.py::test_validation_rejects_missing_type PASSED           [ 82%]
+tests/test_api.py::test_validation_rejects_description_over_max_length PASSED [ 88%]
+tests/test_api.py::test_validation_rejects_non_json_body PASSED          [ 94%]
+tests/test_api.py::test_openapi_docs_available PASSED                    [100%]
+
+============================== 17 passed in 0.53s ==============================
+
+Exit code: 0
+
+
+=== STEP 2: Start server (uvicorn) ===
+Command: uvicorn app.main:app --host 127.0.0.1 --port 8000
+--------------------------------------------------------------------------------
+INFO:     Started server process [49309]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+
+=== STEP 3: Live API smoke tests (curl) ===
+--------------------------------------------------------------------------------
+
+--- 1. POST deposit ---
+curl -s -w "
+HTTP Status: %{http_code}
+" -X POST http://127.0.0.1:8000/transactions -H "Content-Type: application/json" -d '{"amount": 100, "type": "deposit", "description": "Initial funding"}'
+{"id":1,"amount":100.0,"type":"deposit","description":"Initial funding","created_at":"2026-06-23T06:00:12.989620Z"}
+HTTP Status: 201
+
+--- 2. POST withdrawal ---
+curl -s -w "
+HTTP Status: %{http_code}
+" -X POST http://127.0.0.1:8000/transactions -H "Content-Type: application/json" -d '{"amount": 25.5, "type": "withdrawal", "description": "ATM"}'
+{"id":2,"amount":25.5,"type":"withdrawal","description":"ATM","created_at":"2026-06-23T06:00:13.007226Z"}
+HTTP Status: 201
+
+--- 3. GET /transactions ---
+curl -s -w "
+HTTP Status: %{http_code}
+" http://127.0.0.1:8000/transactions
+[{"id":1,"amount":100.0,"type":"deposit","description":"Initial funding","created_at":"2026-06-23T06:00:12.989620Z"},{"id":2,"amount":25.5,"type":"withdrawal","description":"ATM","created_at":"2026-06-23T06:00:13.007226Z"}]
+HTTP Status: 200
+
+--- 4. GET /balance ---
+curl -s -w "
+HTTP Status: %{http_code}
+" http://127.0.0.1:8000/balance
+{"balance":74.5,"transaction_count":2}
+HTTP Status: 200
+
+--- 5. Validation error (negative amount, expect 422) ---
+curl -s -w "
+HTTP Status: %{http_code}
+" -X POST http://127.0.0.1:8000/transactions -H "Content-Type: application/json" -d '{"amount": -10, "type": "deposit"}'
+{"detail":[{"type":"greater_than","loc":["body","amount"],"msg":"Input should be greater than 0","input":-10,"ctx":{"gt":0.0}}]}
+HTTP Status: 422
+
+--- 6. Insufficient balance (expect 400) ---
+curl -s -w "
+HTTP Status: %{http_code}
+" -X POST http://127.0.0.1:8000/transactions -H "Content-Type: application/json" -d '{"amount": 9999, "type": "withdrawal"}'
+{"detail":"Insufficient balance for withdrawal"}
+HTTP Status: 400
+
+================================================================================
+VERIFICATION SUMMARY
+================================================================================
+Tests:  17/17 passed (pytest exit code 0)
+Server: Running on http://127.0.0.1:8000
+Smoke:  All 6 curl checks completed successfully
+Status: PASS — project builds, tests pass, and API responds correctly
+================================================================================

@@ -1,0 +1,87 @@
+================================================================================
+B6 Log Counter (Rust) — Verification Log
+Generated: 2026-06-23T06:00:48Z
+Project:   Task/projects/Basics/B6
+Rust:      rustc 1.96.0 (ac68faa20 2026-05-25)
+Cargo:     cargo 1.96.0 (30a34c682 2026-05-25)
+================================================================================
+
+=== STEP 1: Run all tests (cargo test) ===
+Command: cargo test
+--------------------------------------------------------------------------------
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running unittests src/lib.rs (/var/folders/4r/8ns7xg9j5b9009xl9391tdf40000gp/T/cursor-sandbox-cache/060194a4afad761bbfd94b9bc0aafb39/cargo-target/debug/deps/log_counter-254a8d523b546998)
+
+running 8 tests
+test tests::counts_bracket_and_colon_formats ... ok
+test tests::counts_mixed_log_levels ... ok
+test tests::empty_file_returns_zero_counts ... ok
+test tests::error_takes_precedence_when_line_contains_multiple_levels ... ok
+test tests::missing_file_returns_error ... ok
+test tests::ignores_lines_without_levels ... ok
+test tests::lowercase_levels_are_ignored ... ok
+test tests::counts_from_file_on_disk ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/var/folders/4r/8ns7xg9j5b9009xl9391tdf40000gp/T/cursor-sandbox-cache/060194a4afad761bbfd94b9bc0aafb39/cargo-target/debug/deps/log_counter-6ff9bfac9733d42b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cli.rs (/var/folders/4r/8ns7xg9j5b9009xl9391tdf40000gp/T/cursor-sandbox-cache/060194a4afad761bbfd94b9bc0aafb39/cargo-target/debug/deps/cli-571f81c44d7b4d4e)
+
+running 3 tests
+test cli_without_args_exits_with_code_2 ... ok
+test cli_prints_counts_for_sample_log ... ok
+test cli_missing_file_exits_with_code_1 ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.41s
+
+   Doc-tests log_counter
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+Exit code: 0
+
+=== STEP 2: Run project with sample log (cargo run) ===
+Command: cargo run -- examples/sample.log
+--------------------------------------------------------------------------------
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running `/var/folders/4r/8ns7xg9j5b9009xl9391tdf40000gp/T/cursor-sandbox-cache/060194a4afad761bbfd94b9bc0aafb39/cargo-target/debug/log-counter examples/sample.log`
+INFO:  2
+WARN:  1
+ERROR: 1
+
+Exit code: 0
+
+=== STEP 3: Missing file handling (graceful error) ===
+Command: cargo run -- no-such-file.log
+--------------------------------------------------------------------------------
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running `/var/folders/4r/8ns7xg9j5b9009xl9391tdf40000gp/T/cursor-sandbox-cache/060194a4afad761bbfd94b9bc0aafb39/cargo-target/debug/log-counter no-such-file.log`
+error: file not found: no-such-file.log
+
+Exit code: 1
+
+=== STEP 4: Missing CLI argument (usage) ===
+Command: cargo run
+--------------------------------------------------------------------------------
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running `/var/folders/4r/8ns7xg9j5b9009xl9391tdf40000gp/T/cursor-sandbox-cache/060194a4afad761bbfd94b9bc0aafb39/cargo-target/debug/log-counter`
+usage: /var/folders/4r/8ns7xg9j5b9009xl9391tdf40000gp/T/cursor-sandbox-cache/060194a4afad761bbfd94b9bc0aafb39/cargo-target/debug/log-counter <log-file>
+
+Exit code: 2
+
+================================================================================
+SUMMARY
+================================================================================
+Tests:           ALL PASSED (11/11: 8 unit + 3 integration)
+Sample log run:  SUCCESS — INFO: 2, WARN: 1, ERROR: 1
+Missing file:    SUCCESS (exit 1)
+Missing arg:     SUCCESS (exit 2)
+================================================================================

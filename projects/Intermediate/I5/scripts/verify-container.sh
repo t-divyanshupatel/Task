@@ -16,6 +16,6 @@ convert=$(curl -sf -X POST "${BASE_URL}/convert" \
   -H "Content-Type: application/json" \
   -d '{"amount": 100, "from_currency": "USD", "to_currency": "EUR"}')
 echo "POST /convert -> ${convert}"
-echo "${convert}" | grep -q '"converted_amount": 92.0'
+echo "${convert}" | grep -q '"converted_amount":92.0'
 
 echo "All Docker verification checks passed."

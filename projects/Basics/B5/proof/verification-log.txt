@@ -1,0 +1,112 @@
+================================================================================
+B5 Transaction Ledger API — Verification Log
+Generated: 2026-06-23T06:01:05Z
+Project:   Task/projects/Basics/B5
+Node.js:   v18.20.8
+================================================================================
+
+=== STEP 1: Run all tests (npm test -- --reporter=verbose) ===
+Command: npm test -- --reporter=verbose
+--------------------------------------------------------------------------------
+
+> transaction-ledger-api@1.0.0 test
+> node --experimental-vm-modules node_modules/vitest/vitest.mjs run --reporter=verbose
+
+
+ RUN  v3.2.6 /Users/divyanshupatel/Desktop/mf/Task/projects/Basics/B5
+
+ ✓ tests/api.test.js > Transaction Ledger API > POST /transactions — deposit returns 201 with transaction fields 27ms
+ ✓ tests/api.test.js > Transaction Ledger API > POST /transactions — withdrawal returns 201 6ms
+ ✓ tests/api.test.js > Transaction Ledger API > POST /transactions — deposit without description 2ms
+ ✓ tests/api.test.js > Transaction Ledger API > POST /transactions — withdrawal at exact balance succeeds 7ms
+ ✓ tests/api.test.js > Transaction Ledger API > POST /transactions — rejects insufficient balance with 400 5ms
+ ✓ tests/api.test.js > Transaction Ledger API > GET /transactions — returns empty list initially 3ms
+ ✓ tests/api.test.js > Transaction Ledger API > GET /transactions — returns transactions in creation order 7ms
+ ✓ tests/api.test.js > Transaction Ledger API > GET /balance — empty ledger returns zero 2ms
+ ✓ tests/api.test.js > Transaction Ledger API > GET /balance — reflects mixed deposits and withdrawals 7ms
+ ✓ tests/api.test.js > Transaction Ledger API > rejects negative amount 2ms
+ ✓ tests/api.test.js > Transaction Ledger API > rejects zero amount 2ms
+ ✓ tests/api.test.js > Transaction Ledger API > rejects invalid transaction type 2ms
+ ✓ tests/api.test.js > Transaction Ledger API > rejects missing amount 2ms
+ ✓ tests/api.test.js > Transaction Ledger API > rejects missing type 2ms
+ ✓ tests/api.test.js > Transaction Ledger API > rejects description over max length 2ms
+ ✓ tests/api.test.js > Transaction Ledger API > rejects invalid JSON body 5ms
+
+ Test Files  1 passed (1)
+      Tests  16 passed (16)
+   Start at  11:30:19
+   Duration  907ms (transform 58ms, setup 0ms, collect 292ms, tests 83ms, environment 0ms, prepare 110ms)
+
+Exit code: 0
+
+=== STEP 2: Start the server (npm start) ===
+Command: npm start
+--------------------------------------------------------------------------------
+
+> transaction-ledger-api@1.0.0 start
+> node src/server.js
+
+Transaction Ledger API listening on http://127.0.0.1:3000
+
+Server status: RUNNING on http://127.0.0.1:3000
+
+=== STEP 3: Manual smoke tests (curl against live server) ===
+--------------------------------------------------------------------------------
+
+--- POST /transactions (deposit) ---
+Request:
+  curl -s -X POST http://127.0.0.1:3000/transactions \
+    -H "Content-Type: application/json" \
+    -d '{"amount": 100, "type": "deposit", "description": "Initial funding"}'
+Response:
+  {"id":1,"amount":100,"type":"deposit","description":"Initial funding","created_at":"2026-06-23T06:00:57.180Z"}
+  HTTP_STATUS: 201
+
+--- POST /transactions (withdrawal) ---
+Request:
+  curl -s -X POST http://127.0.0.1:3000/transactions \
+    -H "Content-Type: application/json" \
+    -d '{"amount": 25.5, "type": "withdrawal", "description": "ATM"}'
+Response:
+  {"id":2,"amount":25.5,"type":"withdrawal","description":"ATM","created_at":"2026-06-23T06:00:57.206Z"}
+  HTTP_STATUS: 201
+
+--- GET /transactions ---
+Request:
+  curl -s http://127.0.0.1:3000/transactions
+Response:
+  [{"id":1,"amount":100,"type":"deposit","description":"Initial funding","created_at":"2026-06-23T06:00:57.180Z"},{"id":2,"amount":25.5,"type":"withdrawal","description":"ATM","created_at":"2026-06-23T06:00:57.206Z"}]
+  HTTP_STATUS: 200
+
+--- GET /balance ---
+Request:
+  curl -s http://127.0.0.1:3000/balance
+Response:
+  {"balance":74.5,"transaction_count":2}
+  HTTP_STATUS: 200
+
+--- POST /transactions (validation: negative amount) ---
+Request:
+  curl -s -X POST http://127.0.0.1:3000/transactions \
+    -H "Content-Type: application/json" \
+    -d '{"amount": -10, "type": "deposit"}'
+Response:
+  {"detail":{"formErrors":[],"fieldErrors":{"amount":["amount must be greater than 0"]}}}
+  HTTP_STATUS: 422
+
+--- POST /transactions (insufficient balance) ---
+Request:
+  curl -s -X POST http://127.0.0.1:3000/transactions \
+    -H "Content-Type: application/json" \
+    -d '{"amount": 9999, "type": "withdrawal"}'
+Response:
+  {"detail":"Insufficient balance for withdrawal"}
+  HTTP_STATUS: 400
+
+================================================================================
+VERIFICATION SUMMARY
+================================================================================
+✓ All 16 automated tests passed (Vitest)
+✓ Server started successfully on http://127.0.0.1:3000
+✓ Live API smoke tests returned expected status codes and payloads
+================================================================================
