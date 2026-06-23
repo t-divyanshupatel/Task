@@ -724,3 +724,10 @@ When you select **website** format, the agent copies [`agents/frontend/`](agents
   Review branch feature/auth-fix vs main in Task/extra/medusa
 /advance-perf-optimizer on Task/extra/medusa
 ```
+
+---
+
+## Author
+
+Made by **Divyanshu Patel** — [t-divyanshu.patel@pmltp.com](mailto:t-divyanshu.patel@pmltp.com)
+
