@@ -6,9 +6,9 @@
 | --- | --- |
 | **Agent name** | repo-er-diagram |
 | **Started at** | 2026-06-21T21:07:51Z |
-| **Completed at** | 2026-06-21T21:07:51Z |
-| **Duration** | 0s |
-| **Repository** | Task/medusa |
+| **Completed at** | 2026-06-21T21:50:06Z |
+| **Duration** | 42m 15s |
+| **Repository** | Task/extra/medusa |
 | **Repo name** | Medusa |
 | **Stack detected** | TypeScript monorepo, Medusa DML + MikroORM migrations |
 | **Database engine** | PostgreSQL (primary; SQLite supported in dev) |

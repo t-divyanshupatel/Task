@@ -8,7 +8,7 @@
 | **Started at** | 2026-06-21T21:57:42Z |
 | **Completed at** | 2026-06-21T21:58:16Z |
 | **Duration** | 34s |
-| **Repository** | Task/medusa |
+| **Repository** | Task/extra/medusa |
 | **Repo name** | medusa (Medusa v2 monorepo) |
 | **Stack detected** | TypeScript 5.6, Node ≥20, Yarn 3.2.1 (Berry), Turbo 1.6, Jest/Vitest, ESLint 8 |
 | **Scope** | full repo (excludes `www/`, `integration-tests/` deep scan) |
@@ -128,7 +128,7 @@ quadrantChart
 ### Diff summary
 
 ```
- Task/medusa/.nvmrc | 1 +
+ Task/extra/medusa/.nvmrc | 1 +
  1 file changed, 1 insertion(+)
 ```
 
@@ -153,7 +153,7 @@ nvmrc: 20 | engines: >=20 | satisfies: PASS
 **Limitation:** Full lint/test suite requires `yarn install` (~large monorepo). Re-run after install:
 
 ```bash
-cd Task/medusa && yarn install && yarn lint
+cd Task/extra/medusa && yarn install && yarn lint
 ```
 
 ## Rollback Notes
@@ -161,9 +161,9 @@ cd Task/medusa && yarn install && yarn lint
 ### Quick rollback
 
 ```bash
-cd Task/medusa && git checkout -- .nvmrc
+cd Task/extra/medusa && git checkout -- .nvmrc
 # or, if untracked:
-rm Task/medusa/.nvmrc
+rm Task/extra/medusa/.nvmrc
 ```
 
 ### Files affected
@@ -173,18 +173,18 @@ rm Task/medusa/.nvmrc
 ### Post-rollback verification
 
 ```bash
-test ! -f Task/medusa/.nvmrc && echo "rollback OK"
+test ! -f Task/extra/medusa/.nvmrc && echo "rollback OK"
 ```
 
 ## Discovery Notes
 
 ### Files examined
 
-- `Task/medusa/package.json` — scripts, devDependencies, lint-staged, packageManager
-- `Task/medusa/packages/medusa/package.json:35-37` — `engines.node >= 20`
-- `Task/medusa/_tsconfig.base.json:21` — `noImplicitAny: false`
-- `Task/medusa/.yarnrc.yml:15` — Yarn 3.2.1 Berry config
-- `Task/medusa/CONTRIBUTING.md` — local dev prerequisites (no explicit Node version at root)
+- `Task/extra/medusa/package.json` — scripts, devDependencies, lint-staged, packageManager
+- `Task/extra/medusa/packages/medusa/package.json:35-37` — `engines.node >= 20`
+- `Task/extra/medusa/_tsconfig.base.json:21` — `noImplicitAny: false`
+- `Task/extra/medusa/.yarnrc.yml:15` — Yarn 3.2.1 Berry config
+- `Task/extra/medusa/CONTRIBUTING.md` — local dev prerequisites (no explicit Node version at root)
 
 ### Excluded from scan
 

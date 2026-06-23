@@ -8,7 +8,7 @@
 | **Started at** | 2026-06-22T14:00:00Z |
 | **Completed at** | 2026-06-22T14:22:15Z |
 | **Duration** | 22m 15s |
-| **Repository** | Task/medusa |
+| **Repository** | Task/extra/medusa |
 | **Repo name** | Medusa |
 | **Stack detected** | TypeScript monorepo — Yarn 3 workspaces, Node ≥20, Medusa v2 modular commerce, MikroORM, Jest |
 | **Scope** | full repo (`packages/`) |
@@ -348,7 +348,7 @@ flowchart LR
 
 ### Files examined
 
-- `Task/medusa/package.json` — Yarn workspaces layout, 35 modules
+- `Task/extra/medusa/package.json` — Yarn workspaces layout, 35 modules
 - `packages/medusa/src/api/` — 310 route.ts handlers
 - `packages/modules/*/src/services/` — 111 service files
 - `packages/modules/*/src/models/` — 124 model files

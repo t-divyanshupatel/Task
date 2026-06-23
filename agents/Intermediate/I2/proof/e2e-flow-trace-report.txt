@@ -8,7 +8,7 @@
 | **Started at**             | 2026-06-21T21:10:00Z                               |
 | **Completed at**           | 2026-06-21T21:15:30Z                               |
 | **Duration**               | 5m 30s                                             |
-| **Repository**             | Task/medusa                                        |
+| **Repository**             | Task/extra/medusa                                        |
 | **Repo name**              | Medusa                                             |
 | **Flow traced**            | `GET /store/products`                              |
 | **Flow kind**              | http-inbound                                       |

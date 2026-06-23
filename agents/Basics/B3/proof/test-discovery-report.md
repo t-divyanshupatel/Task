@@ -8,7 +8,7 @@
 | **Started at** | 2026-06-22T14:30:00Z |
 | **Completed at** | 2026-06-22T14:48:22Z |
 | **Duration** | 18m 22s |
-| **Repository** | Task/medusa |
+| **Repository** | Task/extra/medusa |
 | **Repo name** | Medusa |
 | **Stack detected** | TypeScript monorepo — Yarn 3.2.1 workspaces, Turbo 1.6, Node ≥20, Jest 29.7 + @swc/jest, Supertest, Vitest 3 (docs/www only) |
 | **Scope** | full repo (`packages/`, `integration-tests/`; excludes `www/` docs site) |
@@ -34,25 +34,25 @@ Medusa uses **Jest 29.7** as the primary test runner across a Yarn workspaces mo
 
 ### Config file details
 
-#### `Task/medusa/jest.config.js`
+#### `Task/extra/medusa/jest.config.js`
 
 - Multi-project Jest config: loads all `packages/*/jest.config.js`, `packages/core/*/`, `packages/modules/*/`, `packages/modules/providers/*/`.
 - Ignores `dist/`, `__fixtures__/`, `examples/`.
 - Coverage collected from `src/**/*.js` when `GENERATE_JEST_REPORT` is set.
 
-#### `Task/medusa/define_jest_config.js`
+#### `Task/extra/medusa/define_jest_config.js`
 
 - Shared factory for package-level configs.
 - `@swc/jest` transform with TypeScript + legacy decorators + decorator metadata.
 - `testEnvironment: node`; ignores `dist/`, `node_modules/`, `__fixtures__/`, `__mocks__/`.
 
-#### `Task/medusa/integration-tests/jest.config.js`
+#### `Task/extra/medusa/integration-tests/jest.config.js`
 
 - Aggregates `integration-tests/api`, `http`, `plugins`, `repositories` sub-projects.
 - `setupFiles`: `integration-tests/setup-env.js`; `setupFilesAfterEnv`: `integration-tests/setup.js`.
 - `testTimeout: 10000`; requires PostgreSQL/Redis for many HTTP tests.
 
-#### `Task/medusa/packages/modules/auth/jest.config.js` (representative package)
+#### `Task/extra/medusa/packages/modules/auth/jest.config.js` (representative package)
 
 - Extends `defineJest_config.js` with module path aliases (`@models`, `@services`, etc.).
 - Package script: `jest --bail --passWithNoTests --forceExit --testPathPattern=src` (unit).
@@ -129,7 +129,7 @@ flowchart LR
 ### By directory tree
 
 ```
-Task/medusa/
+Task/extra/medusa/
 ├── packages/
 │   ├── core/
 │   │   ├── utils/src/**/__tests__/          # DML, DAL, common utils (largest unit cluster)
@@ -150,15 +150,15 @@ Task/medusa/
 
 | # | Command | Purpose | Working dir | Source |
 |---|---------|---------|-------------|--------|
-| 1 | `yarn install` | Install all workspace dependencies | `Task/medusa/` | Required prerequisite; Yarn 3 workspace |
-| 2 | `yarn test` | Run all unit tests across monorepo via Turbo | `Task/medusa/` | `package.json:scripts.test` |
-| 3 | `yarn test:chunk` | Run unit tests in CI chunks (parallel jobs) | `Task/medusa/` | `package.json:scripts.test:chunk` + `scripts/run-workspace-unit-tests-in-chunks.sh` |
-| 4 | `yarn jest` | Run root multi-project Jest directly | `Task/medusa/` | `package.json:scripts.jest` |
-| 5 | `yarn workspace @medusajs/auth test` | Auth module unit tests only | `Task/medusa/` | `packages/modules/auth/package.json:scripts.test` |
-| 6 | `yarn workspace @medusajs/auth test:integration` | Auth module integration tests | `Task/medusa/` | `packages/modules/auth/package.json:scripts.test:integration` |
-| 7 | `yarn test:integration:http` | HTTP integration test suite | `Task/medusa/` | `package.json:scripts.test:integration:http` |
-| 8 | `yarn test:integration:modules` | Modules integration test suite | `Task/medusa/` | `package.json:scripts.test:integration:modules` |
-| 9 | `yarn test:integration:api` | API integration test suite | `Task/medusa/` | `package.json:scripts.test:integration:api` |
+| 1 | `yarn install` | Install all workspace dependencies | `Task/extra/medusa/` | Required prerequisite; Yarn 3 workspace |
+| 2 | `yarn test` | Run all unit tests across monorepo via Turbo | `Task/extra/medusa/` | `package.json:scripts.test` |
+| 3 | `yarn test:chunk` | Run unit tests in CI chunks (parallel jobs) | `Task/extra/medusa/` | `package.json:scripts.test:chunk` + `scripts/run-workspace-unit-tests-in-chunks.sh` |
+| 4 | `yarn jest` | Run root multi-project Jest directly | `Task/extra/medusa/` | `package.json:scripts.jest` |
+| 5 | `yarn workspace @medusajs/auth test` | Auth module unit tests only | `Task/extra/medusa/` | `packages/modules/auth/package.json:scripts.test` |
+| 6 | `yarn workspace @medusajs/auth test:integration` | Auth module integration tests | `Task/extra/medusa/` | `packages/modules/auth/package.json:scripts.test:integration` |
+| 7 | `yarn test:integration:http` | HTTP integration test suite | `Task/extra/medusa/` | `package.json:scripts.test:integration:http` |
+| 8 | `yarn test:integration:modules` | Modules integration test suite | `Task/extra/medusa/` | `package.json:scripts.test:integration:modules` |
+| 9 | `yarn test:integration:api` | API integration test suite | `Task/extra/medusa/` | `package.json:scripts.test:integration:api` |
 | 10 | `cd packages/modules/auth && ../../../node_modules/.bin/jest --testPathPattern=verification-token` | Single-file scoped unit test | `packages/modules/auth/` | Derived from package test script |
 
 ### Prerequisites
@@ -208,7 +208,7 @@ $ yarn run [--inspect] [--inspect-brk] [-T,--top-level] [-B,--binaries-only] <sc
 | Field | Value |
 |-------|-------|
 | **Command** | `npx --yes jest@29.7.0 --testPathPattern=verification-token --no-cache` |
-| **Working dir** | `Task/medusa/packages/modules/auth` |
+| **Working dir** | `Task/extra/medusa/packages/modules/auth` |
 | **Exit code** | 1 |
 | **Duration** | ~11s |
 | **Result** | ERROR — missing @swc/jest (no node_modules) |
@@ -217,7 +217,7 @@ $ yarn run [--inspect] [--inspect-brk] [-T,--top-level] [-B,--binaries-only] <sc
 ● Validation Error:
 
   Module @swc/jest in the transform option was not found.
-         <rootDir> is: /Users/divyanshupatel/Desktop/mf/Task/medusa/packages/modules/auth
+         <rootDir> is: /Users/divyanshupatel/Desktop/mf/Task/extra/medusa/packages/modules/auth
 
   Configuration Documentation:
   https://jestjs.io/docs/configuration
@@ -228,7 +228,7 @@ $ yarn run [--inspect] [--inspect-brk] [-T,--top-level] [-B,--binaries-only] <sc
 | Field | Value |
 |-------|-------|
 | **Command** | `npx --yes tsx --test src/utils/__tests__/verification-token.spec.ts` |
-| **Working dir** | `Task/medusa/packages/modules/auth` |
+| **Working dir** | `Task/extra/medusa/packages/modules/auth` |
 | **Exit code** | 1 |
 | **Duration** | ~0.3s |
 | **Result** | ERROR — Jest globals not available |
@@ -251,7 +251,7 @@ ReferenceError: describe is not defined
 
 ### Recommended next steps
 
-1. Fix TLS/CA for Yarn: configure corporate proxy CA, or temporarily `export NODE_EXTRA_CA_CERTS=/path/to/ca.pem`, then re-run `yarn install` from `Task/medusa/`.
+1. Fix TLS/CA for Yarn: configure corporate proxy CA, or temporarily `export NODE_EXTRA_CA_CERTS=/path/to/ca.pem`, then re-run `yarn install` from `Task/extra/medusa/`.
 2. After install, run scoped unit tests first: `yarn workspace @medusajs/auth test` (fast feedback).
 3. Run full unit suite: `yarn test` or CI-equivalent `yarn test:chunk` with `CHUNK=0`.
 4. For integration tests, start PostgreSQL/Redis per Medusa docs, then `yarn test:integration:http` or `yarn test:integration:modules`.
@@ -261,14 +261,14 @@ ReferenceError: describe is not defined
 
 ### Files examined
 
-- `Task/medusa/package.json` — root scripts, Jest/Vitest/Turbo versions
-- `Task/medusa/jest.config.js` — multi-project Jest root
-- `Task/medusa/define_jest_config.js` — shared @swc/jest transform
-- `Task/medusa/integration-tests/jest.config.js` — integration test aggregator
-- `Task/medusa/packages/modules/auth/package.json` — representative per-package test scripts
-- `Task/medusa/packages/modules/auth/jest.config.js` — representative package Jest config
-- `Task/medusa/scripts/run-workspace-unit-tests-in-chunks.sh` — CI chunk runner
-- `Task/medusa/integration-tests/http/package.json` — HTTP integration Jest scripts
+- `Task/extra/medusa/package.json` — root scripts, Jest/Vitest/Turbo versions
+- `Task/extra/medusa/jest.config.js` — multi-project Jest root
+- `Task/extra/medusa/define_jest_config.js` — shared @swc/jest transform
+- `Task/extra/medusa/integration-tests/jest.config.js` — integration test aggregator
+- `Task/extra/medusa/packages/modules/auth/package.json` — representative per-package test scripts
+- `Task/extra/medusa/packages/modules/auth/jest.config.js` — representative package Jest config
+- `Task/extra/medusa/scripts/run-workspace-unit-tests-in-chunks.sh` — CI chunk runner
+- `Task/extra/medusa/integration-tests/http/package.json` — HTTP integration Jest scripts
 
 ### Excluded from scan
 

@@ -14,7 +14,7 @@ export const docSections: DocSection[] = [
         content: [
           "Open Cursor in Agent mode (not Ask mode).",
           "Type / in chat and select a skill, e.g. /basics-repo-structure-mapper.",
-          "Provide target repo: /basics-repo-structure-mapper on Task/medusa — markdown output",
+          "Provide target repo: /basics-repo-structure-mapper on Task/extra/medusa — markdown output",
           "Answer planning MCQs (repo path, output format).",
           "Read deliverable at Task/agents/{Tier}/{ID}/proof/*-report.md",
         ],

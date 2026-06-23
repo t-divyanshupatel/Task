@@ -8,7 +8,7 @@
 | **Started at** | 2026-06-21T22:25:52.819Z |
 | **Completed at** | 2026-06-21T22:31:52.819Z |
 | **Duration** | 6m 00s |
-| **Repository** | Task/medusa |
+| **Repository** | Task/extra/medusa |
 | **Repo name** | medusa |
 | **Stack detected** | Medusa v2, TypeScript, file-based API routes, React Router admin dashboard |
 | **Base URL / prefix** | `/` — admin: `/admin/*`, store: `/store/*`, auth: `/auth/*` |

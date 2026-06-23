@@ -8,7 +8,7 @@
 | **Started at** | 2026-06-21T22:05:31Z |
 | **Completed at** | 2026-06-21T22:10:18Z |
 | **Duration** | 4m 47s |
-| **Repository** | Task/medusa |
+| **Repository** | Task/extra/medusa |
 | **Repo name** | medusa (Medusa v2 monorepo) |
 | **Stack detected** | TypeScript 5.7, Node 18.20.8, Yarn 3 Berry, Turbo monorepo |
 | **Target** | `scripts/deps-analyze/analyze-dependencies.js` |
@@ -47,7 +47,7 @@ The workspace dependency analysis script spent **~90% of its runtime** spawning 
 | **Command** | `node -e "… execSync('node scripts/deps-analyze/analyze-dependencies.js') …"` (30 iterations) |
 | **Iterations** | 30 |
 | **Input size** | 78 workspace `package.json` files under `packages/` |
-| **Environment** | macOS darwin 25.5.0, Node v18.20.8, cwd `Task/medusa` |
+| **Environment** | macOS darwin 25.5.0, Node v18.20.8, cwd `Task/extra/medusa` |
 
 ### Results
 
@@ -226,7 +226,7 @@ git checkout -- scripts/deps-analyze/analyze-dependencies.js
 ### Post-rollback verification
 
 ```bash
-cd Task/medusa
+cd Task/extra/medusa
 node -e "/* 30-iter benchmark */"   # expect ~899ms mean restored
 node scripts/deps-analyze/analyze-dependencies.js  # expect 78 packages
 ```
